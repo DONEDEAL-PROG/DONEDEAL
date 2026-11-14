@@ -56,12 +56,22 @@ export async function onRequestGet({ request, env }) {
   }
 
   try {
-    const result = await env.DB.prepare(
-      `SELECT sku, name, variant, price_centavos,
-              stock, enabled
-       FROM store_variants
-       ORDER BY name, variant`
-    ).all();
+  
+const result = await env.DB.prepare(`
+  SELECT
+    v.sku,
+    v.name,
+    v.variant,
+    v.price_centavos,
+    v.stock,
+    v.enabled,
+    i.image_key
+  FROM store_variants AS v
+  LEFT JOIN store_product_images AS i
+    ON i.product_id =
+      substr(v.sku, 1, instr(v.sku, '::') - 1)
+  ORDER BY v.name, v.variant
+`).all();
 
     return json({ products: result.results || [] });
   } catch {
