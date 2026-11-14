@@ -278,42 +278,78 @@ function confirmCartVariant(){
  if(ddConfirmBusy)return;
  const p=products.find(x=>x.id===pendingCartId);if(!p)return;
  if(variantList(p).length&&!pendingCartStorage)return;
- ddConfirmBusy=true;
  const key=cartKey(p.id,pendingCartStorage);
  const qty=pendingCartQty;
  const label=p.brand+' '+p.name+(pendingCartStorage?' · '+pendingCartStorage:'');
- cart[key]=(cart[key]||0)+qty;
- if(pendingCartStorage)chosenStorage[p.id]=pendingCartStorage;
- save();render();
- const button=document.getElementById('confirmVariant');
- if(button){launchAddToCartAnimation(button);button.textContent='✓ Successfully added!';button.disabled=true;}
- showCartCelebration(label,qty);
- const counter=document.getElementById('cartCount');
- if(counter){counter.classList.remove('dd-cart-bounce');void counter.offsetWidth;counter.classList.add('dd-cart-bounce');}
- // Close the picker behind the celebration, without leaving a persistent Web Animation.
- setTimeout(()=>{
+ ddConfirmBusy=true;
+ try{
+   cart[key]=(cart[key]||0)+qty;
+   if(pendingCartStorage)chosenStorage[p.id]=pendingCartStorage;
+   save();
+   render();
    document.getElementById('variantOverlay')?.classList.remove('open');
-   if(button){button.disabled=false;button.textContent='Confirm Add to Cart';}
+   showCartCelebration(label,qty);
+ }catch(error){
+   console.error('Done Deal Add to Cart error:',error);
+   alert('Could not add this gadget to cart. Please try again.');
+ }finally{
    ddConfirmBusy=false;
- },350);
-}
-function showCartCelebration(label,qty){
- let screen=document.getElementById('ddCelebration');
- if(!screen){
-   screen=document.createElement('div');
-   screen.id='ddCelebration';
-   screen.setAttribute('role','status');
-   screen.setAttribute('aria-live','polite');
-   screen.innerHTML='<div class="dd-celebrate-card"><div class="dd-grand-halo" aria-hidden="true"></div><div class="dd-grand-sparkles" aria-hidden="true"></div><div class="dd-confetti" aria-hidden="true"></div><div class="dd-bag" aria-hidden="true"><svg viewBox="0 0 100 110" width="112" height="124" fill="none"><path d="M19 37H81L87 101H13L19 37Z" fill="#f62b87"/><path d="M34 41V28C34 7 66 7 66 28V41" stroke="#fff" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="68" r="22" fill="#fff"/><path d="M39 68L47 76L63 59" stroke="#e41e76" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="dd-celebrate-title">ADDED TO CART!</div><div class="dd-celebrate-detail"></div><div class="dd-celebrate-sub">Your next favorite gadget is in the bag ✨</div><div class="dd-celebrate-progress"></div></div>';
-   document.body.appendChild(screen);
  }
- screen.querySelector('.dd-celebrate-detail').textContent=label+' · Qty '+qty;
- screen.classList.remove('dd-celebrate-show');
- void screen.offsetWidth;
- screen.classList.add('dd-celebrate-show');
- clearTimeout(window.ddCelebrationTimer);
- window.ddCelebrationTimer=setTimeout(()=>screen.classList.remove('dd-celebrate-show'),3600);
 }
+
+function showCartCelebration(label,qty){
+ let overlay=document.getElementById('ddCelebrationFinal');
+ if(!overlay){
+   overlay=document.createElement('div');
+   overlay.id='ddCelebrationFinal';
+   overlay.setAttribute('role','dialog');
+   overlay.setAttribute('aria-modal','true');
+   overlay.setAttribute('aria-label','Added to cart');
+   overlay.innerHTML=`<div class="dd-final-card">
+     <div class="dd-final-glow" aria-hidden="true"></div>
+     <div class="dd-final-confetti" aria-hidden="true"></div>
+     <div class="dd-final-icon" aria-hidden="true">✓</div>
+     <h2>ADDED TO CART!</h2>
+     <div class="dd-final-product"></div>
+     <p>Your next favorite gadget is in the bag ✨</p>
+     <button type="button" class="dd-final-close">Continue Shopping</button>
+   </div>`;
+   const style=document.createElement('style');
+   style.id='dd-final-cart-style';
+   style.textContent=`
+    #ddCelebrationFinal{position:fixed!important;inset:0!important;z-index:2147483647!important;display:none!important;align-items:center!important;justify-content:center!important;padding:18px!important;background:rgba(6,5,11,.88)!important;backdrop-filter:blur(12px)!important}
+    #ddCelebrationFinal.dd-final-visible{display:flex!important}
+    #ddCelebrationFinal .dd-final-card{position:relative;isolation:isolate;overflow:hidden;box-sizing:border-box;width:min(94vw,510px);padding:44px 25px 32px;text-align:center;background:radial-gradient(ellipse at top,#652547 0%,#29202e 60%,#18141f 100%);border:2px solid #ff65af;border-radius:30px;box-shadow:0 0 75px #f92c8b77,0 25px 90px #000b;color:#fff}
+    #ddCelebrationFinal.dd-final-visible .dd-final-card{animation:ddFinalCard 1s cubic-bezier(.2,.85,.25,1.1) both}
+    #ddCelebrationFinal .dd-final-icon{position:relative;z-index:2;display:grid;place-items:center;width:110px;height:110px;margin:0 auto 22px;border-radius:28px;background:linear-gradient(145deg,#ff7cbb,#df1f75);box-shadow:0 15px 40px #ff328c99;font-size:70px;font-weight:900}
+    #ddCelebrationFinal.dd-final-visible .dd-final-icon{animation:ddFinalIcon 1.6s cubic-bezier(.2,.85,.2,1.15) both}
+    #ddCelebrationFinal h2{position:relative;z-index:2;margin:0 0 16px;font-size:clamp(30px,7vw,46px);font-weight:950;line-height:1.1;color:#fff;text-shadow:0 5px 25px #ff369ca8}
+    #ddCelebrationFinal.dd-final-visible h2{animation:ddFinalTitle 1.6s cubic-bezier(.2,.85,.2,1.1) .15s both}
+    #ddCelebrationFinal .dd-final-product{position:relative;z-index:2;font-size:16px;font-weight:700;color:#ffc3df;overflow-wrap:anywhere}
+    #ddCelebrationFinal p{position:relative;z-index:2;color:#e9d6e1;font-size:14px}
+    #ddCelebrationFinal .dd-final-close{position:relative;z-index:2;display:block;width:100%;padding:14px;margin-top:25px;border:0;border-radius:12px;background:#ed408b;color:white;font-size:15px;font-weight:800;cursor:pointer}
+    #ddCelebrationFinal .dd-final-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 25%,#ff52a044,transparent 55%);pointer-events:none}
+    #ddCelebrationFinal .dd-final-confetti{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,#ffd46e 3px,transparent 4px),radial-gradient(circle,#ff8cc8 3px,transparent 4px),radial-gradient(circle,#a99cff 3px,transparent 4px);background-size:57px 69px,79px 83px,96px 91px;opacity:0}
+    #ddCelebrationFinal.dd-final-visible .dd-final-confetti{animation:ddFinalConfetti 2.3s ease-out .2s both}
+    @keyframes ddFinalCard{0%{opacity:0;transform:translateY(100px) scale(.65)}50%{opacity:1;transform:translateY(-17px) scale(1.07)}75%{transform:translateY(8px) scale(.97)}100%{opacity:1;transform:none}}
+    @keyframes ddFinalIcon{0%{opacity:0;transform:translateY(-160px) rotate(-15deg) scale(.5)}32%{opacity:1;transform:translateY(26px) rotate(9deg) scale(1.15)}51%{transform:translateY(-33px) rotate(-7deg) scale(.9)}70%{transform:translateY(15px) scale(1.07)}85%{transform:translateY(-7px)}100%{opacity:1;transform:none}}
+    @keyframes ddFinalTitle{0%{opacity:0;transform:translateY(-90px) scale(.65)}35%{opacity:1;transform:translateY(24px) scale(1.16)}56%{transform:translateY(-26px) scale(.9)}75%{transform:translateY(12px) scale(1.07)}90%{transform:translateY(-5px)}100%{opacity:1;transform:none}}
+    @keyframes ddFinalConfetti{0%{opacity:0;transform:translateY(-50px)}25%{opacity:1}100%{opacity:0;transform:translateY(110px)}}
+    @media(prefers-reduced-motion:reduce){#ddCelebrationFinal.dd-final-visible .dd-final-card,#ddCelebrationFinal.dd-final-visible .dd-final-icon,#ddCelebrationFinal.dd-final-visible h2,#ddCelebrationFinal.dd-final-visible .dd-final-confetti{animation:none!important;opacity:1;transform:none}}
+   `;
+   document.head.appendChild(style);
+   document.body.appendChild(overlay);
+   overlay.querySelector('.dd-final-close').addEventListener('click',()=>overlay.classList.remove('dd-final-visible'));
+   overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('dd-final-visible')});
+ }
+ overlay.querySelector('.dd-final-product').textContent=label+' · Qty '+qty;
+ overlay.classList.remove('dd-final-visible');
+ void overlay.offsetWidth;
+ overlay.classList.add('dd-final-visible');
+ clearTimeout(window.ddFinalCelebrationTimer);
+ window.ddFinalCelebrationTimer=setTimeout(()=>overlay.classList.remove('dd-final-visible'),4800);
+}
+
 function launchAddToCartAnimation(button){
  const bounds=button.getBoundingClientRect();
  const ripple=document.createElement('span');
