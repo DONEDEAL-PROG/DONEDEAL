@@ -1,0 +1,1 @@
+import{json,err,priceCart,sameOrigin}from './_shared.js';export async function onRequestPost({request,env}){if(!sameOrigin(request))return err('Origin not allowed',403);if(!env.DB)return err('Store database not configured',503);try{const body=await request.json();return json(await priceCart(env.DB,body.items))}catch(e){return err(e.message)}}
