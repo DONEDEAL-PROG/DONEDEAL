@@ -75,11 +75,28 @@ $('pay').addEventListener('click',async()=>{
   const d=await r.json();if(!r.ok)throw Error(d.error||'Order unavailable');
   for(const item of items())delete cart[item.sku];
   save();
-  $('review').innerHTML='';
-  const box=safeNode('div','');
-  box.append(safeNode('h2',null,'Order request received!'),safeNode('p','muted','Reference: '+d.order_id),safeNode('p','muted',d.message));
+  $('review').replaceChildren();
+  const box=safeNode('section','dd-order-success');
+  box.setAttribute('role','status');
+  box.setAttribute('aria-live','polite');
+  const celebration=safeNode('div','dd-order-celebration');
+  celebration.setAttribute('aria-hidden','true');
+  const bag=safeNode('div','dd-order-bag','✓');
+  celebration.append(bag);
+  for(let i=0;i<18;i++){
+    const bit=safeNode('i','dd-order-confetti');
+    bit.style.setProperty('--i',String(i));
+    bit.style.setProperty('--angle',(i*20)+'deg');
+    celebration.append(bit);
+  }
+  box.append(celebration);
+  box.append(safeNode('h2',null,'Order request received!'));
+  box.append(safeNode('p','muted','Thank you! Your order is awaiting confirmation.'));
+  box.append(safeNode('p','muted','Order reference: '+(d.order_id||'Pending')));
+  if(d.message)box.append(safeNode('p','muted',d.message));
   const a=safeNode('a','btn','Continue shopping');a.href='shop.html';box.append(a);
   $('review').append(box);
+  window.scrollTo({top:0,behavior:'smooth'});
   $('step2').className='step done';$('step3').className='step active';
   $('status').textContent='';
  }catch(e){$('status').textContent=e.message;$('status').className='error';button.disabled=false}
@@ -119,3 +136,23 @@ loadCheckoutCatalog();
  },false);
 })();
 
+
+
+(function installOrderConfirmationMotion(){
+ if(document.getElementById('dd-order-success-style'))return;
+ const style=document.createElement('style');
+ style.id='dd-order-success-style';
+ style.textContent=`
+ .dd-order-success{position:relative;text-align:center;max-width:560px;margin:18px auto;padding:26px 20px 32px;border:1px solid #ff70b04d;border-radius:22px;background:linear-gradient(155deg,#28242e,#17171d);box-shadow:0 22px 60px #0005;overflow:hidden}
+ .dd-order-success h2{margin:8px 0 12px;color:#fff}
+ .dd-order-success .muted{line-height:1.65;overflow-wrap:anywhere}
+ .dd-order-success .btn{display:inline-block;margin-top:20px}
+ .dd-order-celebration{height:140px;position:relative;display:grid;place-items:center}
+ .dd-order-bag{width:92px;height:92px;border-radius:26px;background:linear-gradient(145deg,#ff66af,#d32175);color:white;display:grid;place-items:center;font-size:58px;font-weight:800;box-shadow:0 15px 35px #d3217566;z-index:2;animation:ddOrderBounce .95s cubic-bezier(.2,.85,.25,1.15) both}
+ .dd-order-confetti{position:absolute;left:50%;top:50%;width:8px;height:13px;border-radius:3px;background:hsl(calc(var(--i)*23 + 310) 95% 72%);transform:rotate(var(--angle)) translateY(-10px);opacity:0;animation:ddOrderConfetti 1.25s ease-out .18s both}
+ @keyframes ddOrderBounce{0%{opacity:0;transform:translateY(-95px) scale(.55) rotate(-15deg)}40%{opacity:1;transform:translateY(15px) scale(1.1) rotate(6deg)}65%{transform:translateY(-14px) scale(.96) rotate(-3deg)}82%{transform:translateY(5px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
+ @keyframes ddOrderConfetti{0%{opacity:0;transform:rotate(var(--angle)) translateY(-12px) scale(.4)}20%{opacity:1}100%{opacity:0;transform:rotate(var(--angle)) translateY(-118px) rotate(170deg)}}
+ @media(prefers-reduced-motion:reduce){.dd-order-bag,.dd-order-confetti{animation:none!important}.dd-order-confetti{display:none}}
+ `;
+ document.head.append(style);
+})();
