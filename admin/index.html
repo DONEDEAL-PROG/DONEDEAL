@@ -61,6 +61,19 @@ small{color:#aaa;overflow-wrap:anywhere}
     </div>
     <p id="status" role="status"></p>
   </div>
+ 
+<div class="panel" id="importPanel">
+  <h3>Import Existing Catalog</h3>
+  <p>Add your 14 remaining Done Deal variants to the database.</p>
+  <p>Existing products will not be overwritten.</p>
+
+  <button id="importBtn" type="button">
+    Import 14 Products
+  </button>
+
+  <p id="importStatus" role="status"></p>
+</div>
+
   <div id="products"></div>
 </section>
 </main>
@@ -247,6 +260,42 @@ $("loginForm").addEventListener("submit", async event => {
     $("loginMessage").textContent = error.message;
   }
 });
+
+document.getElementById("importBtn")
+  ?.addEventListener("click", async () => {
+    if (!confirm("Import the 14 remaining products?")) return;
+
+    const button = document.getElementById("importBtn");
+    const status = document.getElementById("importStatus");
+
+    button.disabled = true;
+    status.textContent = "Importing...";
+
+    try {
+      const response = await fetch("/api/admin/import-catalog", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({})
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Import failed");
+      }
+
+      status.textContent =
+        `Imported ${data.added} products. ` +
+        `${data.skipped} already existed.`;
+
+      await loadProducts();
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      button.disabled = false;
+    }
+  });
 
 $("refreshBtn").addEventListener("click", loadProducts);
 loadProducts();
