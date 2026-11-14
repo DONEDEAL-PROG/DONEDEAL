@@ -390,4 +390,10 @@ function resetBrand(){const buttons=[...document.querySelectorAll('#brands butto
  syncNav();
 })();
 </script>
-<a href="/track-order.html" style="position:fixed;right:16px;bottom:16px;z-index:5000;background:#a63871;color:#fff;padding:11px 17px;border-radius:999px;box-shadow:0 5px 20px #0003;font:700 14px system-ui;text-decoration:none" aria-label="Track your order">📦 Track My Order</a></body></html>
+<a class="dd-track-float" href="/track-order.html" aria-label="Track My Order" title="Track My Order"><span aria-hidden="true">📦</span><span class="dd-track-label">Track My Order</span></a>
+<style>
+.dd-track-float{position:fixed;right:20px;bottom:20px;z-index:99999;display:flex;align-items:center;gap:9px;padding:13px 18px;border-radius:999px;background:#ed3e7c;color:#fff;text-decoration:none;font:700 14px/1.2 system-ui,-apple-system,sans-serif;box-shadow:0 8px 26px rgba(0,0,0,.4);transition:transform .2s,background .2s}
+.dd-track-float:hover,.dd-track-float:focus-visible{background:#ff5593;transform:translateY(-2px)}
+@media(max-width:600px){.dd-track-float{right:14px;bottom:14px;padding:13px}.dd-track-label{display:none}}
+</style>
+</body></html>
