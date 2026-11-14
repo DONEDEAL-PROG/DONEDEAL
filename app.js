@@ -135,34 +135,38 @@ function confirmCartVariant(){
  ddConfirmBusy=true;
  const key=cartKey(p.id,pendingCartStorage);
  const qty=pendingCartQty;
- const label=p.brand+' '+p.name;
+ const label=p.brand+' '+p.name+(pendingCartStorage?' · '+pendingCartStorage:'');
  cart[key]=(cart[key]||0)+qty;
  if(pendingCartStorage)chosenStorage[p.id]=pendingCartStorage;
  save();render();
  const button=document.getElementById('confirmVariant');
- if(button){
-   launchAddToCartAnimation(button);
-   button.textContent='✓ Successfully added!';
-   button.classList.add('dd-added','dd-success-pop');
-   button.disabled=true;
- }
- // The confirmation is visible immediately and is independent of popup animations.
- showCartSuccess(label,qty);
+ if(button){launchAddToCartAnimation(button);button.textContent='✓ Successfully added!';button.disabled=true;}
+ showCartCelebration(label,qty);
  const counter=document.getElementById('cartCount');
  if(counter){counter.classList.remove('dd-cart-bounce');void counter.offsetWidth;counter.classList.add('dd-cart-bounce');}
- window.setTimeout(()=>{
-   const overlay=document.getElementById('variantOverlay');
-   const modal=overlay?.querySelector('.variantModal');
-   if(modal && !matchMedia('(prefers-reduced-motion: reduce)').matches){
-     modal.animate([
-       {opacity:1,transform:'translate(-50%,-50%) scale(1)'},
-       {opacity:0,transform:'translate(-50%,calc(-50% + 16px)) scale(.96)'}
-     ],{duration:280,easing:'ease-in',fill:'forwards'});
-   }
-   window.setTimeout(()=>overlay?.classList.remove('open'),280);
-   if(button){button.classList.remove('dd-added','dd-success-pop');button.disabled=false;}
+ // Close the picker behind the celebration, without leaving a persistent Web Animation.
+ setTimeout(()=>{
+   document.getElementById('variantOverlay')?.classList.remove('open');
+   if(button){button.disabled=false;button.textContent='Confirm Add to Cart';}
    ddConfirmBusy=false;
- },200);
+ },350);
+}
+function showCartCelebration(label,qty){
+ let screen=document.getElementById('ddCelebration');
+ if(!screen){
+   screen=document.createElement('div');
+   screen.id='ddCelebration';
+   screen.setAttribute('role','status');
+   screen.setAttribute('aria-live','polite');
+   screen.innerHTML='<div class="dd-celebrate-card"><div class="dd-confetti" aria-hidden="true"></div><div class="dd-bag" aria-hidden="true"><svg viewBox="0 0 100 110" width="112" height="124" fill="none"><path d="M19 37H81L87 101H13L19 37Z" fill="#f62b87"/><path d="M34 41V28C34 7 66 7 66 28V41" stroke="#fff" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="68" r="22" fill="#fff"/><path d="M39 68L47 76L63 59" stroke="#e41e76" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="dd-celebrate-title">ADDED TO CART!</div><div class="dd-celebrate-detail"></div><div class="dd-celebrate-sub">Your next favorite gadget is in the bag ✨</div><div class="dd-celebrate-progress"></div></div>';
+   document.body.appendChild(screen);
+ }
+ screen.querySelector('.dd-celebrate-detail').textContent=label+' · Qty '+qty;
+ screen.classList.remove('dd-celebrate-show');
+ void screen.offsetWidth;
+ screen.classList.add('dd-celebrate-show');
+ clearTimeout(window.ddCelebrationTimer);
+ window.ddCelebrationTimer=setTimeout(()=>screen.classList.remove('dd-celebrate-show'),2200);
 }
 function launchAddToCartAnimation(button){
  const bounds=button.getBoundingClientRect();
@@ -292,3 +296,4 @@ document.querySelectorAll('button[onclick="openCheckout()"]').forEach(b=>b.textC
 #ddCartToast{z-index:100002!important}
 @media(prefers-reduced-motion:reduce){#variantOverlay.open .variantModal,#detailOverlay.open .modal,#checkoutOverlay.open .modal{animation:none!important;transform:translate(-50%,-50%)!important}}
 `;document.head.appendChild(style)})();
+(function(){const style=document.createElement("style");style.id="dd-cart-celebration-css";style.textContent="\n/* Done Deal full-screen add-to-cart celebration */\n#ddCelebration{position:fixed;inset:0;z-index:2147483646;display:grid;place-items:center;padding:22px;background:rgba(9,8,14,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s ease}\n#ddCelebration.dd-celebrate-show{opacity:1;visibility:visible;pointer-events:auto}\n.dd-celebrate-card{position:relative;width:min(440px,100%);padding:45px 24px 36px;text-align:center;overflow:hidden;border:1px solid #79314f;border-radius:28px;background:radial-gradient(ellipse at 50% 12%,#59213f 0%,#28202d 55%,#17161d 100%);box-shadow:0 28px 100px #000b;color:#fff;transform:translateY(35px) scale(.75)}\n.dd-celebrate-show .dd-celebrate-card{animation:ddCardBounce .85s cubic-bezier(.2,.85,.25,1.1) both}\n.dd-bag{position:relative;z-index:1;filter:drop-shadow(0 16px 18px #f62b8766)}\n.dd-celebrate-show .dd-bag{animation:ddBagBounce 1.25s ease-in-out .05s both}\n.dd-celebrate-title{position:relative;z-index:1;margin-top:10px;font:900 clamp(26px,7vw,36px)/1.15 Manrope,Arial,sans-serif;letter-spacing:-1px;color:#fff;text-shadow:0 3px 18px #ff277b77}\n.dd-celebrate-detail{position:relative;z-index:1;margin:16px auto 8px;font:700 14px/1.5 'DM Sans',Arial,sans-serif;color:#ff9ac4;overflow-wrap:anywhere}\n.dd-celebrate-sub{position:relative;z-index:1;color:#c8bdc8;font:500 12px/1.5 'DM Sans',Arial,sans-serif}\n.dd-celebrate-progress{height:4px;width:75%;margin:28px auto 0;border-radius:9px;background:#4a3948;overflow:hidden}\n.dd-celebrate-progress:after{content:'';display:block;width:100%;height:100%;background:linear-gradient(90deg,#ed1680,#ff88b9);transform-origin:left}\n.dd-celebrate-show .dd-celebrate-progress:after{animation:ddCelebrationProgress 2.2s linear both}\n.dd-confetti{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,#ff6ba9 2px,transparent 3px),radial-gradient(circle,#ffd0e3 2px,transparent 3px),radial-gradient(circle,#e92c83 3px,transparent 4px);background-size:78px 96px,112px 87px,133px 124px;background-position:0 0,22px 28px,50px 7px;opacity:.7}\n.dd-celebrate-show .dd-confetti{animation:ddConfetti 2.2s ease-out both}\n@keyframes ddCardBounce{0%{transform:translateY(35px) scale(.75)}45%{transform:translateY(-14px) scale(1.06)}65%{transform:translateY(5px) scale(.97)}82%{transform:translateY(-5px) scale(1.02)}100%{transform:translateY(0) scale(1)}}\n@keyframes ddBagBounce{0%{transform:translateY(-75px) rotate(-13deg) scale(.65);opacity:0}35%{transform:translateY(15px) rotate(8deg) scale(1.12);opacity:1}55%{transform:translateY(-16px) rotate(-6deg)}75%{transform:translateY(5px) rotate(3deg)}100%{transform:translateY(0) rotate(0) scale(1)}}\n@keyframes ddConfetti{0%{transform:translateY(-35px) rotate(-8deg);opacity:0}25%{opacity:.8}100%{transform:translateY(65px) rotate(10deg);opacity:.2}}\n@keyframes ddCelebrationProgress{from{transform:scaleX(1)}to{transform:scaleX(0)}}\n@media(prefers-reduced-motion:reduce){.dd-celebrate-show .dd-celebrate-card,.dd-celebrate-show .dd-bag,.dd-celebrate-show .dd-confetti{animation:none;transform:none}.dd-celebrate-show .dd-celebrate-progress:after{animation:none}}\n";document.head.appendChild(style)})();
