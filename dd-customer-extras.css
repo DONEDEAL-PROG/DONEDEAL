@@ -92,3 +92,64 @@ html[data-dd-store-theme=light] .dd-menu-links a:hover{background:#fff0f6;color:
 html[data-dd-store-theme=light] .dd-menu-close{background:#f7e7f0!important;color:#713452!important}
 html[data-dd-store-theme=light] .dd-menu-foot{border-color:#eedce6;color:#6f6170}
 @media(max-width:650px){.dd-menu-trigger{padding:9px!important;font-size:0!important}.dd-menu-trigger svg{width:20px}.nav{gap:6px!important}}
+
+
+/* Approved Frosted Glass Wishlist design — header and product cards */
+.nav .dd-wishlist-link,
+header.nav .dd-wishlist-link{
+ display:inline-flex!important;align-items:center;justify-content:center;gap:8px!important;
+ height:43px!important;min-width:unset!important;width:auto!important;
+ padding:0 16px!important;border-radius:999px!important;
+ background:rgba(75,66,79,.82)!important;
+ border:1px solid rgba(199,173,194,.52)!important;
+ color:#fff!important;text-decoration:none!important;
+ box-shadow:0 6px 20px rgba(12,8,15,.14)!important;
+ backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+ font-size:13px!important;font-weight:650!important;line-height:1!important;
+ transition:background .2s,border-color .2s,transform .2s
+}
+.nav .dd-wishlist-link:hover{transform:translateY(-1px);background:rgba(96,73,94,.92)!important;border-color:#d99cbb!important}
+.dd-wishlist-symbol{font-size:24px!important;line-height:1!important;color:#ffc2d9!important}
+.nav .dd-wishlist-link .dd-wishlist-word{font-size:13px!important;color:inherit!important;font-weight:650!important}
+.nav .dd-wishlist-link .dd-wishlist-count{font-size:11px!important;font-weight:800!important;color:#251720!important;background:#f47dae;border-radius:999px;padding:4px 7px;min-width:20px;text-align:center}
+.dd-wishlist-count:empty{display:none}
+.product .dd-heart,
+.dd-extra-card [data-dd-wish]{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ width:auto!important;min-width:unset!important;height:37px!important;
+ padding:0 13px!important;border-radius:999px!important;
+ background:rgba(71,64,76,.86)!important;color:#ffe3ee!important;
+ border:1px solid rgba(190,167,190,.55)!important;
+ box-shadow:0 4px 16px rgba(0,0,0,.16)!important;
+ backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+ font-size:12px!important;font-weight:700!important;letter-spacing:.01em!important;
+ white-space:nowrap;line-height:1!important;cursor:pointer;
+ transition:background .2s,transform .2s,border-color .2s
+}
+.product .dd-heart{top:12px;right:12px}
+.product .dd-heart:hover,.dd-extra-card [data-dd-wish]:hover{transform:translateY(-1px);border-color:#e1aac7!important}
+.product .dd-heart.dd-is-saved,.dd-extra-card [data-dd-wish].dd-is-saved{
+ background:rgba(100,51,76,.94)!important;color:#ffe0ec!important;
+ border-color:#d979a3!important
+}
+html[data-dd-store-theme=light] .nav .dd-wishlist-link{
+ background:rgba(255,255,255,.91)!important;color:#34212e!important;
+ border-color:#e6c5d4!important;box-shadow:0 5px 18px rgba(105,42,73,.09)!important
+}
+html[data-dd-store-theme=light] .dd-wishlist-symbol{color:#c13b78!important}
+html[data-dd-store-theme=light] .nav .dd-wishlist-link .dd-wishlist-word{color:#34212e!important}
+html[data-dd-store-theme=light] .nav .dd-wishlist-link .dd-wishlist-count{background:#fce4ee;color:#a72f65!important}
+html[data-dd-store-theme=light] .product .dd-heart,
+html[data-dd-store-theme=light] .dd-extra-card [data-dd-wish]{
+ background:rgba(255,255,255,.94)!important;color:#a72f65!important;
+ border-color:#e6c5d4!important;box-shadow:0 4px 14px rgba(100,40,70,.10)!important
+}
+html[data-dd-store-theme=light] .product .dd-heart.dd-is-saved,
+html[data-dd-store-theme=light] .dd-extra-card [data-dd-wish].dd-is-saved{
+ background:#fce4ee!important;color:#a72f65!important;border-color:#e8a3c0!important
+}
+@media(max-width:650px){
+ .nav .dd-wishlist-link{height:38px!important;padding:0 10px!important;gap:5px!important}
+ .nav .dd-wishlist-link .dd-wishlist-word{font-size:11px!important}
+ .product .dd-heart{height:34px!important;padding:0 9px!important;font-size:11px!important}
+}

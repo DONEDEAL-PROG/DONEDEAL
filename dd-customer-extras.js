@@ -14,7 +14,7 @@
  const image=p=>p.photo||window.DDProductImage?.(p.id)||'';
  const price=p=>p.savedPrice??window.DDProductPrice?.(p);
  function refresh(){
-  document.querySelectorAll('[data-dd-wish]').forEach(b=>{const yes=read(W).includes(b.dataset.ddWish);b.textContent=yes?'♥':'♡';b.setAttribute('aria-pressed',String(yes));b.title=yes?'Remove from wishlist':'Save to wishlist'});
+  document.querySelectorAll('[data-dd-wish]').forEach(b=>{const yes=read(W).includes(b.dataset.ddWish);b.textContent=yes?'♥ Saved ✓':'♡ Wishlist';b.classList.toggle('dd-is-saved',yes);b.setAttribute('aria-pressed',String(yes));b.setAttribute('aria-label',yes?'Remove from wishlist':'Add to wishlist');b.title=yes?'Remove from wishlist':'Save to wishlist'});
   document.querySelectorAll('[data-dd-wish-count]').forEach(e=>e.textContent=read(W).length||'');
   if(document.getElementById('dd-recent-grid'))renderRecent();
   if(document.getElementById('dd-wishlist-grid'))renderWishlist();
@@ -39,7 +39,7 @@
  theme(localStorage.getItem(T)==='light'?'light':'dark');
  document.addEventListener('click',e=>{if(e.target.closest('[data-dd-theme-toggle]'))theme(document.documentElement.dataset.ddStoreTheme==='dark'?'light':'dark')});
  window.DDExtras={view,refresh};
- document.addEventListener('DOMContentLoaded',()=>{const nav=document.querySelector('header.nav');if(nav){const area=document.createElement('div');area.className='dd-header-tools';area.innerHTML='<a class="dd-wishlist-link" href="wishlist.html" aria-label="My wishlist">♡ <span data-dd-wish-count></span></a><button type="button" data-dd-theme-toggle></button>';nav.insertBefore(area,nav.lastElementChild);theme(document.documentElement.dataset.ddStoreTheme)}
+ document.addEventListener('DOMContentLoaded',()=>{const nav=document.querySelector('header.nav');if(nav){const area=document.createElement('div');area.className='dd-header-tools';area.innerHTML='<a class="dd-wishlist-link" href="wishlist.html" aria-label="Open my wishlist"><span class="dd-wishlist-symbol" aria-hidden="true">♡</span><span class="dd-wishlist-word">Wishlist</span><span class="dd-wishlist-count" data-dd-wish-count></span></a><button type="button" data-dd-theme-toggle></button>';nav.insertBefore(area,nav.lastElementChild);theme(document.documentElement.dataset.ddStoreTheme)}
  if(document.body.dataset.ddRecent==='yes'){const target=document.querySelector('#shop')||document.querySelector('main');if(target){const section=document.createElement('section');section.className='dd-extra-section';section.innerHTML='<h2>Recently Viewed</h2><p>Pick up where you left off</p><div id="dd-recent-grid" class="dd-extra-grid"></div>';target.append(section)}}
  refresh();setTimeout(refresh,700);
  const query=new URLSearchParams(location.search).get('product');if(query){let tries=0;const open=setInterval(()=>{if(byId(query)&&typeof window.detail==='function'){clearInterval(open);window.detail(query)}else if(++tries>20)clearInterval(open)},300)}
