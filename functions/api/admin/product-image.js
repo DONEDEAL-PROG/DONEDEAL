@@ -75,7 +75,7 @@ export async function onRequestPost({ request, env }) {
 
   if (
     typeof product_id !== "string" ||
-    !/^[A-Za-z]+-\d+$/.test(product_id) ||
+    !/^(?:[A-Za-z]+-\d+|custom-[0-9a-f-]{36})$/.test(product_id) ||
     typeof image_key !== "string" ||
     !/^products\/[0-9a-f-]{36}\.(jpg|png|webp)$/.test(image_key)
   ) {
