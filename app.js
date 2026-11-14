@@ -226,13 +226,14 @@ function render() {
   if (sort === 'brand') data.sort((a,b) => a.brand.localeCompare(b.brand));
   document.getElementById('resultCount').textContent = data.length + ' products';
   document.getElementById('catalog').innerHTML = data.map(p => `
-    <article class="product">
+    <article class="product" data-dd-product="${p.id}">
       <div class="visual" style="--shade:${shades[p.brand]}">
         <span class="tag">${p.tag}</span>
         ${productImages[p.id]
           ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`
           : `<div class="mini"></div>`}
       </div>
+      <button type="button" class="dd-heart" data-dd-wish="${p.id}" aria-label="Save ${p.name} to wishlist" aria-pressed="false">♡</button>
       <div class="pbody">
         <div class="brand">${p.brand}</div>
         <h3>${p.name}</h3>
@@ -246,6 +247,7 @@ function render() {
       </div>
     </article>
   `).join('') || '<div class="empty">No phones found. Try another search.</div>';
+  window.DDExtras?.refresh();
 }
 function renderBrands(){document.getElementById('brands').innerHTML=['All',...Object.keys(entries)].map(b=>`<button class="chip ${filter===b?'active':''}" onclick="filter='${b}';renderBrands();render()">${b==='All'?'All Brands':b}</button>`).join('')}
 function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart));document.getElementById('cartCount').textContent='('+Object.values(cart).reduce((a,b)=>a+Number(b||0),0)+')'}
@@ -431,6 +433,7 @@ function changeQty(key,d){cart[key]=(cart[key]||0)+d;if(cart[key]<=0)delete cart
 function closeOverlay(){document.querySelectorAll('.overlay').forEach(e=>e.classList.remove('open'))}
 function openCart(){closeOverlay();document.getElementById('cartOverlay').classList.add('open');let keys=Object.keys(cart).filter(k=>cartEntry(k));let total=0,hasUnknown=false;document.getElementById('cartItems').innerHTML=keys.length?keys.map(key=>{const e=cartEntry(key);if(e.price==null)hasUnknown=true;else total+=e.price*cart[key];return `<div class="cartitem"><div><strong>${e.p.brand} ${e.p.name}</strong><div style="color:#aeb7ca;margin-top:5px">${e.storage||'Storage to confirm'} · ${money(e.price)}</div></div><div><button onclick="changeQty('${key}',-1)">−</button> ${cart[key]} <button onclick="changeQty('${key}',1)">+</button></div></div>`}).join(''):'<div class="empty">Your cart is empty.</div>';document.getElementById('cartTotal').textContent=!keys.length?'Add a phone to get started.':hasUnknown?'Known SRP subtotal: '+money(total)+' · Other items require a quote':'Catalog subtotal: '+money(total);}
 function detail(id){
+ window.DDExtras?.view(id);
  const p=products.find(x=>x.id===id);if(!p)return;
  closeOverlay();const variants=variantList(p);const selected=selectedVariant(p);
  const specRows=specsFor(p).map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('');
@@ -522,3 +525,4 @@ document.querySelectorAll('button[onclick="openCheckout()"]').forEach(b=>b.textC
 @media(prefers-reduced-motion:reduce){#variantOverlay.open .variantModal,#detailOverlay.open .modal,#checkoutOverlay.open .modal{animation:none!important;transform:translate(-50%,-50%)!important}}
 `;document.head.appendChild(style)})();
 (function(){const style=document.createElement("style");style.id="dd-cart-celebration-css";style.textContent="\n/* Done Deal full-screen add-to-cart celebration */\n#ddCelebration{position:fixed;inset:0;z-index:2147483646;display:grid;place-items:center;padding:22px;background:rgba(9,8,14,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease,visibility .25s ease}\n#ddCelebration.dd-celebrate-show{opacity:1;visibility:visible;pointer-events:auto}\n.dd-celebrate-card{position:relative;width:min(440px,100%);padding:45px 24px 36px;text-align:center;overflow:hidden;border:1px solid #79314f;border-radius:28px;background:radial-gradient(ellipse at 50% 12%,#59213f 0%,#28202d 55%,#17161d 100%);box-shadow:0 28px 100px #000b;color:#fff;transform:translateY(35px) scale(.75)}\n.dd-celebrate-show .dd-celebrate-card{animation:ddCardBounce .85s cubic-bezier(.2,.85,.25,1.1) both}\n.dd-bag{position:relative;z-index:1;filter:drop-shadow(0 16px 18px #f62b8766)}\n.dd-celebrate-show .dd-bag{animation:ddBagBounce 1.25s ease-in-out .05s both}\n.dd-celebrate-title{position:relative;z-index:1;margin-top:10px;font:900 clamp(26px,7vw,36px)/1.15 Manrope,Arial,sans-serif;letter-spacing:-1px;color:#fff;text-shadow:0 3px 18px #ff277b77}\n.dd-celebrate-detail{position:relative;z-index:1;margin:16px auto 8px;font:700 14px/1.5 'DM Sans',Arial,sans-serif;color:#ff9ac4;overflow-wrap:anywhere}\n.dd-celebrate-sub{position:relative;z-index:1;color:#c8bdc8;font:500 12px/1.5 'DM Sans',Arial,sans-serif}\n.dd-celebrate-progress{height:4px;width:75%;margin:28px auto 0;border-radius:9px;background:#4a3948;overflow:hidden}\n.dd-celebrate-progress:after{content:'';display:block;width:100%;height:100%;background:linear-gradient(90deg,#ed1680,#ff88b9);transform-origin:left}\n.dd-celebrate-show .dd-celebrate-progress:after{animation:ddCelebrationProgress 2.2s linear both}\n.dd-confetti{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,#ff6ba9 2px,transparent 3px),radial-gradient(circle,#ffd0e3 2px,transparent 3px),radial-gradient(circle,#e92c83 3px,transparent 4px);background-size:78px 96px,112px 87px,133px 124px;background-position:0 0,22px 28px,50px 7px;opacity:.7}\n.dd-celebrate-show .dd-confetti{animation:ddConfetti 2.2s ease-out both}\n@keyframes ddCardBounce{0%{transform:translateY(35px) scale(.75)}45%{transform:translateY(-14px) scale(1.06)}65%{transform:translateY(5px) scale(.97)}82%{transform:translateY(-5px) scale(1.02)}100%{transform:translateY(0) scale(1)}}\n@keyframes ddBagBounce{0%{transform:translateY(-75px) rotate(-13deg) scale(.65);opacity:0}35%{transform:translateY(15px) rotate(8deg) scale(1.12);opacity:1}55%{transform:translateY(-16px) rotate(-6deg)}75%{transform:translateY(5px) rotate(3deg)}100%{transform:translateY(0) rotate(0) scale(1)}}\n@keyframes ddConfetti{0%{transform:translateY(-35px) rotate(-8deg);opacity:0}25%{opacity:.8}100%{transform:translateY(65px) rotate(10deg);opacity:.2}}\n@keyframes ddCelebrationProgress{from{transform:scaleX(1)}to{transform:scaleX(0)}}\n@media(prefers-reduced-motion:reduce){.dd-celebrate-show .dd-celebrate-card,.dd-celebrate-show .dd-bag,.dd-celebrate-show .dd-confetti{animation:none;transform:none}.dd-celebrate-show .dd-celebrate-progress:after{animation:none}}\n";document.head.appendChild(style)})();
+window.DDGetProducts=()=>products;window.DDProductImage=id=>productImages[id];window.DDProductPrice=p=>productPrice(p);
