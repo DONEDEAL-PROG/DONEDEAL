@@ -225,8 +225,163 @@ function renderProduct(item) {
     }
   });
 
+  // Product photo uploader
+  const photoSection = document.createElement("div");
+  photoSection.style.marginTop = "18px";
+  photoSection.style.paddingTop = "16px";
+  photoSection.style.borderTop = "1px solid #37303a";
+
+  const photoTitle = document.createElement("label");
+  photoTitle.textContent = "Product Photo";
+
+  const preview = document.createElement("img");
+  preview.alt = item.name + " product photo";
+  preview.style.width = "120px";
+  preview.style.height = "120px";
+  preview.style.objectFit = "contain";
+  preview.style.background = "#292933";
+  preview.style.borderRadius = "12px";
+  preview.style.display = "block";
+  preview.style.marginBottom = "12px";
+
+  if (item.image_key) {
+    preview.src = "/api/images/" + item.image_key;
+  } else {
+    preview.style.display = "none";
+  }
+
+  const imageInput = document.createElement("input");
+  imageInput.type = "file";
+  imageInput.accept = "image/jpeg,image/png,image/webp";
+  imageInput.style.marginBottom = "10px";
+
+  const uploadButton = document.createElement("button");
+  uploadButton.type = "button";
+  uploadButton.textContent = item.image_key
+    ? "Replace Photo"
+    : "Upload Photo";
+
+  const photoMessage = document.createElement("small");
+  photoMessage.setAttribute("role", "status");
+  photoMessage.style.display = "block";
+  photoMessage.style.marginTop = "10px";
+
+  imageInput.addEventListener("change", () => {
+    const file = imageInput.files?.[0];
+    if (!file) return;
+
+    if (
+      !["image/jpeg", "image/png", "image/webp"]
+        .includes(file.type) ||
+      file.size === 0 ||
+      file.size > 5 * 1024 * 1024
+    ) {
+      photoMessage.textContent =
+        "Choose JPG, PNG or WebP under 5MB.";
+      imageInput.value = "";
+      return;
+    }
+
+    const localURL = URL.createObjectURL(file);
+    preview.onload = () => URL.revokeObjectURL(localURL);
+    preview.src = localURL;
+    preview.style.display = "block";
+    photoMessage.textContent = "Preview ready. Click Upload Photo.";
+  });
+
+  uploadButton.addEventListener("click", async () => {
+    const file = imageInput.files?.[0];
+
+    if (!file) {
+      photoMessage.textContent = "Choose a photo first.";
+      return;
+    }
+
+    const productId = item.sku.split("::")[0];
+
+    if (!/^[A-Za-z]+-\d+$/.test(productId)) {
+      photoMessage.textContent = "Invalid product ID.";
+      return;
+    }
+
+    uploadButton.disabled = true;
+    imageInput.disabled = true;
+    photoMessage.textContent = "Uploading photo...";
+
+    try {
+      const form = new FormData();
+      form.append("image", file);
+
+      const uploadResponse = await fetch(
+        "/api/admin/upload-image",
+        {
+          method: "POST",
+          credentials: "same-origin",
+          body: form
+        }
+      );
+
+      const uploadData = await uploadResponse.json();
+
+      if (!uploadResponse.ok) {
+        throw new Error(
+          uploadData.error || "Image upload failed."
+        );
+      }
+
+      photoMessage.textContent = "Saving product photo...";
+
+      const saveResponse = await fetch(
+        "/api/admin/product-image",
+        {
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            image_key: uploadData.key
+          })
+        }
+      );
+
+      const saveData = await saveResponse.json();
+
+      if (!saveResponse.ok) {
+        throw new Error(
+          saveData.error || "Unable to save product photo."
+        );
+      }
+
+      item.image_key = uploadData.key;
+      preview.src = uploadData.image_url;
+      uploadButton.textContent = "Replace Photo";
+      imageInput.value = "";
+
+      photoMessage.textContent =
+        "Photo saved successfully!";
+      photoMessage.className = "success";
+
+    } catch (error) {
+      photoMessage.textContent = error.message;
+      photoMessage.className = "notice";
+    } finally {
+      uploadButton.disabled = false;
+      imageInput.disabled = false;
+    }
+  });
+
+  photoSection.append(
+    photoTitle,
+    preview,
+    imageInput,
+    uploadButton,
+    photoMessage
+  );
+
   actions.append(availableLabel, save, message);
-  card.append(head, fields, actions);
+  card.append(head, fields, actions, photoSection);
   $("products").append(card);
 }
 
