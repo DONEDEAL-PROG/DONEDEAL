@@ -1,3 +1,5 @@
+const productCatalog={"Huawei-0":{"name":"Huawei Pura 80 Ultra","brand":"Huawei"},"Huawei-1":{"name":"Huawei Pura 80 Pro","brand":"Huawei"},"Huawei-2":{"name":"Huawei Mate X6","brand":"Huawei"},"Huawei-3":{"name":"Huawei Pura 70 Pro","brand":"Huawei"},"Huawei-4":{"name":"Huawei nova 13 Pro","brand":"Huawei"},"Samsung-0":{"name":"Samsung Galaxy S25 Ultra","brand":"Samsung"},"Samsung-1":{"name":"Samsung Galaxy S25+","brand":"Samsung"},"Samsung-2":{"name":"Samsung Galaxy S25","brand":"Samsung"},"Samsung-3":{"name":"Samsung Galaxy Z Fold7","brand":"Samsung"},"Samsung-4":{"name":"Samsung Galaxy Z Flip7","brand":"Samsung"},"OPPO-0":{"name":"OPPO Find X9 Pro","brand":"OPPO"},"OPPO-1":{"name":"OPPO Find X9","brand":"OPPO"},"OPPO-2":{"name":"OPPO Find X8 Pro","brand":"OPPO"},"OPPO-3":{"name":"OPPO Find N5","brand":"OPPO"},"OPPO-4":{"name":"OPPO Reno13 Pro","brand":"OPPO"},"vivo-0":{"name":"vivo X300 Pro","brand":"vivo"},"vivo-1":{"name":"vivo X300","brand":"vivo"},"vivo-2":{"name":"vivo X200 Pro","brand":"vivo"},"vivo-3":{"name":"vivo X200","brand":"vivo"},"vivo-4":{"name":"vivo V60","brand":"vivo"},"Xiaomi-0":{"name":"Xiaomi 17 Ultra","brand":"Xiaomi"},"Xiaomi-1":{"name":"Xiaomi 17 Pro Max","brand":"Xiaomi"},"Xiaomi-2":{"name":"Xiaomi 15 Ultra","brand":"Xiaomi"},"Xiaomi-3":{"name":"Xiaomi 15","brand":"Xiaomi"},"Xiaomi-4":{"name":"Xiaomi 14T Pro","brand":"Xiaomi"},"Apple-0":{"name":"Apple iPhone 17 Pro Max","brand":"Apple"},"Apple-1":{"name":"Apple iPhone 17 Pro","brand":"Apple"},"Apple-2":{"name":"Apple iPhone Air","brand":"Apple"},"Apple-3":{"name":"Apple iPhone 17","brand":"Apple"},"Apple-4":{"name":"Apple iPhone 16 Pro Max","brand":"Apple"},"Apple-5":{"name":"Apple iPhone 16 Pro","brand":"Apple"},"Apple-6":{"name":"Apple iPhone 16 Plus","brand":"Apple"},"Apple-7":{"name":"Apple iPhone 16","brand":"Apple"},"Apple-8":{"name":"Apple iPhone 16e","brand":"Apple"},"Apple-9":{"name":"Apple iPhone 15","brand":"Apple"}};
+const catalogPrices={"Huawei-0":{"16GB / 512GB":89999},"Huawei-1":{"12GB / 512GB":59999}};
 const $=id=>document.getElementById(id);
 const money=n=>'₱'+(n/100).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 let cart={};try{cart=JSON.parse(localStorage.getItem('doneDealCart')||'{}')}catch{}
@@ -17,11 +19,11 @@ function renderCart(){
  for(const key of keys){
   const row=safeNode('div','cart-product'+(selected.has(key)?'':' is-unselected'));
   const check=document.createElement('input');check.type='checkbox';check.className='cart-select';check.checked=selected.has(key);check.setAttribute('aria-label','Select '+key);check.addEventListener('change',()=>{check.checked?selected.add(key):selected.delete(key);refresh()});
-  const photo=safeNode('div','phone-tile');photo.append(safeNode('span','phone-symbol','▯'));
-  const info=safeNode('div');info.append(safeNode('div','cart-product-name',key.replace(/-\d+\|/,' · ').replace(/\|/g,' · ')));
-  info.append(safeNode('div','cart-product-variant','Configuration will be verified at checkout'));
+  const photo=safeNode('div','phone-tile');photo.append(safeNode('span','phone-symbol','▯'));photo.title='Product photo not yet available';
+  const info=safeNode('div');const [id,storage='']=key.split('::');const product=productCatalog[id];info.append(safeNode('div','cart-product-name',product?.name||id));
+  info.append(safeNode('div','cart-product-variant',storage||'Storage to confirm'));
   const side=safeNode('div','cart-product-side');
-  side.append(safeNode('div','cart-product-price','Price verified in summary'));
+  const published=catalogPrices[id]?.[storage];side.append(safeNode('div','cart-product-price',published?'Catalog SRP: ₱'+published.toLocaleString('en-PH'):'Price to confirm'));
   const qty=safeNode('div','qty-row');
   const minus=safeNode('button',null,'−');minus.type='button';minus.setAttribute('aria-label','Decrease quantity');
   const count=safeNode('span',null,String(cart[key]));
@@ -65,7 +67,7 @@ $('pay').addEventListener('click',async()=>{
  try{
   const r=await fetch('/api/create-checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({items:items(),customer})});
   const d=await r.json();if(!r.ok)throw Error(d.error||'Checkout unavailable');
-  const url=new URL(d.checkout_url);if(url.protocol!=='https:'||url.hostname!=='checkout.paymongo.com')throw Error('Unexpected payment URL');
+  const url=new URL(d.checkout_url);if(url.protocol!=='https:'||!(url.hostname==='checkout.paymongo.com'||url.hostname.endsWith('.paymongo.com')))throw Error('Unexpected payment URL');
   $('step2').className='step done';$('step3').className='step active';location.assign(d.checkout_url);
  }catch(e){$('status').textContent=e.message;$('status').className='error';button.disabled=false}
 });
