@@ -1,6 +1,6 @@
 (function(){
 function ready(){
- const nav=document.querySelector('header.nav');
+ const nav=document.querySelector('header.nav,header .topbar,body>header');
  if(!nav||document.querySelector('.dd-menu-trigger'))return;
  const trigger=document.createElement('button');trigger.type='button';trigger.className='dd-menu-trigger';trigger.setAttribute('aria-label','Open navigation menu');trigger.setAttribute('aria-expanded','false');
  trigger.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg> Menu';
