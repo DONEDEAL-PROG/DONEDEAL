@@ -100,7 +100,41 @@ function renderBrands(){document.getElementById('brands').innerHTML=['All',...Ob
 function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart));document.getElementById('cartCount').textContent='('+Object.values(cart).reduce((a,b)=>a+Number(b||0),0)+')'}
 function cartKey(id,storage){return storage?id+'::'+storage:id;}
 function cartEntry(key){const [id,storage]=key.split('::');const p=products.find(x=>x.id===id);if(!p)return null;const v=variantList(p).find(x=>x[0]===storage);return {p,storage:storage||null,price:v?v[1]:null};}
-function add(id){const p=products.find(x=>x.id===id);if(!p)return;const v=selectedVariant(p);const key=cartKey(id,v?v[0]:null);cart[key]=(cart[key]||0)+1;save();openCart();}
+let pendingCartId=null,pendingCartStorage=null,pendingCartQty=1;
+function add(id){openVariantPicker(id);}
+function openVariantPicker(id){
+ const p=products.find(x=>x.id===id);if(!p)return;
+ pendingCartId=id;pendingCartQty=1;
+ const variants=variantList(p);pendingCartStorage=variants.length?null:null;
+ closeOverlay();
+ document.getElementById('variantTitle').textContent=p.brand+' '+p.name;
+ const choices=document.getElementById('variantChoices');
+ choices.innerHTML=variants.length?variants.map(([storage,price])=>`<button type="button" class="variantOption" data-storage="${storage}" onclick="chooseCartVariant(this)"><strong>${storage}</strong><span>${money(price)}</span></button>`).join(''):'<div class="variantUnavailable">Storage options and Philippine SRP have not yet been verified for this model. You can add it as a quotation request.</div>';
+ document.getElementById('variantLabel').textContent=variants.length?'Select storage':'Storage to be confirmed';
+ document.getElementById('variantQty').textContent='1';
+ document.getElementById('variantPrice').textContent=variants.length?'Choose a storage option to see its price':'Price on request';
+ const confirm=document.getElementById('confirmVariant');confirm.disabled=variants.length>0;
+ confirm.textContent=variants.length?'Select storage to continue':'Add quotation item to cart';
+ document.getElementById('variantOverlay').classList.add('open');
+}
+function chooseCartVariant(button){
+ pendingCartStorage=button.dataset.storage;
+ document.querySelectorAll('#variantChoices .variantOption').forEach(el=>el.classList.toggle('selected',el===button));
+ const p=products.find(x=>x.id===pendingCartId);
+ const v=variantList(p).find(x=>x[0]===pendingCartStorage);
+ document.getElementById('variantPrice').textContent=v?money(v[1])+' · Published PH SRP':'Price on request';
+ document.getElementById('confirmVariant').disabled=false;
+ document.getElementById('confirmVariant').textContent='Confirm Add to Cart';
+}
+function adjustVariantQty(delta){pendingCartQty=Math.max(1,Math.min(99,pendingCartQty+delta));document.getElementById('variantQty').textContent=pendingCartQty;}
+function confirmCartVariant(){
+ const p=products.find(x=>x.id===pendingCartId);if(!p)return;
+ if(variantList(p).length&&!pendingCartStorage)return;
+ const key=cartKey(p.id,pendingCartStorage);
+ cart[key]=(cart[key]||0)+pendingCartQty;
+ if(pendingCartStorage)chosenStorage[p.id]=pendingCartStorage;
+ save();render();openCart();
+}
 function changeQty(key,d){cart[key]=(cart[key]||0)+d;if(cart[key]<=0)delete cart[key];save();openCart();}
 function closeOverlay(){document.querySelectorAll('.overlay').forEach(e=>e.classList.remove('open'))}
 function openCart(){closeOverlay();document.getElementById('cartOverlay').classList.add('open');let keys=Object.keys(cart).filter(k=>cartEntry(k));let total=0,hasUnknown=false;document.getElementById('cartItems').innerHTML=keys.length?keys.map(key=>{const e=cartEntry(key);if(e.price==null)hasUnknown=true;else total+=e.price*cart[key];return `<div class="cartitem"><div><strong>${e.p.brand} ${e.p.name}</strong><div style="color:#aeb7ca;margin-top:5px">${e.storage||'Storage to confirm'} · ${money(e.price)}</div></div><div><button onclick="changeQty('${key}',-1)">−</button> ${cart[key]} <button onclick="changeQty('${key}',1)">+</button></div></div>`}).join(''):'<div class="empty">Your cart is empty.</div>';document.getElementById('cartTotal').textContent=!keys.length?'Add a phone to get started.':hasUnknown?'Known SRP subtotal: '+money(total)+' · Other items require a quote':'Published PH SRP subtotal: '+money(total)+' (not a final selling price)';}
