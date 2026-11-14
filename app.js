@@ -71,38 +71,48 @@ function parseSpecs(p){
   return result;
 }
 function srpFor(p){return philippineSRP[p.id] || null;}
-function productPrice(p){const v=srpFor(p);return v && Number.isFinite(v.amount) && v.amount>0?v.amount:null;}
+function productPrice(p){const v=variantList(p)[0];return v?v[1]:null;}
+
+// Philippine published SRPs by specific memory variant (not live selling prices).
+const phVariants = {"Samsung-0": [["12GB / 256GB", 83190], ["12GB / 512GB", 97790], ["12GB / 1TB", 112390]], "Samsung-1": [["12GB / 256GB", 70790], ["12GB / 512GB", 80090]], "Samsung-2": [["12GB / 256GB", 54090], ["12GB / 512GB", 68690]], "Samsung-3": [["12GB / 256GB", 117590], ["12GB / 512GB", 132090], ["16GB / 1TB", 153990]], "Samsung-4": [["12GB / 256GB", 73890], ["12GB / 512GB", 88390]], "Apple-3": [["256GB", 69990]]};
+const verifiedSpecs = {"Samsung-0": {"Display": "6.9-inch Dynamic AMOLED 2X, 120Hz", "Processor": "Snapdragon 8 Elite for Galaxy", "RAM": "12GB", "Rear cameras": "200MP main + 50MP ultrawide + 50MP telephoto + 10MP telephoto", "Front camera": "12MP", "Battery": "5,000mAh", "Charging": "45W wired", "Connectivity": "5G, Wi-Fi 7, Bluetooth", "Operating system": "Android / One UI", "Other features": "Integrated S Pen, IP68"}, "Samsung-1": {"Display": "6.7-inch Dynamic AMOLED 2X", "Rear camera": "50MP main", "Battery": "4,900mAh", "Operating system": "Android / One UI"}, "Samsung-2": {"Display": "6.2-inch Dynamic AMOLED 2X", "Rear camera": "50MP main", "Battery": "4,000mAh", "Operating system": "Android / One UI"}, "Samsung-3": {"Display": "8.0-inch foldable AMOLED inner display", "Rear camera": "200MP main", "Form factor": "Book-style foldable"}, "Samsung-4": {"Display": "6.9-inch inner AMOLED + 4.1-inch cover", "Rear camera": "50MP main", "Form factor": "Flip foldable"}};
+const phSources = {'Samsung':'https://hptotosamsung.com/ph/trade-in/','Apple':'https://www.apple.com/ph/shop/buy-iphone'};
+function variantList(p){return phVariants[p.id]||[];}
+const chosenStorage={};
+function selectedVariant(p){const list=variantList(p);return list.find(x=>x[0]===chosenStorage[p.id])||list[0]||null;}
+function specsFor(p){
+ const base=Object.assign({},verifiedSpecs[p.id]||{});
+ for(const part of p.spec.split(' • ')){
+   const key=/display|oled|amoled|ltpo/i.test(part)?'Display':/snapdragon|dimensity|kirin|bionic|A19|A18/i.test(part)?'Processor':/camera|MP/i.test(part)?'Camera':/battery|mAh/i.test(part)?'Battery':/charging|[0-9]+W/i.test(part)?'Charging':/foldable/i.test(part)?'Form factor':'Highlights';
+   if(!base[key])base[key]=part;
+ }
+ const v=selectedVariant(p);if(v)base['Storage / RAM']=v[0];
+ return Object.entries(base);
+}
+function setDetailVariant(id,value){chosenStorage[id]=value;detail(id);}
+
 const shades={Huawei:'#d1a1a0',Samsung:'#829cdb',OPPO:'#a4c5b3',vivo:'#8aacee',Xiaomi:'#f0b381',Apple:'#c2c8d3'};
 const products=Object.entries(entries).flatMap(([brand,items])=>items.map((x,i)=>({id:brand+'-'+i,brand,name:x[0],desc:x[1],spec:x[2],tag:x[3],price:null})));
 let filter='All',cart=JSON.parse(localStorage.getItem('doneDealCart')||'{}');
 const money=p=>p==null?'PH SRP pending verification':'₱'+p.toLocaleString('en-PH');
-function render(){let q=document.getElementById('search').value.toLowerCase(),sort=document.getElementById('sort').value;let data=products.filter(p=>(filter==='All'||p.brand===filter)&&(p.brand+' '+p.name+' '+p.desc+' '+p.spec).toLowerCase().includes(q));if(sort==='az')data.sort((a,b)=>a.name.localeCompare(b.name));if(sort==='brand')data.sort((a,b)=>a.brand.localeCompare(b.brand));document.getElementById('resultCount').textContent=data.length+' products';document.getElementById('catalog').innerHTML=data.map(p=>`<article class="product"><div class="visual" style="--shade:${shades[p.brand]}"><span class="tag">${p.tag}</span><div class="mini"></div></div><div class="pbody"><div class="brand">${p.brand}</div><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="spec">${p.spec}</div><div class="price">${money(productPrice(p))}<small>Official PH SRP • subject to variant and availability</small></div><div class="actions"><button class="outline" onclick="detail('${p.id}')">View Details</button><button class="primary" onclick="add('${p.id}')">Add to Cart</button></div></div></article>`).join('')||'<div class="empty">No phones found. Try another search.</div>';}
+function render(){let q=document.getElementById('search').value.toLowerCase(),sort=document.getElementById('sort').value;let data=products.filter(p=>(filter==='All'||p.brand===filter)&&(p.brand+' '+p.name+' '+p.desc+' '+p.spec).toLowerCase().includes(q));if(sort==='az')data.sort((a,b)=>a.name.localeCompare(b.name));if(sort==='brand')data.sort((a,b)=>a.brand.localeCompare(b.brand));document.getElementById('resultCount').textContent=data.length+' products';document.getElementById('catalog').innerHTML=data.map(p=>`<article class="product"><div class="visual" style="--shade:${shades[p.brand]}"><span class="tag">${p.tag}</span><div class="mini"></div></div><div class="pbody"><div class="brand">${p.brand}</div><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="spec">${p.spec}</div><div class="price">${money(productPrice(p))}<small>Published PH SRP where verified • confirm availability</small></div><div class="actions"><button class="outline" onclick="detail('${p.id}')">View Details</button><button class="primary" onclick="add('${p.id}')">Add to Cart</button></div></div></article>`).join('')||'<div class="empty">No phones found. Try another search.</div>';}
 function renderBrands(){document.getElementById('brands').innerHTML=['All',...Object.keys(entries)].map(b=>`<button class="chip ${filter===b?'active':''}" onclick="filter='${b}';renderBrands();render()">${b==='All'?'All Brands':b}</button>`).join('')}
-function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart));document.getElementById('cartCount').textContent='('+Object.values(cart).reduce((a,b)=>a+b,0)+')'}
-function add(id){cart[id]=(cart[id]||0)+1;save();openCart()}
-function changeQty(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];save();openCart()}
+function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart));document.getElementById('cartCount').textContent='('+Object.values(cart).reduce((a,b)=>a+Number(b||0),0)+')'}
+function cartKey(id,storage){return storage?id+'::'+storage:id;}
+function cartEntry(key){const [id,storage]=key.split('::');const p=products.find(x=>x.id===id);if(!p)return null;const v=variantList(p).find(x=>x[0]===storage);return {p,storage:storage||null,price:v?v[1]:null};}
+function add(id){const p=products.find(x=>x.id===id);if(!p)return;const v=selectedVariant(p);const key=cartKey(id,v?v[0]:null);cart[key]=(cart[key]||0)+1;save();openCart();}
+function changeQty(key,d){cart[key]=(cart[key]||0)+d;if(cart[key]<=0)delete cart[key];save();openCart();}
 function closeOverlay(){document.querySelectorAll('.overlay').forEach(e=>e.classList.remove('open'))}
-function openCart(){closeOverlay();document.getElementById('cartOverlay').classList.add('open');let ids=Object.keys(cart);document.getElementById('cartItems').innerHTML=ids.length?ids.map(id=>{let p=products.find(x=>x.id===id);return `<div class="cartitem"><div><strong>${p.brand} ${p.name}</strong><div style="color:#66758c;margin-top:5px">${money(productPrice(p))}</div></div><div><button onclick="changeQty('${id}',-1)">−</button> ${cart[id]} <button onclick="changeQty('${id}',1)">+</button></div></div>`}).join(''):'<div class="empty">Your cart is empty.</div>';document.getElementById('cartTotal').textContent=ids.length?'Final total: to be quoted':'Add a phone to get started.'}
+function openCart(){closeOverlay();document.getElementById('cartOverlay').classList.add('open');let keys=Object.keys(cart).filter(k=>cartEntry(k));let total=0,hasUnknown=false;document.getElementById('cartItems').innerHTML=keys.length?keys.map(key=>{const e=cartEntry(key);if(e.price==null)hasUnknown=true;else total+=e.price*cart[key];return `<div class="cartitem"><div><strong>${e.p.brand} ${e.p.name}</strong><div style="color:#aeb7ca;margin-top:5px">${e.storage||'Storage to confirm'} · ${money(e.price)}</div></div><div><button onclick="changeQty('${key}',-1)">−</button> ${cart[key]} <button onclick="changeQty('${key}',1)">+</button></div></div>`}).join(''):'<div class="empty">Your cart is empty.</div>';document.getElementById('cartTotal').textContent=!keys.length?'Add a phone to get started.':hasUnknown?'Known SRP subtotal: '+money(total)+' · Other items require a quote':'Published PH SRP subtotal: '+money(total)+' (not a final selling price)';}
 function detail(id){
-  const p=products.find(x=>x.id===id);if(!p)return;
-  closeOverlay();
-  const specs=parseSpecs(p);
-  const srp=srpFor(p);
-  const specHTML=specs.map(s=>`<div class="detailSpec"><dt>${s.label}</dt><dd>${s.value}</dd></div>`).join('');
-  document.getElementById('detailBody').innerHTML=`
-    <div class="brand">${p.brand} / ${p.tag}</div>
-    <h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2>
-    <div class="visual" style="--shade:${shades[p.brand]};height:235px;border-radius:12px"><div class="mini"></div></div>
-    <p style="color:#f0f0f4">${p.desc}</p>
-    <h3 style="color:#fff;margin-bottom:6px">Product specifications</h3>
-    <p class="detailSpecsIntro">Specifications shown below are drawn from the current catalog. Unconfirmed details are identified rather than guessed.</p>
-    <dl class="detailSpecs">${specHTML}</dl>
-    <div class="detailPrice">${money(productPrice(p))}</div>
-    <div class="detailPriceNote">${srp&&productPrice(p)?`Philippine SRP • ${srp.variant||'specified variant'}${srp.source?' • '+srp.source:''}`:'An official Philippine SRP has not yet been verified for this model and storage variant.'}</div>
-    <div class="notice">Please confirm exact Philippine variant, storage, warranty, stock and final selling price before purchase.</div>
-    <button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
-  document.getElementById('detailOverlay').classList.add('open');
+ const p=products.find(x=>x.id===id);if(!p)return;
+ closeOverlay();const variants=variantList(p);const selected=selectedVariant(p);
+ const specRows=specsFor(p).map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('');
+ const picker=variants.length?`<label class="storageLabel">Choose storage variant<select class="storageSelect" onchange="setDetailVariant('${p.id}',this.value)">${variants.map(([v,price])=>`<option value="${v}" ${selected&&selected[0]===v?'selected':''}>${v} — ₱${price.toLocaleString('en-PH')}</option>`).join('')}</select></label>`:'';
+ const price=selected?'₱'+selected[1].toLocaleString('en-PH'):'PH SRP not confirmed';
+ document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]};height:200px;border-radius:12px"><div class="mini"></div></div><p style="color:#eee">${p.desc}</p><h3>Full product specifications</h3><table class="specTable"><tbody>${specRows}</tbody></table>${picker}<div class="detailPrice">${price}</div><div class="detailPriceNote">${selected?`Published Philippine SRP for ${selected[0]} · <a href="${phSources[p.brand]}" target="_blank" rel="noopener">Source</a>`:'A reliable published Philippine SRP for this exact variant was not established. Request a quotation before checkout.'}</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
+ document.getElementById('detailOverlay').classList.add('open');
 }
 function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return}closeOverlay();document.getElementById('checkoutOverlay').classList.add('open');document.getElementById('checkoutForm').style.display='block';document.getElementById('orderConfirmation').innerHTML=''}
-document.getElementById('checkoutForm').addEventListener('submit',e=>{e.preventDefault();let data=new FormData(e.target);let name=String(data.get('name')).replace(/[<>]/g,'');let summary=Object.keys(cart).map(id=>{let p=products.find(x=>x.id===id);return `${cart[id]} × ${p.brand} ${p.name}`}).join(', ');document.getElementById('checkoutForm').style.display='none';document.getElementById('orderConfirmation').innerHTML=`<div class="notice" style="margin-top:20px"><strong>Demo order summary created</strong><p>Thank you, ${name}. This is NOT an actual order. No payment has been taken and no merchant has received your information.</p><p><strong>Items:</strong> ${summary}</p><p>To accept real orders, connect a secure backend, merchant notifications, verified prices, stock management, and a payment provider.</p></div>`});
+document.getElementById('checkoutForm').addEventListener('submit',e=>{e.preventDefault();let data=new FormData(e.target);let name=String(data.get('name')).replace(/[<>]/g,'');let summary=Object.keys(cart).map(key=>{const e=cartEntry(key);return e?`${cart[key]} × ${e.p.brand} ${e.p.name} (${e.storage||'storage TBD'})`:''}).filter(Boolean).join(', ');document.getElementById('checkoutForm').style.display='none';document.getElementById('orderConfirmation').innerHTML=`<div class="notice" style="margin-top:20px"><strong>Demo order summary created</strong><p>Thank you, ${name}. This is NOT an actual order. No payment has been taken and no merchant has received your information.</p><p><strong>Items:</strong> ${summary}</p><p>To accept real orders, connect a secure backend, merchant notifications, verified prices, stock management, and a payment provider.</p></div>`});
 document.getElementById('search').addEventListener('input',render);document.getElementById('sort').addEventListener('change',render);renderBrands();render();save();

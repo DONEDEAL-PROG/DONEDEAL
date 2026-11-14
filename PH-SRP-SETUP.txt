@@ -1,14 +1,8 @@
-PHILIPPINE SRP SETUP
+Done Deal catalog update - November 14, 2026
 
-Open app.js and find const philippineSRP = {}.
+Confirmed published PH SRP variants in app.js: Samsung S25 Ultra, S25+, S25, Z Fold7, Z Flip7; Apple iPhone 17 starting price.
+Samsung source: https://hptotosamsung.com/ph/trade-in/
+Apple source: https://www.apple.com/ph/shop/buy-iphone
 
-Add verified model-specific prices, e.g.
-const philippineSRP = {
-  "Apple-0": {amount: 00000, variant: "256GB", source: "Official PH brand price list"}
-};
-
-Replace 00000 with a verified PHP SRP. The example is NOT a real price.
-
-The existing product catalog has no verified SRP data, so prices remain pending verification rather than showing fabricated amounts.
-
-Keep your existing hero-unified.webp and any other images in your GitHub repository; they are referenced by index.html but were not supplied with this upload.
+IMPORTANT: These are published PH SRPs, not guaranteed current merchant selling prices. Other model prices remain unconfirmed rather than fabricated. Specifications for non-Samsung products use the existing catalog summaries until verified.
+Replace app.js and index.html in GitHub, retain all existing hero images and apple-logo.svg.
