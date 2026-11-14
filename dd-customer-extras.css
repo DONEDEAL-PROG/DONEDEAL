@@ -4,3 +4,40 @@
 .dd-extra-section{max-width:1200px;margin:30px auto;padding:24px 18px}.dd-extra-section h2{font-size:26px;margin:0}.dd-extra-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:20px}.dd-extra-card{background:#211c26;border:1px solid #574052;border-radius:16px;overflow:hidden;color:white}.dd-extra-photo{height:170px;background:#332b35;display:flex;align-items:center;justify-content:center;font-size:56px}.dd-extra-photo img{width:100%;height:100%;object-fit:contain}.dd-extra-info{padding:15px}.dd-extra-info h3{font-size:16px;margin:8px 0}.dd-extra-info p{font-weight:700;color:#ff83ba}.dd-extra-actions{display:flex;gap:8px}.dd-extra-actions button{background:#e83d88;color:white;border:0;border-radius:9px;padding:10px;cursor:pointer}.dd-extra-actions .dd-save{font-size:20px;background:#4a3445}
 html[data-dd-store-theme=light] body{background:#f8f5f7!important;color:#261d25!important}html[data-dd-store-theme=light] .nav{background:#fff!important;color:#241d24!important}html[data-dd-store-theme=light] .nav a{color:#342332!important}html[data-dd-store-theme=light] .product,html[data-dd-store-theme=light] .dd-extra-card{background:#fff!important;color:#261d25!important;border-color:#eadce5!important}html[data-dd-store-theme=light] .dd-extra-photo{background:#f6eef2}html[data-dd-store-theme=light] .dd-extra-info p{color:#b62c6c}html[data-dd-store-theme=light] .dd-extra-section{color:#2c2430}
 @media(max-width:650px){.dd-header-tools{gap:4px}.dd-header-tools button,.dd-wishlist-link{padding:7px!important;font-size:12px}.dd-extra-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-extra-photo{height:125px}}
+
+
+/* Premium wishlist action, matching DONEDEAL's pink/graphite identity */
+.nav .dd-header-tools{display:flex;align-items:center;gap:10px}
+.nav .dd-wishlist-link{
+ display:inline-flex!important;align-items:center;justify-content:center;gap:7px;
+ min-width:48px;height:43px;padding:0 13px!important;
+ background:linear-gradient(145deg,#30202d,#19151d)!important;
+ border:1px solid rgba(244,92,157,.55)!important;border-radius:13px!important;
+ color:#ff83b7!important;font-size:24px!important;font-weight:600!important;
+ box-shadow:0 5px 18px rgba(25,12,25,.12),inset 0 1px rgba(255,255,255,.08);
+ transition:transform .2s,box-shadow .2s,border-color .2s
+}
+.nav .dd-wishlist-link:hover{transform:translateY(-2px);border-color:#ff6eab!important;box-shadow:0 8px 22px rgba(231,56,128,.22)}
+.nav .dd-wishlist-link span{font-size:12px!important;color:#fff!important;font-weight:800}
+.nav [data-dd-theme-toggle]{height:43px;border-radius:13px!important;padding:0 15px!important;background:#261d28!important;border:1px solid #d75b93!important;color:#fff!important;white-space:nowrap}
+html[data-dd-store-theme=light] .nav .dd-wishlist-link{background:linear-gradient(145deg,#fff,#fff0f6)!important;color:#b91e64!important;border-color:#efb5ce!important;box-shadow:0 5px 16px rgba(117,38,78,.09)}
+html[data-dd-store-theme=light] .nav .dd-wishlist-link span{color:#942553!important}
+html[data-dd-store-theme=light] .nav [data-dd-theme-toggle]{background:#fff!important;color:#54263e!important;border-color:#e7bfd0!important}
+
+/* Readable typography throughout the storefront in light mode */
+html[data-dd-store-theme=light] .dd-showcase-heading h2,
+html[data-dd-store-theme=light] .dd-brand-showcase h2,
+html[data-dd-store-theme=light] .sectionhead h2,
+html[data-dd-store-theme=light] .featuredHeading h2,
+html[data-dd-store-theme=light] .dd-extra-section h2{color:#251b27!important}
+html[data-dd-store-theme=light] .dd-showcase-heading p,
+html[data-dd-store-theme=light] .dd-brand-showcase>p,
+html[data-dd-store-theme=light] .sectionhead p,
+html[data-dd-store-theme=light] .dd-extra-section>p{color:#655969!important}
+html[data-dd-store-theme=light] .dd-showcase-heading>span,
+html[data-dd-store-theme=light] .dd-showcase-heading h2 span{color:#d82c78!important}
+html[data-dd-store-theme=light] .navlinks,
+html[data-dd-store-theme=light] .navlinks a{color:#342331!important}
+html[data-dd-store-theme=light] .navlinks a:hover{color:#c12870!important}
+html[data-dd-store-theme=light] .dd-extra-info small{color:#6c5d69!important}
+@media(max-width:650px){.nav .dd-wishlist-link{height:38px;min-width:40px;padding:0 9px!important}.nav [data-dd-theme-toggle]{height:38px;padding:0 9px!important}}
