@@ -278,21 +278,36 @@ function confirmCartVariant(){
  if(ddConfirmBusy)return;
  const p=products.find(x=>x.id===pendingCartId);if(!p)return;
  if(variantList(p).length&&!pendingCartStorage)return;
+ ddConfirmBusy=true;
  const key=cartKey(p.id,pendingCartStorage);
  const qty=pendingCartQty;
  const label=p.brand+' '+p.name+(pendingCartStorage?' · '+pendingCartStorage:'');
- ddConfirmBusy=true;
- try{
-   cart[key]=(cart[key]||0)+qty;
+ try {
+   // Cart persistence and cart counter are the only required updates here.
+   // Full catalog render is unnecessary and may fail on this page.
+   cart[key]=(Number(cart[key])||0)+qty;
    if(pendingCartStorage)chosenStorage[p.id]=pendingCartStorage;
-   save();
-   render();
-   document.getElementById('variantOverlay')?.classList.remove('open');
-   showCartCelebration(label,qty);
- }catch(error){
-   console.error('Done Deal Add to Cart error:',error);
+   try { localStorage.setItem('doneDealCart',JSON.stringify(cart)); }
+   catch(storageError){ console.warn('Cart storage unavailable:',storageError); }
+   const counter=document.getElementById('cartCount');
+   if(counter){
+     counter.textContent='('+Object.values(cart).reduce((a,b)=>a+Number(b||0),0)+')';
+     counter.classList.remove('dd-cart-bounce');
+     void counter.offsetWidth;
+     counter.classList.add('dd-cart-bounce');
+   }
+   const overlay=document.getElementById('variantOverlay');
+   if(overlay)overlay.classList.remove('open');
+   // Animation must never prevent a successful cart addition.
+   try { showCartCelebration(label,qty); }
+   catch(animationError){
+     console.error('Cart celebration error:',animationError);
+     alert('Added to cart: '+label);
+   }
+ } catch(error){
+   console.error('Done Deal cart error:',error);
    alert('Could not add this gadget to cart. Please try again.');
- }finally{
+ } finally {
    ddConfirmBusy=false;
  }
 }
