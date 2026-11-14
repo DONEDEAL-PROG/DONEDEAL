@@ -224,7 +224,24 @@ function renderGadgetControls(item){
  const toggle=document.createElement('button');toggle.type='button';toggle.className='secondary';
  const active=Number(item.gadget_enabled)!==0;
  toggle.textContent=active?'Deactivate Gadget':'Activate Gadget';
- heading.append(title,toggle);panel.append(heading);
+ const deleteGadget=document.createElement('button');
+ deleteGadget.type='button';deleteGadget.className='secondary';deleteGadget.textContent='Delete Entire Gadget';
+ deleteGadget.style.border='1px solid #e35b8e';
+ heading.append(title,toggle,deleteGadget);panel.append(heading);
+ deleteGadget.onclick=async()=>{
+  deleteGadget.disabled=true;
+  try{
+   const info=await adminVariantPost({action:'inspect_gadget',product_id:id});
+   if(info.active){alert('⚠ This gadget is in '+info.active+' active order(s). Deactivate the gadget first; deletion is blocked until all orders are delivered or cancelled.');return;}
+   if(!confirm('Delete ALL '+info.variants+' storage variants of '+item.name+'? '+info.total+' historical order(s) will remain saved.'))return;
+   if(!confirm('FINAL CONFIRMATION: Delete the entire gadget permanently?'))return;
+   await adminVariantPost({action:'delete_gadget',product_id:id});
+   await loadProducts();
+   alert('✓ Gadget deleted. Historical orders preserved.');
+  }catch(e){alert(e.message);}
+  finally{deleteGadget.disabled=false;}
+ };
+
  const info=document.createElement('small');info.textContent='Each storage below has its own price, stock and Active toggle. New storage starts Deactivated.';
  panel.append(info);
  const add=document.createElement('button');add.type='button';add.className='secondary';
@@ -355,6 +372,7 @@ function renderProduct(item) {
   rename.textContent='Save Storage Name (Deactivates New Variant)';
   const renameMsg=document.createElement('small');renameMsg.setAttribute('role','status');
   rename.onclick=async()=>{
+   if(!renameInput.value.trim()){renameMsg.textContent='Enter a storage name before saving.';return;}
    if(renameInput.value.trim()===item.variant){renameMsg.textContent='Storage name is unchanged.';return;}
    if(!confirm('Rename storage? The original variant will be deactivated and the new name starts Deactivated. Price and stock are copied.'))return;
    rename.disabled=true;renameMsg.textContent='Renaming...';
@@ -410,6 +428,31 @@ function renderProduct(item) {
     } finally { save.disabled = false; }
   });
   actions.append(availableLabel,save,message,rename,renameMsg);
+  const deleteVariant=document.createElement('button');
+  deleteVariant.type='button';deleteVariant.className='secondary';
+  deleteVariant.textContent='Delete This Storage Variant';
+  deleteVariant.style.border='1px solid #e35b8e';
+  const deleteNotice=document.createElement('small');deleteNotice.setAttribute('role','status');
+  deleteVariant.onclick=async()=>{
+   deleteVariant.disabled=true;deleteNotice.textContent='Checking existing orders...';
+   const productId=item.sku.split('::')[0];
+   try{
+    const info=await adminVariantPost({action:'inspect',product_id:productId,sku:item.sku});
+    if(info.active){
+     deleteNotice.textContent='⚠ '+info.active+' active order(s) contain this variant. Permanent deletion blocked; uncheck Available for sale and click Save Changes to deactivate.';
+     alert('⚠ This variant is in '+info.active+' active order(s). You can DEACTIVATE it now, but cannot delete until all orders are delivered or cancelled.');
+     return;
+    }
+    const warning=info.total?'⚠ '+info.total+' completed/cancelled order(s) reference this variant. Order history will remain intact.':'No existing orders reference this variant.';
+    if(!confirm(warning+'\\n\\nPermanently delete '+item.name+' — '+item.variant+'? This cannot be undone.'))return;
+    if(!confirm('FINAL CONFIRMATION: Permanently delete this storage variant?'))return;
+    await adminVariantPost({action:'delete',product_id:productId,sku:item.sku});
+    await loadProducts();
+    alert('✓ Storage variant deleted permanently. Order history preserved.');
+   }catch(e){deleteNotice.textContent=e.message;alert(e.message);}
+   finally{deleteVariant.disabled=false;}
+  };
+  actions.append(deleteVariant,deleteNotice);
   const photoArea = document.createElement("div");
   photoArea.className = "photoArea";
   const photoLabel = document.createElement("label");
