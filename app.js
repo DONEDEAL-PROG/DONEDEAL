@@ -127,36 +127,34 @@ function chooseCartVariant(button){
  document.getElementById('confirmVariant').textContent='Confirm Add to Cart';
 }
 function adjustVariantQty(delta){pendingCartQty=Math.max(1,Math.min(99,pendingCartQty+delta));document.getElementById('variantQty').textContent=pendingCartQty;}
+let ddConfirmBusy=false;
 function confirmCartVariant(){
+ if(ddConfirmBusy)return;
  const p=products.find(x=>x.id===pendingCartId);if(!p)return;
  if(variantList(p).length&&!pendingCartStorage)return;
+ ddConfirmBusy=true;
  const key=cartKey(p.id,pendingCartStorage);
- cart[key]=(cart[key]||0)+pendingCartQty;
+ const qty=pendingCartQty;
+ const label=p.brand+' '+p.name;
+ cart[key]=(cart[key]||0)+qty;
  if(pendingCartStorage)chosenStorage[p.id]=pendingCartStorage;
  save();render();
- const addedQty=pendingCartQty;
- const label=p.brand+' '+p.name;
  const button=document.getElementById('confirmVariant');
  if(button){
    launchAddToCartAnimation(button);
-   button.textContent='✓ Added to cart!';
+   button.textContent='✓ Successfully added!';
    button.classList.add('dd-added','dd-success-pop');
    button.disabled=true;
  }
+ // The confirmation is visible immediately and is independent of popup animations.
+ showCartSuccess(label,qty);
  const counter=document.getElementById('cartCount');
  if(counter){counter.classList.remove('dd-cart-bounce');void counter.offsetWidth;counter.classList.add('dd-cart-bounce');}
- // Keep the confirmation visible long enough to be noticed, then close the picker.
- // Show the toast only after the modal closes so it cannot be hidden by its backdrop.
  window.setTimeout(()=>{
-   closeOverlay();
-   showCartSuccess(label,addedQty);
-   window.setTimeout(()=>{
-     if(button){
-       button.classList.remove('dd-added','dd-success-pop');
-       button.disabled=false;
-     }
-   },250);
- },850);
+   document.getElementById('variantOverlay')?.classList.remove('open');
+   if(button){button.classList.remove('dd-added','dd-success-pop');button.disabled=false;}
+   ddConfirmBusy=false;
+ },480);
 }
 function launchAddToCartAnimation(button){
  const bounds=button.getBoundingClientRect();
@@ -182,7 +180,7 @@ function launchAddToCartAnimation(button){
 function showCartSuccess(label,qty){const badge=document.getElementById('cartCount');if(badge){badge.classList.remove('dd-count-pulse');void badge.offsetWidth;badge.classList.add('dd-count-pulse');setTimeout(()=>badge.classList.remove('dd-count-pulse'),450)}
  let toast=document.getElementById('ddCartToast');
  if(!toast){
-   toast=document.createElement('div');toast.id='ddCartToast';toast.className='dd-cart-toast';toast.setAttribute('role','status');toast.setAttribute('aria-live','polite');
+   toast=document.createElement('div');toast.id='ddCartToast';toast.className='dd-cart-toast';toast.style.cssText='position:fixed!important;top:24px!important;left:50%!important;right:auto!important;bottom:auto!important;z-index:2147483647!important;transform:translateX(-50%)!important;min-width:min(390px,calc(100vw - 32px))!important;box-shadow:0 20px 80px #000b!important;';toast.setAttribute('role','status');toast.setAttribute('aria-live','polite');
    document.body.appendChild(toast);
  }
  toast.replaceChildren();
@@ -191,11 +189,11 @@ function showCartSuccess(label,qty){const badge=document.getElementById('cartCou
  const title=document.createElement('strong');title.textContent='Successfully added to cart';
  const detail=document.createElement('small');detail.textContent=label+' · Qty '+qty;
  body.append(title,detail);
- const view=document.createElement('button');view.type='button';view.textContent='View cart';view.addEventListener('click',()=>{toast.classList.remove('dd-show');openCart()});
+ const view=document.createElement('button');view.type='button';view.textContent='View cart';view.addEventListener('click',()=>{toast.classList.remove('dd-show');toast.style.opacity='0';toast.style.pointerEvents='none';openCart()});
  toast.append(tick,body,view);
- toast.classList.remove('dd-show');void toast.offsetWidth;toast.classList.add('dd-show');
+ toast.classList.remove('dd-show');void toast.offsetWidth;toast.classList.add('dd-show');toast.style.opacity='1';toast.style.pointerEvents='auto';
  clearTimeout(window.ddToastTimeout);
- window.ddToastTimeout=setTimeout(()=>toast.classList.remove('dd-show'),3600);
+ window.ddToastTimeout=setTimeout(()=>{toast.classList.remove('dd-show');toast.style.opacity='0';toast.style.pointerEvents='none';},4200);
 }
 
 function changeQty(key,d){cart[key]=(cart[key]||0)+d;if(cart[key]<=0)delete cart[key];save();openCart();}
