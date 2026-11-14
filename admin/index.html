@@ -207,11 +207,6 @@ function updateList() {
       $("products").append(h);
       lastBrand = brand;
     }
-    const gadgetId=item.sku.split('::')[0];
-    if(gadgetId!==lastGadget){
-      renderGadgetControls(item);
-      lastGadget=gadgetId;
-    }
     renderProduct(item);
   }
 }
@@ -223,7 +218,7 @@ async function adminVariantPost(payload){
 }
 function renderGadgetControls(item){
  const id=item.sku.split('::')[0];
- const panel=document.createElement('section');panel.className='panel gadgetControls';
+ const panel=document.createElement('section');panel.className='panel gadgetControls';panel.style.marginTop='18px';
  const heading=document.createElement('div');heading.className='productHead';
  const title=document.createElement('strong');title.textContent=item.name+' — Storage & Pricing';
  const toggle=document.createElement('button');toggle.type='button';toggle.className='secondary';
@@ -267,7 +262,7 @@ function renderGadgetControls(item){
    await loadProducts();
   }catch(e){message.textContent=e.message;save.disabled=false;}
  };
- $('products').append(panel);
+ return panel;
 }
 function renderProduct(item) {
   const card = document.createElement("article");
@@ -467,7 +462,7 @@ function renderProduct(item) {
     } finally {upload.disabled = false;imageInput.disabled = false;}
   });
   photoArea.append(photoLabel,preview,imageInput,upload,photoMessage);
-  editor.append(fields,actions,photoArea);
+  editor.append(fields,actions,renderGadgetControls(item),photoArea);
   card.append(head,editor);
   $("products").append(card);
 }
