@@ -176,8 +176,17 @@ function orderCard(o){
    row.append(identity);
    const right=el('div',null,'dd-product-amount');
    right.append(el('span','Qty '+(item.quantity||1),'dd-product-qty'));
-   const lineCents=item.line_total_centavos??item.total_centavos;
-   right.append(el('strong',lineCents==null?'Price unavailable':money(lineCents)));
+   // priceCart() stores amount (unit price in centavos) and subtotal
+   // (line total in centavos) in each order's items_json.
+   const qty=Number(item.quantity||1);
+   const lineCents=item.subtotal??item.line_total_centavos??item.total_centavos
+      ??(item.amount!=null?Number(item.amount)*qty:null)
+      ??(item.price_centavos!=null?Number(item.price_centavos)*qty:null);
+   const unitCents=item.amount??item.price_centavos
+      ??(lineCents!=null&&qty>0?Number(lineCents)/qty:null);
+   if(unitCents!=null&&Number.isFinite(Number(unitCents)))
+     right.append(el('span',money(unitCents)+' each','dd-product-qty'));
+   right.append(el('strong',lineCents!=null&&Number.isFinite(Number(lineCents))?money(lineCents):'Price not recorded'));
    row.append(right);productList.append(row);
  }
  products.append(productList);
