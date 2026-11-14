@@ -78,7 +78,6 @@ const phVariants = {"Samsung-0": [["12GB / 256GB", 83190], ["12GB / 512GB", 9779
 const verifiedSpecs = {"Huawei-0": {"Display":"6.8-inch LTPO OLED, 1–120Hz, 2848 × 1276","Processor":"Kirin 9020 octa-core","RAM":"16GB","Storage":"512GB","Rear cameras":"50MP 1-inch main + 40MP ultrawide + 50MP telephoto + 12.5MP telephoto","Front camera":"13MP","Battery":"5,170mAh rated","Charging":"100W wired / 80W wireless","Connectivity":"4G LTE, Wi-Fi, Bluetooth, NFC; SIM support depends on variant","Operating system":"EMUI 15.0","Other features":"IP68/IP69, dual telephoto optical zoom"},"Huawei-1":{"Display":"6.8-inch LTPO OLED","Processor":"Kirin 9020","RAM":"12GB","Storage":"512GB","Battery":"5,170mAh rated","Charging":"100W wired"},"Samsung-0": {"Display": "6.9-inch Dynamic AMOLED 2X, 120Hz", "Processor": "Snapdragon 8 Elite for Galaxy", "RAM": "12GB", "Rear cameras": "200MP main + 50MP ultrawide + 50MP telephoto + 10MP telephoto", "Front camera": "12MP", "Battery": "5,000mAh", "Charging": "45W wired", "Connectivity": "5G, Wi-Fi 7, Bluetooth", "Operating system": "Android / One UI", "Other features": "Integrated S Pen, IP68"}, "Samsung-1": {"Display": "6.7-inch Dynamic AMOLED 2X", "Rear camera": "50MP main", "Battery": "4,900mAh", "Operating system": "Android / One UI"}, "Samsung-2": {"Display": "6.2-inch Dynamic AMOLED 2X", "Rear camera": "50MP main", "Battery": "4,000mAh", "Operating system": "Android / One UI"}, "Samsung-3": {"Display": "8.0-inch foldable AMOLED inner display", "Rear camera": "200MP main", "Form factor": "Book-style foldable"}, "Samsung-4": {"Display": "6.9-inch inner AMOLED + 4.1-inch cover", "Rear camera": "50MP main", "Form factor": "Flip foldable"}};
 const phSources = {'Samsung':'https://hptotosamsung.com/ph/trade-in/','Apple':'https://www.apple.com/ph/shop/buy-iphone','Huawei':'https://consumer.huawei.com/ph/phones/'};
 
-
 const liveVariants = {};
 const productImages = {};
 
@@ -107,16 +106,13 @@ async function loadLiveVariants() {
       }
 
       liveVariants[productId].push([variant, price]);
-    }
-
       if (
         typeof product.image_key === "string" &&
-        /^products\/[0-9a-f-]{36}\.(jpg|png|webp)$/
-          .test(product.image_key)
+        /^products\/[0-9a-f-]{36}\.(jpg|png|webp)$/.test(product.image_key)
       ) {
-        productImages[productId] =
-          "/api/images/" + product.image_key;
+        productImages[productId] = "/api/images/" + product.image_key;
       }
+    }
 
     Object.assign(phVariants, liveVariants);
 
@@ -147,66 +143,38 @@ const shades={Huawei:'#d1a1a0',Samsung:'#829cdb',OPPO:'#a4c5b3',vivo:'#8aacee',X
 const products=Object.entries(entries).flatMap(([brand,items])=>items.map((x,i)=>({id:brand+'-'+i,brand,name:x[0],desc:x[1],spec:x[2],tag:x[3],price:null})));
 let filter='All',cart=JSON.parse(localStorage.getItem('doneDealCart')||'{}');
 const money=p=>p==null?'PH SRP pending verification':'₱'+p.toLocaleString('en-PH');
-
 function render() {
   const q = document.getElementById('search').value.toLowerCase();
   const sort = document.getElementById('sort').value;
-
   let data = products.filter(p =>
     (filter === 'All' || p.brand === filter) &&
-    (p.brand + ' ' + p.name + ' ' + p.desc + ' ' + p.spec)
-      .toLowerCase().includes(q)
+    (p.brand + ' ' + p.name + ' ' + p.desc + ' ' + p.spec).toLowerCase().includes(q)
   );
-
-  if (sort === 'az') {
-    data.sort((a, b) => a.name.localeCompare(b.name));
-  }
-
-  if (sort === 'brand') {
-    data.sort((a, b) => a.brand.localeCompare(b.brand));
-  }
-
-  document.getElementById('resultCount').textContent =
-    data.length + ' products';
-
-  document.getElementById('catalog').innerHTML =
-    data.map(p => `
-      <article class="product">
-        <div class="visual" style="--shade:${shades[p.brand]}">
-          <span class="tag">${p.tag}</span>
-          ${productImages[p.id]
-            ? `<img
-                src="${productImages[p.id]}"
-                alt="${p.brand} ${p.name}"
-                loading="lazy"
-                style="width:100%;height:100%;object-fit:contain;
-                       position:relative;z-index:1"
-              >`
-            : `<div class="mini"></div>`}
+  if (sort === 'az') data.sort((a,b) => a.name.localeCompare(b.name));
+  if (sort === 'brand') data.sort((a,b) => a.brand.localeCompare(b.brand));
+  document.getElementById('resultCount').textContent = data.length + ' products';
+  document.getElementById('catalog').innerHTML = data.map(p => `
+    <article class="product">
+      <div class="visual" style="--shade:${shades[p.brand]}">
+        <span class="tag">${p.tag}</span>
+        ${productImages[p.id]
+          ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`
+          : `<div class="mini"></div>`}
+      </div>
+      <div class="pbody">
+        <div class="brand">${p.brand}</div>
+        <h3>${p.name}</h3>
+        <div class="desc">${p.desc}</div>
+        <div class="spec">${p.spec}</div>
+        <div class="price">${money(productPrice(p))}<small>Published PH SRP where verified • confirm availability</small></div>
+        <div class="actions">
+          <button class="outline" onclick="detail('${p.id}')">View Details</button>
+          <button class="primary" onclick="add('${p.id}')">Add to Cart</button>
         </div>
-        <div class="pbody">
-          <div class="brand">${p.brand}</div>
-          <h3>${p.name}</h3>
-          <div class="desc">${p.desc}</div>
-          <div class="spec">${p.spec}</div>
-          <div class="price">
-            ${money(productPrice(p))}
-            <small>Published PH SRP where verified • confirm availability</small>
-          </div>
-          <div class="actions">
-            <button class="outline" onclick="detail('${p.id}')">
-              View Details
-            </button>
-            <button class="primary" onclick="add('${p.id}')">
-              Add to Cart
-            </button>
-          </div>
-        </div>
-      </article>
-    `).join('') ||
-    '<div class="empty">No phones found. Try another search.</div>';
+      </div>
+    </article>
+  `).join('') || '<div class="empty">No phones found. Try another search.</div>';
 }
-
 function renderBrands(){document.getElementById('brands').innerHTML=['All',...Object.keys(entries)].map(b=>`<button class="chip ${filter===b?'active':''}" onclick="filter='${b}';renderBrands();render()">${b==='All'?'All Brands':b}</button>`).join('')}
 function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart));document.getElementById('cartCount').textContent='('+Object.values(cart).reduce((a,b)=>a+Number(b||0),0)+')'}
 function cartKey(id,storage){return storage?id+'::'+storage:id;}
@@ -328,7 +296,7 @@ function detail(id){
  const specRows=specsFor(p).map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('');
  const picker=variants.length?`<label class="storageLabel">Choose storage variant<select class="storageSelect" onchange="setDetailVariant('${p.id}',this.value)">${variants.map(([v,price])=>`<option value="${v}" ${selected&&selected[0]===v?'selected':''}>${v} — ₱${price.toLocaleString('en-PH')}</option>`).join('')}</select></label>`:'';
  const price=selected?'₱'+selected[1].toLocaleString('en-PH'):'PH SRP not confirmed';
- document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]};height:200px;border-radius:12px"><div class="mini"></div></div><p style="color:#eee">${p.desc}</p><h3>Full product specifications</h3><table class="specTable"><tbody>${specRows}</tbody></table>${picker}<div class="detailPrice">${price}</div><div class="detailPriceNote">${selected?`Published Philippine SRP for ${selected[0]} · <a href="${phSources[p.brand]}" target="_blank" rel="noopener">Source</a>`:'A reliable published Philippine SRP for this exact variant was not established. Request a quotation before checkout.'}</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
+ document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]};height:200px;border-radius:12px">${productImages[p.id] ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">` : `<div class="mini"></div>`}</div><p style="color:#eee">${p.desc}</p><h3>Full product specifications</h3><table class="specTable"><tbody>${specRows}</tbody></table>${picker}<div class="detailPrice">${price}</div><div class="detailPriceNote">${selected?`Published Philippine SRP for ${selected[0]} · <a href="${phSources[p.brand]}" target="_blank" rel="noopener">Source</a>`:'A reliable published Philippine SRP for this exact variant was not established. Request a quotation before checkout.'}</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
  document.getElementById('detailOverlay').classList.add('open');
 }
 function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return;} window.location.href='checkout.html';}
