@@ -5,7 +5,7 @@ const legacyQuery = `
   FROM store_variants AS v
   LEFT JOIN store_product_images AS i
     ON i.product_id = substr(v.sku, 1, instr(v.sku, '::') - 1)
-  WHERE v.enabled = 1
+  WHERE v.enabled = 1 AND NOT EXISTS (SELECT 1 FROM store_gadget_visibility AS g WHERE g.product_id=substr(v.sku,1,instr(v.sku,'::')-1) AND g.enabled=0)
   ORDER BY v.name, v.variant
 `;
 
@@ -17,7 +17,7 @@ const v2Query = `
     ON i.product_id = substr(v.sku, 1, instr(v.sku, '::') - 1)
   LEFT JOIN store_products AS p
     ON p.id = substr(v.sku, 1, instr(v.sku, '::') - 1)
-  WHERE v.enabled = 1
+  WHERE v.enabled = 1 AND NOT EXISTS (SELECT 1 FROM store_gadget_visibility AS g WHERE g.product_id=substr(v.sku,1,instr(v.sku,'::')-1) AND g.enabled=0)
   ORDER BY v.name, v.variant
 `;
 
