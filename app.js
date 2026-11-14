@@ -133,8 +133,64 @@ function confirmCartVariant(){
  const key=cartKey(p.id,pendingCartStorage);
  cart[key]=(cart[key]||0)+pendingCartQty;
  if(pendingCartStorage)chosenStorage[p.id]=pendingCartStorage;
- save();render();openCart();
+ save();render();
+ const addedQty=pendingCartQty;
+ const label=p.brand+' '+p.name;
+ const button=document.getElementById('confirmVariant');
+ if(button){
+   launchAddToCartAnimation(button);
+   button.textContent='✓ Added to cart!';
+   button.classList.add('dd-added','dd-success-pop');
+   button.disabled=true;
+ }
+ const counter=document.getElementById('cartCount');
+ if(counter){counter.classList.remove('dd-cart-bounce');void counter.offsetWidth;counter.classList.add('dd-cart-bounce');}
+ window.setTimeout(()=>{
+   closeOverlay();
+   if(button){button.classList.remove('dd-added','dd-success-pop');button.disabled=false;}
+   showCartSuccess(label,addedQty);
+ },380);
 }
+function launchAddToCartAnimation(button){
+ const bounds=button.getBoundingClientRect();
+ const ripple=document.createElement('span');
+ ripple.className='dd-click-ripple';
+ ripple.style.left='50%';ripple.style.top='50%';
+ button.appendChild(ripple);
+ setTimeout(()=>ripple.remove(),650);
+ const target=document.querySelector('#cartCount')?.closest('button')||document.querySelector('[onclick="openCart()"]');
+ if(!target||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ const end=target.getBoundingClientRect();
+ const dot=document.createElement('span');
+ dot.className='dd-fly-to-cart';dot.textContent='✓';
+ dot.style.left=(bounds.left+bounds.width/2)+'px';
+ dot.style.top=(bounds.top+bounds.height/2)+'px';
+ document.body.appendChild(dot);
+ requestAnimationFrame(()=>{
+  dot.style.transform=`translate(${end.left+end.width/2-(bounds.left+bounds.width/2)}px,${end.top+end.height/2-(bounds.top+bounds.height/2)}px) scale(.4)`;
+  dot.style.opacity='0';
+ });
+ setTimeout(()=>dot.remove(),780);
+}
+function showCartSuccess(label,qty){const badge=document.getElementById('cartCount');if(badge){badge.classList.remove('dd-count-pulse');void badge.offsetWidth;badge.classList.add('dd-count-pulse');setTimeout(()=>badge.classList.remove('dd-count-pulse'),450)}
+ let toast=document.getElementById('ddCartToast');
+ if(!toast){
+   toast=document.createElement('div');toast.id='ddCartToast';toast.className='dd-cart-toast';toast.setAttribute('role','status');toast.setAttribute('aria-live','polite');
+   document.body.appendChild(toast);
+ }
+ toast.replaceChildren();
+ const tick=document.createElement('span');tick.className='dd-toast-check';tick.textContent='✓';
+ const body=document.createElement('div');
+ const title=document.createElement('strong');title.textContent='Successfully added to cart';
+ const detail=document.createElement('small');detail.textContent=label+' · Qty '+qty;
+ body.append(title,detail);
+ const view=document.createElement('button');view.type='button';view.textContent='View cart';view.addEventListener('click',()=>{toast.classList.remove('dd-show');openCart()});
+ toast.append(tick,body,view);
+ toast.classList.remove('dd-show');void toast.offsetWidth;toast.classList.add('dd-show');
+ clearTimeout(window.ddToastTimeout);
+ window.ddToastTimeout=setTimeout(()=>toast.classList.remove('dd-show'),3600);
+}
+
 function changeQty(key,d){cart[key]=(cart[key]||0)+d;if(cart[key]<=0)delete cart[key];save();openCart();}
 function closeOverlay(){document.querySelectorAll('.overlay').forEach(e=>e.classList.remove('open'))}
 function openCart(){closeOverlay();document.getElementById('cartOverlay').classList.add('open');let keys=Object.keys(cart).filter(k=>cartEntry(k));let total=0,hasUnknown=false;document.getElementById('cartItems').innerHTML=keys.length?keys.map(key=>{const e=cartEntry(key);if(e.price==null)hasUnknown=true;else total+=e.price*cart[key];return `<div class="cartitem"><div><strong>${e.p.brand} ${e.p.name}</strong><div style="color:#aeb7ca;margin-top:5px">${e.storage||'Storage to confirm'} · ${money(e.price)}</div></div><div><button onclick="changeQty('${key}',-1)">−</button> ${cart[key]} <button onclick="changeQty('${key}',1)">+</button></div></div>`}).join(''):'<div class="empty">Your cart is empty.</div>';document.getElementById('cartTotal').textContent=!keys.length?'Add a phone to get started.':hasUnknown?'Known SRP subtotal: '+money(total)+' · Other items require a quote':'Catalog subtotal: '+money(total);}
@@ -168,3 +224,51 @@ document.getElementById('search').addEventListener('input',render);document.getE
 
 // Online checkout uses server-authoritative prices; browser SRP and demo prices never set payment amounts.
 document.querySelectorAll('button[onclick="openCheckout()"]').forEach(b=>b.textContent='Secure Checkout');
+
+// Microinteractions for product selection and add-to-cart confirmation.
+(function(){
+ const css=`
+ .dd-cart-toast{position:fixed;right:24px;bottom:24px;z-index:99999;display:flex;align-items:center;gap:13px;max-width:min(450px,calc(100vw - 32px));padding:15px 17px;background:#24242c;color:#fff;border:1px solid #ed4b8a;border-radius:16px;box-shadow:0 20px 55px #0009;opacity:0;transform:translateY(22px) scale(.96);pointer-events:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1)}
+ .dd-cart-toast.dd-show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
+ .dd-toast-check{display:grid;place-items:center;flex:0 0 33px;height:33px;border-radius:50%;background:#e33d7d;font-weight:800}
+ .dd-cart-toast strong{display:block;font-size:13px}.dd-cart-toast small{display:block;color:#c7c3ce;margin-top:4px;font-size:11px}
+ .dd-cart-toast button{margin-left:auto;border:1px solid #f26da0;border-radius:9px;background:#e33d7d;color:white;padding:9px 12px;white-space:nowrap;cursor:pointer;font-size:12px;font-weight:700}
+ #confirmVariant{position:relative;overflow:hidden;isolation:isolate}
+ .dd-click-ripple{position:absolute;z-index:2;width:28px;height:28px;border-radius:50%;background:#fff8;pointer-events:none;transform:translate(-50%,-50%) scale(0);animation:ddRipple .6s ease-out forwards}
+ @keyframes ddRipple{to{transform:translate(-50%,-50%) scale(30);opacity:0}}
+ #confirmVariant.dd-success-pop{animation:ddSuccessPop .4s cubic-bezier(.2,.9,.3,1.2)}
+ @keyframes ddSuccessPop{0%{transform:scale(1)}45%{transform:scale(.96)}80%{transform:scale(1.035)}100%{transform:scale(1)}}
+ .dd-fly-to-cart{position:fixed;z-index:100000;pointer-events:none;display:grid;place-items:center;width:34px;height:34px;margin:-17px;background:#e33d7d;border:2px solid #fff;color:white;border-radius:50%;font-size:18px;font-weight:800;box-shadow:0 0 22px #e33d7d88;transition:transform .75s cubic-bezier(.2,.75,.25,1),opacity .75s ease}
+ #confirmVariant.dd-added{background:#23835e!important;color:white!important;opacity:1!important;cursor:default}
+ .dd-cart-bounce{display:inline-block;animation:ddCartPop .5s cubic-bezier(.2,.8,.2,1)}
+ @keyframes ddCartPop{0%{transform:scale(1)}40%{transform:scale(1.38);color:#ff78ae}100%{transform:scale(1)}}
+ button,.product,.dd-brand-tile,.chip,.variantOption,a{transition:transform .18s ease,background-color .2s ease,border-color .2s ease,box-shadow .2s ease,opacity .2s ease}
+ button:not(:disabled):active,.chip:active,.variantOption:active{transform:scale(.96)}
+ .product:hover{transform:translateY(-3px)}
+ .variantOption:hover{border-color:#e33d7d;transform:translateY(-2px)}
+ @media(hover:hover){.primary:hover,.btn:hover,#confirmVariant:not(:disabled):hover{filter:brightness(1.08);box-shadow:0 8px 24px #e33d7d33}}
+ @media(max-width:540px){.dd-cart-toast{right:16px;bottom:16px;left:16px;max-width:none}}
+ @media(prefers-reduced-motion:reduce){.dd-cart-toast,button,.product,.dd-brand-tile,.chip,.variantOption,a,.dd-click-ripple,.dd-fly-to-cart{transition:none!important;animation:none!important}}
+ `;
+ const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
+})();
+
+
+(function(){
+ if(window.__ddMotionInstalled)return;
+ window.__ddMotionInstalled=true;
+ const st=document.createElement('style');st.id='dd-motion-style';st.textContent='\n/* Done Deal motion system */\n@keyframes ddEnter{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}\n@keyframes ddOverlayEnter{from{opacity:0}to{opacity:1}}\n@keyframes ddModalEnter{from{opacity:0;transform:translateY(15px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}\n@keyframes ddDrawerEnter{from{transform:translateX(24px);opacity:.55}to{transform:translateX(0);opacity:1}}\n@keyframes ddCartPulse{0%,100%{transform:scale(1)}45%{transform:scale(1.13)}}\nbody.dd-motion-ready main,body.dd-motion-ready .wrap{animation:ddEnter .38s cubic-bezier(.2,.7,.25,1) both}\nbody.dd-leaving main,body.dd-leaving .wrap{opacity:0;transform:translateY(-7px);transition:opacity .2s ease,transform .2s ease}\na,button,.btn,.chip,.brandTile,.dd-brand-tile,.product,.variantOption{transition:transform .2s ease,box-shadow .22s ease,background-color .2s ease,border-color .2s ease,filter .2s ease}\nbutton:not(:disabled):active,.btn:not(:disabled):active,.chip:active,.variantOption:active{transform:scale(.965)}\n.product:hover,.dd-brand-tile:hover{transform:translateY(-5px);box-shadow:0 15px 35px #0005,0 0 0 1px #ec438366}\n.product:hover .visual img,.dd-brand-tile:hover img{transform:scale(1.035);transition:transform .35s ease}\n.overlay.open{animation:ddOverlayEnter .22s ease both}\n.overlay.open .modal{animation:ddModalEnter .27s cubic-bezier(.2,.7,.2,1) both}\n.overlay.open .drawer{animation:ddDrawerEnter .3s cubic-bezier(.2,.7,.2,1) both}\n#cartCount.dd-count-pulse{animation:ddCartPulse .42s ease}\n:focus-visible{outline:2px solid #ff7eae;outline-offset:3px}\n@media(prefers-reduced-motion:reduce){body.dd-motion-ready main,body.dd-motion-ready .wrap,.overlay.open,.overlay.open .modal,.overlay.open .drawer,#cartCount.dd-count-pulse{animation:none!important}body.dd-leaving main,body.dd-leaving .wrap{opacity:1;transform:none}a,button,.btn,.chip,.brandTile,.dd-brand-tile,.product,.variantOption{transition:none!important;transform:none!important}}\n';document.head.append(st);
+ const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(!reduce)requestAnimationFrame(()=>document.body.classList.add('dd-motion-ready'));
+ document.addEventListener('click',e=>{
+  const link=e.target.closest('a[href]');
+  if(!link||e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||link.target&&link.target!=='_self'||link.hasAttribute('download'))return;
+  const u=new URL(link.href,location.href);
+  if(u.origin!==location.origin||!u.pathname.endsWith('.html')||u.pathname===location.pathname&&u.search===location.search)return;
+  if(reduce)return;
+  e.preventDefault();
+  document.body.classList.add('dd-leaving');
+  setTimeout(()=>location.assign(u.href),210);
+ },false);
+})();
+

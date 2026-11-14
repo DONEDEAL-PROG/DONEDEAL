@@ -72,3 +72,23 @@ $('pay').addEventListener('click',async()=>{
  }catch(e){$('status').textContent=e.message;$('status').className='error';button.disabled=false}
 });
 refresh();
+
+
+(function(){
+ if(window.__ddMotionInstalled)return;
+ window.__ddMotionInstalled=true;
+ const st=document.createElement('style');st.id='dd-motion-style';st.textContent='\n/* Done Deal motion system */\n@keyframes ddEnter{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}\n@keyframes ddOverlayEnter{from{opacity:0}to{opacity:1}}\n@keyframes ddModalEnter{from{opacity:0;transform:translateY(15px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}\n@keyframes ddDrawerEnter{from{transform:translateX(24px);opacity:.55}to{transform:translateX(0);opacity:1}}\n@keyframes ddCartPulse{0%,100%{transform:scale(1)}45%{transform:scale(1.13)}}\nbody.dd-motion-ready main,body.dd-motion-ready .wrap{animation:ddEnter .38s cubic-bezier(.2,.7,.25,1) both}\nbody.dd-leaving main,body.dd-leaving .wrap{opacity:0;transform:translateY(-7px);transition:opacity .2s ease,transform .2s ease}\na,button,.btn,.chip,.brandTile,.dd-brand-tile,.product,.variantOption{transition:transform .2s ease,box-shadow .22s ease,background-color .2s ease,border-color .2s ease,filter .2s ease}\nbutton:not(:disabled):active,.btn:not(:disabled):active,.chip:active,.variantOption:active{transform:scale(.965)}\n.product:hover,.dd-brand-tile:hover{transform:translateY(-5px);box-shadow:0 15px 35px #0005,0 0 0 1px #ec438366}\n.product:hover .visual img,.dd-brand-tile:hover img{transform:scale(1.035);transition:transform .35s ease}\n.overlay.open{animation:ddOverlayEnter .22s ease both}\n.overlay.open .modal{animation:ddModalEnter .27s cubic-bezier(.2,.7,.2,1) both}\n.overlay.open .drawer{animation:ddDrawerEnter .3s cubic-bezier(.2,.7,.2,1) both}\n#cartCount.dd-count-pulse{animation:ddCartPulse .42s ease}\n:focus-visible{outline:2px solid #ff7eae;outline-offset:3px}\n@media(prefers-reduced-motion:reduce){body.dd-motion-ready main,body.dd-motion-ready .wrap,.overlay.open,.overlay.open .modal,.overlay.open .drawer,#cartCount.dd-count-pulse{animation:none!important}body.dd-leaving main,body.dd-leaving .wrap{opacity:1;transform:none}a,button,.btn,.chip,.brandTile,.dd-brand-tile,.product,.variantOption{transition:none!important;transform:none!important}}\n';document.head.append(st);
+ const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if(!reduce)requestAnimationFrame(()=>document.body.classList.add('dd-motion-ready'));
+ document.addEventListener('click',e=>{
+  const link=e.target.closest('a[href]');
+  if(!link||e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||link.target&&link.target!=='_self'||link.hasAttribute('download'))return;
+  const u=new URL(link.href,location.href);
+  if(u.origin!==location.origin||!u.pathname.endsWith('.html')||u.pathname===location.pathname&&u.search===location.search)return;
+  if(reduce)return;
+  e.preventDefault();
+  document.body.classList.add('dd-leaving');
+  setTimeout(()=>location.assign(u.href),210);
+ },false);
+})();
+
