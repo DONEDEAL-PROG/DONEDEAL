@@ -93,6 +93,37 @@ button:not(:disabled):hover{filter:brightness(1.08)}
 @media(max-width:560px){main{padding:0 14px}.brands{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.brandBtn{min-height:82px;padding:13px;font-size:14px}#products{grid-template-columns:1fr;gap:12px}.product:has(.editor.open){grid-column:span 1}.product:has(.editor.open) .productHead{flex-direction:column;align-items:stretch}.product:has(.editor.open) .editBtn{width:100%}.product:has(.editor.open) .thumb{width:72px;height:72px}.thumb{height:165px}#dashboard>.panel{padding:18px}}
 @media(prefers-reduced-motion:reduce){.brandBtn,.product{transition:none}.brandBtn:hover,.product:hover{transform:none}}
 
+
+/* Clear storage-first admin product cards */
+#products .productHead .identity>div:last-child{width:100%}
+#products .productHead strong{font-size:16px;line-height:1.45;font-weight:800;color:#fff}
+#products .productHead .dd-storage-label{
+  display:block;width:fit-content;max-width:100%;
+  margin:12px 0 9px;padding:9px 13px;
+  border:1px solid #ff69b5;border-radius:9px;
+  background:#48243a;color:#ffd3e8;
+  font-size:19px;font-weight:900;line-height:1.3;
+  letter-spacing:.025em;overflow-wrap:anywhere;
+}
+#products .productHead small:not(.dd-storage-label):not(.dd-sku-note){
+  color:#f4eaf0;font-size:14px;line-height:1.65;font-weight:600;
+}
+#products .productHead .dd-sku-note{
+  color:#a8a0af;font-size:11px;line-height:1.4;margin-top:7px;
+  overflow-wrap:anywhere;
+}
+#products .product .editBtn{font-size:15px;padding:12px 15px}
+@media(max-width:560px){
+  #products .productHead .dd-storage-label{font-size:18px}
+}
+.dd-brand-home{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin:22px 0}
+.dd-brand-tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:145px;padding:24px!important;text-align:left;border:1px solid #66425b!important;border-radius:16px!important;background:linear-gradient(135deg,#292530,#211d27)!important;color:#fff!important;box-shadow:0 5px 18px #0003;cursor:pointer}
+.dd-brand-tile strong{font-size:clamp(21px,2.2vw,28px);font-weight:850;line-height:1.2;color:#ffb8dc}
+.dd-brand-tile span{font-size:13px;color:#d6cbd4;margin-top:12px;line-height:1.4}
+.dd-brand-tile:hover,.dd-brand-tile:focus-visible{border-color:#ff3e9e!important;transform:translateY(-2px)}
+.dd-back-brands{padding:10px 16px!important;background:#3d2b39!important;border:1px solid #ff3e9e!important;border-radius:10px!important;color:#fff!important}
+.dd-selected-brand{font-size:21px;margin-left:14px}
+@media(max-width:600px){.dd-brand-home{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.dd-brand-tile{min-height:120px;padding:16px!important}.dd-brand-tile strong{font-size:20px}.dd-selected-brand{display:block;margin:12px 0 0}}
 </style>
 </head>
 <body>
@@ -124,7 +155,7 @@ const $ = id => document.getElementById(id);
 const money = cents => (cents / 100).toFixed(2);
 const knownBrands = ["Apple","Samsung","Huawei","OPPO","vivo","Xiaomi"];
 let allProducts = [];
-let selectedBrand = "All";
+let selectedBrand = null;
 function showDashboard() {
   $("loginPanel").style.display = "none";
   $("dashboard").style.display = "block";
@@ -164,51 +195,50 @@ async function loadProducts() {
   }
 }
 function updateTabs() {
-  const tabs = $("brandTabs");
+  const tabs=$("brandTabs");
   tabs.replaceChildren();
-  const brands = ["All",...knownBrands];
-  if (allProducts.some(p => brandOf(p) === "Other")) brands.push("Other");
-  for (const brand of brands) {
-    const count = brand === "All" ? allProducts.length :
-      allProducts.filter(p => brandOf(p) === brand).length;
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "brandBtn" + (selectedBrand === brand ? " active" : "");
-    btn.setAttribute("aria-pressed", selectedBrand === brand ? "true" : "false");
-    btn.textContent = brand + " (" + count + ")";
-    btn.addEventListener("click", () => { selectedBrand = brand; updateList(); });
-    tabs.append(btn);
+  if(selectedBrand===null){
+    tabs.classList.add("dd-brand-home");
+    $("productSearch").style.display="none";
+    for(const brand of [...knownBrands,...(allProducts.some(p=>brandOf(p)==="Other")?["Other"]:[])]){
+      const items=allProducts.filter(p=>brandOf(p)===brand);
+      if(!items.length)continue;
+      const tile=document.createElement("button");
+      tile.type="button";tile.className="dd-brand-tile";
+      const label=document.createElement("strong");label.textContent=brand;
+      const count=document.createElement("span");
+      count.textContent=new Set(items.map(p=>p.sku.split("::")[0])).size+" gadget models · "+items.length+" variants";
+      tile.append(label,count);
+      tile.onclick=()=>{selectedBrand=brand;updateList();};
+      tabs.append(tile);
+    }
+  }else{
+    tabs.classList.remove("dd-brand-home");
+    $("productSearch").style.display="";
+    const back=document.createElement("button");
+    back.type="button";back.className="dd-back-brands";
+    back.textContent="← Back to Brands";
+    back.onclick=()=>{selectedBrand=null;$("productSearch").value="";updateList();};
+    const heading=document.createElement("strong");
+    heading.className="dd-selected-brand";heading.textContent=selectedBrand+" — Gadget Inventory";
+    tabs.append(back,heading);
   }
 }
 function updateList() {
   updateTabs();
-  const q = $("productSearch").value.trim().toLowerCase();
-  const visible = allProducts.filter(p =>
-    (selectedBrand === "All" || brandOf(p) === selectedBrand) &&
-    [p.name,p.variant,p.sku,brandOf(p)].join(" ").toLowerCase().includes(q)
-  );
-  $("status").textContent = allProducts.length + " total variants · " +
-    visible.length + " showing";
   $("products").replaceChildren();
-  $("emptyState").style.display = visible.length ? "none" : "block";
-  let lastBrand = null;
-  let lastGadget = null;
-  const sorted = [...visible].sort((a,b) =>
-    knownBrands.concat("Other").indexOf(brandOf(a)) -
-    knownBrands.concat("Other").indexOf(brandOf(b)) ||
-    a.name.localeCompare(b.name) || a.variant.localeCompare(b.variant)
-  );
-  for (const item of sorted) {
-    const brand = brandOf(item);
-    if (brand !== lastBrand) {
-      const h = document.createElement("h3");
-      h.className = "brandHeading";
-      h.textContent = brand;
-      $("products").append(h);
-      lastBrand = brand;
-    }
-    renderProduct(item);
+  if(selectedBrand===null){
+    $("status").textContent="Choose a brand to view its gadget inventory";
+    $("emptyState").style.display="none";
+    return;
   }
+  const q=$("productSearch").value.trim().toLowerCase();
+  const visible=allProducts.filter(p=>brandOf(p)===selectedBrand &&
+    [p.name,p.variant,p.sku].join(" ").toLowerCase().includes(q));
+  $("status").textContent=selectedBrand+": "+visible.length+" storage variants";
+  $("emptyState").style.display=visible.length?"none":"block";
+  const sorted=[...visible].sort((a,b)=>a.name.localeCompare(b.name)||a.variant.localeCompare(b.variant));
+  for(const item of sorted)renderProduct(item);
 }
 async function adminVariantPost(payload){
  const response=await fetch('/api/admin/variants',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -328,11 +358,16 @@ function renderProduct(item) {
   const name = document.createElement("strong");
   name.textContent = item.name;
   const details = document.createElement("small");
-  details.textContent = item.variant + " · " + item.sku;
+  details.className = "dd-storage-label";
+  const variantName = String(item.variant || "").trim();
+  details.textContent = "STORAGE  •  " + (variantName && variantName.toLowerCase() !== "to be set" ? variantName : "NOT SET");
+  const skuNote = document.createElement("small");
+  skuNote.className = "dd-sku-note";
+  skuNote.textContent = item.sku;
   const summary = document.createElement("small");
   summary.textContent = "₱" + money(item.price_centavos) +
     " · Stock: " + item.stock + " · " + (item.enabled === 1 ? "Available" : "Not for sale");
-  title.append(name,details,summary);
+  title.append(name,details,summary,skuNote);
   identity.append(thumb,title);
   const toggle = document.createElement("button");
   toggle.type = "button";
