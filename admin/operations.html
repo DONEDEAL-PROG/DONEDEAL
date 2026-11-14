@@ -12,6 +12,7 @@
 <div class="field"><label>Description</label><textarea id="description" rows="3" maxlength="1200" placeholder="Describe the gadget"></textarea></div>
 <h3>Variants</h3><div id="variants"></div><div class="row"><button class="secondary" id="addVariant">＋ Add Variant</button><button id="saveGadget">Save Gadget & Variants</button></div><p class="status" id="gadgetMsg"></p>
 <p class="muted">After saving, use the existing <a href="/admin/">Product Manager</a> to upload the gadget's main photo. Product photos are shared by all variants of one model.</p></section>
+<section class="panel" id="manageGadgets"><div class="row space"><h2>Manage Added Gadgets</h2><button class="secondary" id="refreshGadgets" type="button">↻ Refresh</button></div><p class="muted">Hide removes a gadget from the storefront without deleting it. Delete is permanent and only available for custom gadgets without order history.</p><div id="customGadgetList" class="grid"></div><p id="manageMsg" class="status"></p></section>
 <section id="orders" class="hide">
 <div class="panel"><div class="row space"><h2>Orders Dashboard</h2><button id="refreshOrders" class="secondary">↻ Refresh</button></div><div class="row"><div class="field"><label>Find order / customer</label><input id="orderSearch" placeholder="Search reference, name, phone"></div><div class="field"><label>Status</label><select id="orderFilter"><option value="">All statuses</option><option>pending</option><option>confirmed</option><option>processing</option><option>shipped</option><option>delivered</option><option>cancelled</option></select></div></div><p class="status" id="ordersMsg"></p><div id="orderList"></div></div>
 <div class="panel"><h2>＋ Manual Order</h2><p>For Messenger, walk-in, or phone orders. Prices and availability are checked against D1.</p>
@@ -45,11 +46,43 @@ $('saveGadget').onclick=async()=>{
 };
 async function loadCatalog(){
  const d=await api('/api/admin/products');catalog=d.products||[];
+ renderCustomGadgets();
  const select=$('manualSku');select.replaceChildren();
  for(const p of catalog.filter(p=>p.enabled===1&&p.stock>0&&p.price_centavos>=100)){
  const o=el('option',p.name+' · '+p.variant+' · '+money(p.price_centavos)+' · '+p.stock+' in stock');o.value=p.sku;select.append(o);
  }
 }
+function renderCustomGadgets(){
+ const groups=new Map();
+ for(const p of catalog){
+  const id=String(p.sku||'').split('::')[0];
+  if(!id.startsWith('custom-'))continue;
+  if(!groups.has(id))groups.set(id,{id,name:p.name,variants:[],visible:false});
+  const g=groups.get(id);g.variants.push(p);if(Number(p.enabled)===1)g.visible=true;
+ }
+ const list=$('customGadgetList');list.replaceChildren();
+ if(!groups.size){list.append(el('p','No custom gadgets added yet.'));return}
+ for(const g of groups.values()){
+  const tile=el('div',null,'tile');tile.append(el('h3',g.name),el('p',g.variants.length+' variant(s) · '+(g.visible?'Visible':'Hidden'),'muted'));
+  const buttons=el('div',null,'row');
+  const toggle=el('button',g.visible?'Hide Gadget':'Show Gadget','secondary');
+  const del=el('button','Delete Permanently','secondary');
+  toggle.onclick=()=>manageGadget(g,g.visible?'hide':'show');
+  del.onclick=()=>manageGadget(g,'delete');
+  buttons.append(toggle,del);tile.append(buttons);list.append(tile);
+ }
+}
+async function manageGadget(g,action){
+ const message=action==='delete'?'Permanently delete '+g.name+' and all its variants? This cannot be undone.':'Are you sure you want to '+action+' '+g.name+'?';
+ if(!confirm(message))return;
+ $('manageMsg').textContent='Updating '+g.name+'...';
+ try{
+  await post('/api/admin/gadget-manage',{id:g.id,action});
+  $('manageMsg').textContent=g.name+' '+(action==='delete'?'deleted':action==='hide'?'hidden':'shown')+' successfully.';
+  await loadCatalog();
+ }catch(e){$('manageMsg').textContent=e.message}
+}
+$('refreshGadgets').onclick=loadCatalog;
 function orderCard(o){
  const box=el('div',null,'panel order');
  const head=el('div',null,'row space'),title=el('h3',o.id),badge=el('span',o.source||'legacy','tag');head.append(title,badge);box.append(head);
