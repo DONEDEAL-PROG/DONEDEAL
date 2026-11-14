@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,410 +7,410 @@
 <title>Done Deal | Admin</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#111116;color:white;font-family:system-ui,sans-serif}
+body{margin:0;background:#111116;color:#fff;font-family:system-ui,sans-serif}
 header{background:#1d1d26;padding:20px 5%;border-bottom:1px solid #37303a}
-h1{margin:0;font-size:24px}
-.subtitle{color:#ff4da6}
-main{max-width:1000px;margin:35px auto;padding:0 20px}
+h1{margin:0;font-size:24px}.subtitle{color:#ff4da6}
+main{max-width:1100px;margin:32px auto;padding:0 20px}
 .panel,.product{background:#1d1d26;border:1px solid #37303a;border-radius:16px;padding:22px;margin-bottom:16px}
 #loginPanel{max-width:420px;margin:60px auto}
 input,button{font:inherit;border-radius:9px;padding:12px}
-input{background:#292933;border:1px solid #454550;color:white;width:100%;min-width:0}
+input{background:#292933;border:1px solid #454550;color:#fff;width:100%;min-width:0}
+input[type=checkbox]{width:auto}
 button{background:#ec2991;border:0;color:white;font-weight:700;cursor:pointer}
 button:disabled{opacity:.5;cursor:wait}
 button.secondary{background:#34343f}
+button:focus-visible,input:focus-visible{outline:2px solid #ff85c1;outline-offset:2px}
 label{display:block;margin-bottom:7px;color:#ccc;font-size:14px}
-.fields{display:grid;grid-template-columns:1fr 100px;gap:12px;margin:16px 0}
-.productHead{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.fields{display:grid;grid-template-columns:1fr 120px;gap:12px;margin:16px 0}
+.productHead{display:flex;justify-content:space-between;gap:12px;align-items:center}
 small{color:#aaa;overflow-wrap:anywhere}
 .actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.notice{color:#ffb5d8}
-.success{color:#7fe0a0}
+.notice{color:#ffb5d8}.success{color:#7fe0a0}
 #dashboard{display:none}
-@media(max-width:520px){.fields{grid-template-columns:1fr 90px}}
+.toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0}
+.toolbar input{flex:1;min-width:200px}
+.brands{display:flex;flex-wrap:wrap;gap:9px;margin:16px 0 22px}
+.brandBtn{background:#292933;border:1px solid #49404c;padding:10px 13px;font-size:13px}
+.brandBtn.active{background:#ec2991;border-color:#ec2991}
+.brandBtn .count{opacity:.75;margin-left:5px}
+.brandHeading{font-size:18px;margin:24px 0 12px;color:#ff78ba}
+.product{padding:16px 18px}
+.productHead .identity{display:flex;align-items:center;gap:12px;min-width:0}
+.thumb{width:60px;height:60px;flex:none;border-radius:12px;background:#292933;object-fit:contain}
+.thumbEmpty{display:grid;place-items:center;color:#b3a2b1;font-size:11px;text-align:center}
+.productHead strong{display:block}
+.productHead small{display:block;margin-top:4px}
+.editBtn{white-space:nowrap}
+.editor{display:none;border-top:1px solid #37303a;margin-top:16px;padding-top:16px}
+.editor.open{display:block}
+.photoPreview{width:130px;height:130px;object-fit:contain;background:#292933;border-radius:12px;display:block;margin:10px 0}
+.photoArea{border-top:1px solid #37303a;margin-top:18px;padding-top:16px}
+.photoArea input{margin-bottom:10px}
+#emptyState{display:none;text-align:center;color:#aaa;padding:30px}
+@media(max-width:520px){.fields{grid-template-columns:1fr 90px}.panel{padding:17px}.productHead{align-items:flex-start}.thumb{width:48px;height:48px}.editBtn{padding:9px}}
+
+/* Square-tile dashboard redesign */
+:root{--dd-pink:#ff3e9e;--dd-border:#383442;--dd-card:#20202a}
+body{background:radial-gradient(ellipse at 12% 0%,#2b1727 0%,#111116 40%,#101015 100%)}
+header{padding:23px max(5%,24px);background:#1a1922}
+header h1{letter-spacing:.09em;font-size:26px;font-weight:900}
+main{max-width:1250px}
+.panel{border-radius:12px;background:linear-gradient(145deg,#22202b,#1b1b24);box-shadow:0 12px 40px #0003}
+#dashboard>.panel{padding:26px}
+#dashboard h2{font-size:25px;letter-spacing:-.04em}
+.toolbar input{border-radius:9px;padding:16px 18px;background:#13131b}
+.brands{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0 24px}
+.brandBtn{position:relative;min-height:96px;border-radius:12px;background:linear-gradient(145deg,#2a2935,#20202a);border:1px solid #44404e;text-align:left;padding:18px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;font-size:16px;letter-spacing:-.02em;transition:transform .18s,border-color .18s,background .18s}
+.brandBtn::before{content:"";display:block;width:22px;height:4px;border-radius:5px;background:#ff5da9;opacity:.8}
+.brandBtn:hover{transform:translateY(-3px);border-color:#ff67b1}
+.brandBtn.active{background:linear-gradient(145deg,#b91768,#ee398f);border-color:#ff85c2;box-shadow:0 8px 26px #e72b8b36}
+.brandBtn.active::before{background:white}
+.brandBtn .count{display:inline-flex;margin-left:0;color:#d9c9d5;font-size:12px;opacity:1}
+.brandBtn.active .count{color:#fff}
+#products{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;align-items:start}
+.brandHeading{grid-column:1/-1;margin:18px 0 1px;padding:8px 0 11px;border-bottom:1px solid #49404c;font-size:17px;text-transform:uppercase;letter-spacing:.14em}
+.product{margin:0;min-width:0;padding:17px;border-radius:12px;background:linear-gradient(145deg,#24232e,#1c1c26);border:1px solid #393641;transition:transform .2s,border-color .2s,box-shadow .2s}
+.product:hover{transform:translateY(-3px);border-color:#a84578;box-shadow:0 12px 28px #0005}
+.productHead{display:flex;flex-direction:column;align-items:stretch;gap:13px}
+.productHead .identity{display:flex;flex-direction:column;align-items:stretch;gap:12px}
+.productHead .identity>div:last-child{min-width:0}
+.thumb{width:100%;height:145px;border-radius:9px;object-fit:contain}
+.thumbEmpty{background:linear-gradient(135deg,#34303d,#1b1b25);font-size:13px}
+.productHead strong{font-size:15px;line-height:1.35}
+.productHead small{font-size:12px;line-height:1.5}
+.editBtn{width:100%;border:1px solid #e43d8c;background:#3a2333!important;color:#ffc3e0}
+.editBtn:hover{background:#6d294c!important}
+.product:has(.editor.open){grid-column:span 2;border-color:#f151a1;box-shadow:0 10px 40px #0006}
+.product:has(.editor.open) .productHead{flex-direction:row;align-items:center}
+.product:has(.editor.open) .productHead .identity{flex-direction:row;align-items:center;flex:1}
+.product:has(.editor.open) .thumb{width:90px;height:90px;flex:none}
+.product:has(.editor.open) .editBtn{width:auto}
+.editor{margin-top:18px}
+.photoArea{margin-top:22px}
+.photoPreview{border-radius:10px}
+button:not(:disabled):hover{filter:brightness(1.08)}
+@media(max-width:850px){.brands{grid-template-columns:repeat(3,minmax(0,1fr))}#products{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){main{padding:0 14px}.brands{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.brandBtn{min-height:82px;padding:13px;font-size:14px}#products{grid-template-columns:1fr;gap:12px}.product:has(.editor.open){grid-column:span 1}.product:has(.editor.open) .productHead{flex-direction:column;align-items:stretch}.product:has(.editor.open) .editBtn{width:100%}.product:has(.editor.open) .thumb{width:72px;height:72px}.thumb{height:165px}#dashboard>.panel{padding:18px}}
+@media(prefers-reduced-motion:reduce){.brandBtn,.product{transition:none}.brandBtn:hover,.product:hover{transform:none}}
+
 </style>
 </head>
 <body>
-<header>
-  <h1>DONE DEAL</h1>
-  <div class="subtitle">PRIVATE ADMIN DASHBOARD</div>
-</header>
+<header><h1>DONE DEAL</h1><div class="subtitle">PRIVATE ADMIN DASHBOARD</div></header>
 <main>
 <section id="loginPanel" class="panel">
-  <h2>Admin Sign In</h2>
-  <form id="loginForm">
-    <label for="password">Admin password</label>
-    <input id="password" type="password"
-      autocomplete="current-password" required>
-    <button type="submit" style="width:100%;margin-top:14px">
-      Sign In
-    </button>
-  </form>
-  <p id="loginMessage" class="notice" role="status"></p>
+<h2>Admin Sign In</h2>
+<form id="loginForm">
+<label for="password">Admin password</label>
+<input id="password" type="password" autocomplete="current-password" required>
+<button type="submit" style="width:100%;margin-top:14px">Sign In</button>
+</form>
+<p id="loginMessage" class="notice" role="status"></p>
 </section>
-
 <section id="dashboard">
-  <div class="panel">
-    <div class="productHead">
-      <div>
-        <h2>Product Manager</h2>
-        <p class="subtitle">Manage prices, stock and availability</p>
-      </div>
-      <button class="secondary" id="refreshBtn">Refresh</button>
-    </div>
-    <p id="status" role="status"></p>
-  </div>
- 
-
-
-  <div id="products"></div>
+<div class="panel">
+<div class="productHead"><div><h2 style="margin:0 0 8px">Product Manager</h2><p class="subtitle" style="margin:0">Browse by brand, search, then edit a gadget</p></div><button class="secondary" id="refreshBtn">Refresh</button></div>
+<p id="status" role="status"></p>
+<div class="toolbar"><input id="productSearch" type="search" placeholder="Search brand, model, storage or SKU..." aria-label="Search products"></div>
+<div id="brandTabs" class="brands" aria-label="Filter by brand"></div>
+</div>
+<div id="products"></div>
+<div id="emptyState">No matching gadgets. Try another search or brand.</div>
 </section>
 </main>
 <script>
 const $ = id => document.getElementById(id);
 const money = cents => (cents / 100).toFixed(2);
-
+const knownBrands = ["Apple","Samsung","Huawei","OPPO","vivo","Xiaomi"];
+let allProducts = [];
+let selectedBrand = "All";
 function showDashboard() {
   $("loginPanel").style.display = "none";
   $("dashboard").style.display = "block";
 }
-
 function showLogin() {
   $("loginPanel").style.display = "block";
   $("dashboard").style.display = "none";
 }
-
+function brandOf(item) {
+  const prefix = String(item.sku || "").split("-")[0];
+  return knownBrands.find(b => b.toLowerCase() === prefix.toLowerCase()) ||
+    knownBrands.find(b => String(item.name || "").toLowerCase().startsWith(b.toLowerCase())) ||
+    "Other";
+}
+function imageUrl(key) {
+  return typeof key === "string" && /^products\/[0-9a-f-]{36}\.(jpg|png|webp)$/.test(key)
+    ? "/api/images/" + key : null;
+}
 async function loadProducts() {
   $("status").textContent = "Loading products...";
-  $("products").replaceChildren();
-
   try {
     const response = await fetch("/api/admin/products", {
-      credentials: "same-origin",
-      cache: "no-store"
+      credentials: "same-origin", cache: "no-store"
     });
-
     if (response.status === 401) {
       showLogin();
-      $("loginMessage").textContent =
-        "Please sign in to continue.";
+      $("loginMessage").textContent = "Please sign in to continue.";
       return;
     }
-
     const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || "Unable to load products.");
-    }
-
+    if (!response.ok) throw new Error(data.error || "Unable to load products.");
+    allProducts = Array.isArray(data.products) ? data.products : [];
     showDashboard();
-    const products = data.products || [];
-
-    $("status").textContent =
-      products.length + " product variant(s) found.";
-
-    if (!products.length) {
-      $("status").textContent =
-        "No products yet. Existing products will appear here.";
-    }
-
-    products.forEach(renderProduct);
+    updateList();
   } catch (error) {
     $("status").textContent = error.message;
   }
 }
-
+function updateTabs() {
+  const tabs = $("brandTabs");
+  tabs.replaceChildren();
+  const brands = ["All",...knownBrands];
+  if (allProducts.some(p => brandOf(p) === "Other")) brands.push("Other");
+  for (const brand of brands) {
+    const count = brand === "All" ? allProducts.length :
+      allProducts.filter(p => brandOf(p) === brand).length;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "brandBtn" + (selectedBrand === brand ? " active" : "");
+    btn.setAttribute("aria-pressed", selectedBrand === brand ? "true" : "false");
+    btn.textContent = brand + " (" + count + ")";
+    btn.addEventListener("click", () => { selectedBrand = brand; updateList(); });
+    tabs.append(btn);
+  }
+}
+function updateList() {
+  updateTabs();
+  const q = $("productSearch").value.trim().toLowerCase();
+  const visible = allProducts.filter(p =>
+    (selectedBrand === "All" || brandOf(p) === selectedBrand) &&
+    [p.name,p.variant,p.sku,brandOf(p)].join(" ").toLowerCase().includes(q)
+  );
+  $("status").textContent = allProducts.length + " total variants · " +
+    visible.length + " showing";
+  $("products").replaceChildren();
+  $("emptyState").style.display = visible.length ? "none" : "block";
+  let lastBrand = null;
+  const sorted = [...visible].sort((a,b) =>
+    knownBrands.concat("Other").indexOf(brandOf(a)) -
+    knownBrands.concat("Other").indexOf(brandOf(b)) ||
+    a.name.localeCompare(b.name) || a.variant.localeCompare(b.variant)
+  );
+  for (const item of sorted) {
+    const brand = brandOf(item);
+    if (brand !== lastBrand) {
+      const h = document.createElement("h3");
+      h.className = "brandHeading";
+      h.textContent = brand;
+      $("products").append(h);
+      lastBrand = brand;
+    }
+    renderProduct(item);
+  }
+}
 function renderProduct(item) {
   const card = document.createElement("article");
   card.className = "product";
-
   const head = document.createElement("div");
   head.className = "productHead";
-
+  const identity = document.createElement("div");
+  identity.className = "identity";
+  const thumb = document.createElement("div");
+  thumb.className = "thumb thumbEmpty";
+  thumb.textContent = "No photo";
+  function setThumb(key) {
+    const src = imageUrl(key);
+    thumb.replaceChildren();
+    if (src) {
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = item.name;
+      img.className = "thumb";
+      img.onerror = () => { thumb.replaceChildren(); thumb.textContent = "No photo"; };
+      thumb.append(img);
+    } else thumb.textContent = "No photo";
+  }
+  setThumb(item.image_key);
   const title = document.createElement("div");
   const name = document.createElement("strong");
   name.textContent = item.name;
   const details = document.createElement("small");
   details.textContent = item.variant + " · " + item.sku;
-  title.append(name, document.createElement("br"), details);
-  head.append(title);
-
+  const summary = document.createElement("small");
+  summary.textContent = "₱" + money(item.price_centavos) +
+    " · Stock: " + item.stock + " · " + (item.enabled === 1 ? "Available" : "Not for sale");
+  title.append(name,details,summary);
+  identity.append(thumb,title);
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "secondary editBtn";
+  toggle.textContent = "Edit";
+  head.append(identity,toggle);
+  const editor = document.createElement("div");
+  editor.className = "editor";
+  toggle.addEventListener("click", () => {
+    const open = editor.classList.toggle("open");
+    toggle.textContent = open ? "Close" : "Edit";
+    toggle.setAttribute("aria-expanded", String(open));
+  });
+  toggle.setAttribute("aria-expanded","false");
   const fields = document.createElement("div");
   fields.className = "fields";
-
   const priceBox = document.createElement("div");
   const priceLabel = document.createElement("label");
   priceLabel.textContent = "Price (PHP)";
   const price = document.createElement("input");
-  price.type = "number";
-  price.min = "0.01";
-  price.step = "0.01";
+  price.type = "number";price.min = "0.01";price.step = "0.01";
   price.value = money(item.price_centavos);
-  priceBox.append(priceLabel, price);
-
+  priceBox.append(priceLabel,price);
   const stockBox = document.createElement("div");
   const stockLabel = document.createElement("label");
   stockLabel.textContent = "Stock";
   const stock = document.createElement("input");
-  stock.type = "number";
-  stock.min = "0";
-  stock.step = "1";
-  stock.value = item.stock;
-  stockBox.append(stockLabel, stock);
-
-  fields.append(priceBox, stockBox);
-
+  stock.type = "number";stock.min = "0";stock.step = "1";stock.value = item.stock;
+  stockBox.append(stockLabel,stock);
+  fields.append(priceBox,stockBox);
   const actions = document.createElement("div");
   actions.className = "actions";
-
   const available = document.createElement("input");
-  available.type = "checkbox";
-  available.checked = item.enabled === 1;
-  available.style.width = "auto";
-
+  available.type = "checkbox";available.checked = item.enabled === 1;
   const availableLabel = document.createElement("label");
   availableLabel.style.margin = "0";
-  availableLabel.append(available, " Available for sale");
-
+  availableLabel.append(available," Available for sale");
   const save = document.createElement("button");
-  save.textContent = "Save Changes";
-
+  save.type = "button";save.textContent = "Save Changes";
   const message = document.createElement("small");
-  message.setAttribute("role", "status");
-
+  message.setAttribute("role","status");
   save.addEventListener("click", async () => {
     const rawPrice = price.value.trim();
     const rawStock = stock.value.trim();
     const php = Number(rawPrice);
     const quantity = Number(rawStock);
     const cents = Math.round(php * 100);
-
     if (!/^\d+(\.\d{1,2})?$/.test(rawPrice) ||
-        !Number.isSafeInteger(cents) ||
-        cents < 1 ||
-        !/^\d+$/.test(rawStock) ||
-        !Number.isSafeInteger(quantity)) {
+        !Number.isSafeInteger(cents) || cents < 1 ||
+        !/^\d+$/.test(rawStock) || !Number.isSafeInteger(quantity)) {
       message.textContent = "Enter a valid price and stock.";
+      message.className = "notice";
       return;
     }
-
-    save.disabled = true;
-    message.textContent = "Saving...";
-
+    save.disabled = true;message.textContent = "Saving...";
     try {
       const response = await fetch("/api/admin/products", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-          sku: item.sku,
-          price_centavos: cents,
-          stock: quantity,
-          enabled: available.checked ? 1 : 0
-        })
+        method:"POST",credentials:"same-origin",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({sku:item.sku,price_centavos:cents,
+          stock:quantity,enabled:available.checked ? 1 : 0})
       });
-
       const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || "Save failed.");
-      }
-
+      if (!response.ok) throw new Error(data.error || "Save failed.");
+      item.price_centavos = cents;
+      item.stock = quantity;
+      item.enabled = available.checked ? 1 : 0;
+      summary.textContent = "₱" + money(cents) + " · Stock: " + quantity +
+        " · " + (item.enabled === 1 ? "Available" : "Not for sale");
       message.textContent = "Saved successfully!";
       message.className = "success";
     } catch (error) {
       message.textContent = error.message;
       message.className = "notice";
-    } finally {
-      save.disabled = false;
-    }
+    } finally { save.disabled = false; }
   });
-
-  // Product photo uploader
-  const photoSection = document.createElement("div");
-  photoSection.style.marginTop = "18px";
-  photoSection.style.paddingTop = "16px";
-  photoSection.style.borderTop = "1px solid #37303a";
-
-  const photoTitle = document.createElement("label");
-  photoTitle.textContent = "Product Photo";
-
+  actions.append(availableLabel,save,message);
+  const photoArea = document.createElement("div");
+  photoArea.className = "photoArea";
+  const photoLabel = document.createElement("label");
+  photoLabel.textContent = "Product Photo";
   const preview = document.createElement("img");
-  preview.alt = item.name + " product photo";
-  preview.style.width = "120px";
-  preview.style.height = "120px";
-  preview.style.objectFit = "contain";
-  preview.style.background = "#292933";
-  preview.style.borderRadius = "12px";
-  preview.style.display = "block";
-  preview.style.marginBottom = "12px";
-
-  if (item.image_key) {
-    preview.src = "/api/images/" + item.image_key;
-  } else {
-    preview.style.display = "none";
-  }
-
+  preview.className = "photoPreview";preview.alt = item.name + " photo";
+  preview.style.display = imageUrl(item.image_key) ? "block" : "none";
+  if (imageUrl(item.image_key)) preview.src = imageUrl(item.image_key);
   const imageInput = document.createElement("input");
-  imageInput.type = "file";
-  imageInput.accept = "image/jpeg,image/png,image/webp";
-  imageInput.style.marginBottom = "10px";
-
-  const uploadButton = document.createElement("button");
-  uploadButton.type = "button";
-  uploadButton.textContent = item.image_key
-    ? "Replace Photo"
-    : "Upload Photo";
-
+  imageInput.type = "file";imageInput.accept = "image/jpeg,image/png,image/webp";
+  const upload = document.createElement("button");
+  upload.type = "button";
+  upload.textContent = item.image_key ? "Replace Photo" : "Upload Photo";
   const photoMessage = document.createElement("small");
-  photoMessage.setAttribute("role", "status");
-  photoMessage.style.display = "block";
-  photoMessage.style.marginTop = "10px";
-
+  photoMessage.style.display = "block";photoMessage.style.marginTop = "10px";
+  photoMessage.setAttribute("role","status");
+  let objectUrl = null;
   imageInput.addEventListener("change", () => {
     const file = imageInput.files?.[0];
     if (!file) return;
-
-    if (
-      !["image/jpeg", "image/png", "image/webp"]
-        .includes(file.type) ||
-      file.size === 0 ||
-      file.size > 5 * 1024 * 1024
-    ) {
-      photoMessage.textContent =
-        "Choose JPG, PNG or WebP under 5MB.";
-      imageInput.value = "";
-      return;
+    if (!["image/jpeg","image/png","image/webp"].includes(file.type) ||
+        file.size === 0 || file.size > 5*1024*1024) {
+      photoMessage.textContent = "Choose JPG, PNG or WebP under 5MB.";
+      photoMessage.className = "notice";imageInput.value = "";return;
     }
-
-    const localURL = URL.createObjectURL(file);
-    preview.onload = () => URL.revokeObjectURL(localURL);
-    preview.src = localURL;
-    preview.style.display = "block";
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = URL.createObjectURL(file);
+    preview.src = objectUrl;preview.style.display = "block";
     photoMessage.textContent = "Preview ready. Click Upload Photo.";
+    photoMessage.className = "";
   });
-
-  uploadButton.addEventListener("click", async () => {
+  upload.addEventListener("click", async () => {
     const file = imageInput.files?.[0];
-
-    if (!file) {
-      photoMessage.textContent = "Choose a photo first.";
-      return;
-    }
-
+    if (!file) {photoMessage.textContent = "Choose a photo first.";return;}
     const productId = item.sku.split("::")[0];
-
     if (!/^[A-Za-z]+-\d+$/.test(productId)) {
-      photoMessage.textContent = "Invalid product ID.";
-      return;
+      photoMessage.textContent = "Invalid product ID.";return;
     }
-
-    uploadButton.disabled = true;
-    imageInput.disabled = true;
+    upload.disabled = true;imageInput.disabled = true;
     photoMessage.textContent = "Uploading photo...";
-
     try {
-      const form = new FormData();
-      form.append("image", file);
-
-      const uploadResponse = await fetch(
-        "/api/admin/upload-image",
-        {
-          method: "POST",
-          credentials: "same-origin",
-          body: form
-        }
-      );
-
-      const uploadData = await uploadResponse.json();
-
-      if (!uploadResponse.ok) {
-        throw new Error(
-          uploadData.error || "Image upload failed."
-        );
-      }
-
+      const form = new FormData();form.append("image",file);
+      const uploaded = await fetch("/api/admin/upload-image",{
+        method:"POST",credentials:"same-origin",body:form
+      });
+      const uploadData = await uploaded.json();
+      if (!uploaded.ok) throw new Error(uploadData.error || "Image upload failed.");
       photoMessage.textContent = "Saving product photo...";
-
-      const saveResponse = await fetch(
-        "/api/admin/product-image",
-        {
-          method: "POST",
-          credentials: "same-origin",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            product_id: productId,
-            image_key: uploadData.key
-          })
-        }
-      );
-
-      const saveData = await saveResponse.json();
-
-      if (!saveResponse.ok) {
-        throw new Error(
-          saveData.error || "Unable to save product photo."
-        );
-      }
-
+      const saved = await fetch("/api/admin/product-image",{
+        method:"POST",credentials:"same-origin",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({product_id:productId,image_key:uploadData.key})
+      });
+      const saveData = await saved.json();
+      if (!saved.ok) throw new Error(saveData.error || "Unable to save product photo.");
       item.image_key = uploadData.key;
       preview.src = uploadData.image_url;
-      uploadButton.textContent = "Replace Photo";
+      setThumb(item.image_key);
+      upload.textContent = "Replace Photo";
       imageInput.value = "";
-
-      photoMessage.textContent =
-        "Photo saved successfully!";
+      if (objectUrl) { URL.revokeObjectURL(objectUrl);objectUrl = null; }
+      photoMessage.textContent = "Photo saved successfully!";
       photoMessage.className = "success";
-
+      // The photo belongs to the gadget model, shared across storage variants.
+      const productPrefix = productId + "::";
+      allProducts.filter(p => p.sku.startsWith(productPrefix))
+        .forEach(p => {p.image_key = uploadData.key;});
     } catch (error) {
-      photoMessage.textContent = error.message;
-      photoMessage.className = "notice";
-    } finally {
-      uploadButton.disabled = false;
-      imageInput.disabled = false;
-    }
+      photoMessage.textContent = error.message;photoMessage.className = "notice";
+    } finally {upload.disabled = false;imageInput.disabled = false;}
   });
-
-  photoSection.append(
-    photoTitle,
-    preview,
-    imageInput,
-    uploadButton,
-    photoMessage
-  );
-
-  actions.append(availableLabel, save, message);
-  card.append(head, fields, actions, photoSection);
+  photoArea.append(photoLabel,preview,imageInput,upload,photoMessage);
+  editor.append(fields,actions,photoArea);
+  card.append(head,editor);
   $("products").append(card);
 }
-
 $("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
   $("loginMessage").textContent = "Signing in...";
-
   try {
-    const response = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      credentials: "same-origin",
-      body: JSON.stringify({password:$("password").value})
+    const response = await fetch("/api/admin/login",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      credentials:"same-origin",
+      body:JSON.stringify({password:$("password").value})
     });
-
     if (!response.ok) throw new Error("Invalid login.");
     $("password").value = "";
     showDashboard();
     await loadProducts();
-  } catch (error) {
-    $("loginMessage").textContent = error.message;
-  }
+  } catch (error) {$("loginMessage").textContent = error.message;}
 });
-
-
-$("refreshBtn").addEventListener("click", loadProducts);
+$("productSearch").addEventListener("input",updateList);
+$("refreshBtn").addEventListener("click",loadProducts);
 loadProducts();
-  
-
-
 </script>
 </body>
 </html>
