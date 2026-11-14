@@ -9,8 +9,8 @@ export async function onRequestPost({request,env}){
   const product=await env.DB.prepare('SELECT id,brand,model FROM store_products WHERE id=?').bind(id).first();
   if(!product)return reply({error:'Custom gadget not found'},404);
   if(action==='hide'||action==='show'){
-   const count=await env.DB.prepare('UPDATE store_variants SET enabled=?,updated_at=CURRENT_TIMESTAMP WHERE sku LIKE ?').bind(action==='show'?1:0,id+'::%').run();
-   return reply({ok:true,action,changed:count.meta?.changes||0});
+   await env.DB.prepare('INSERT INTO store_gadget_visibility(product_id,enabled) VALUES(?,?) ON CONFLICT(product_id) DO UPDATE SET enabled=excluded.enabled').bind(id,action==='show'?1:0).run();
+   return reply({ok:true,action});
   }
   // Do not remove products with order history. Keep order records intact.
   const history=await env.DB.prepare('SELECT id FROM store_orders WHERE items_json LIKE ? LIMIT 1').bind('%'+id+'::%').first();

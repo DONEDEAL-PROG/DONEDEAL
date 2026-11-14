@@ -35,7 +35,7 @@ export async function onRequestPost({request,env}){
   const q=await priceCart(env.DB,b.items);
   const id='DD-'+crypto.randomUUID(),now=new Date().toISOString();
   await env.DB.batch([
-   ...q.items.map(item=>env.DB.prepare('UPDATE store_variants SET stock=CASE WHEN enabled=1 THEN stock-? ELSE -1 END WHERE sku=?').bind(item.quantity,item.sku)),
+   ...q.items.map(item=>env.DB.prepare(`UPDATE store_variants SET stock=CASE WHEN enabled=1 AND NOT EXISTS (SELECT 1 FROM store_gadget_visibility AS g WHERE g.product_id=substr(store_variants.sku,1,instr(store_variants.sku,'::')-1) AND g.enabled=0) THEN stock-? ELSE -1 END WHERE sku=?`).bind(item.quantity,item.sku)),
    env.DB.prepare('INSERT INTO store_orders(id,status,total_centavos,customer_json,items_json,created_at) VALUES(?,?,?,?,?,?)').bind(id,'pending',q.total,JSON.stringify(c),JSON.stringify(q.items),now),
    env.DB.prepare(`INSERT INTO store_order_meta(order_id,source,fulfillment,payment_method,payment_status,shipping_note,notes) VALUES(?,'manual',?,?, 'unpaid',?,?)`).bind(id,b.fulfillment,b.payment_method,b.fulfillment==='delivery'?'Shipping fee to be confirmed':'Pickup arrangements to be confirmed',String(b.notes||'').slice(0,1000)),
    env.DB.prepare('INSERT INTO store_order_reservations(order_id) VALUES(?)').bind(id)

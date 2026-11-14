@@ -65,8 +65,10 @@ const result = await env.DB.prepare(`
     v.price_centavos,
     v.stock,
     v.enabled,
+    COALESCE(g.enabled,1) AS gadget_enabled,
     i.image_key
   FROM store_variants AS v
+  LEFT JOIN store_gadget_visibility AS g ON g.product_id=substr(v.sku, 1, instr(v.sku, '::') - 1)
   LEFT JOIN store_product_images AS i
     ON i.product_id =
       substr(v.sku, 1, instr(v.sku, '::') - 1)
