@@ -147,6 +147,8 @@ const phSources = {'Samsung':'https://hptotosamsung.com/ph/trade-in/','Apple':'h
 
 const liveVariants = {};
 const productImages = {};
+const liveStock = {};
+let catalogStockLoaded = false;
 
 async function loadLiveVariants() {
   try {
@@ -161,6 +163,7 @@ async function loadLiveVariants() {
     const data = await response.json();
 
     for (const product of data.products || []) {
+      liveStock[product.sku] = Math.max(0,Number(product.stock)||0);
       const separator = product.sku.lastIndexOf("::");
       if (separator === -1) continue;
 
@@ -182,6 +185,8 @@ async function loadLiveVariants() {
     }
 
     Object.assign(phVariants, liveVariants);
+    catalogStockLoaded = true;
+    render();
 
     console.log("Done Deal catalog loaded from D1");
   } catch (error) {
@@ -190,7 +195,7 @@ async function loadLiveVariants() {
 }
 
 function variantList(p) {
-  return phVariants[p.id] || [];
+  return catalogStockLoaded ? (liveVariants[p.id] || []) : [];
 }
 
 const chosenStorage={};
@@ -236,7 +241,7 @@ function render() {
         <div class="price">${money(productPrice(p))}<small>Published PH SRP where verified • confirm availability</small></div>
         <div class="actions">
           <button class="outline" onclick="detail('${p.id}')">View Details</button>
-          <button class="primary" onclick="add('${p.id}')">Add to Cart</button>
+          <button class="primary" onclick="add('${p.id}')" ${variantList(p).some(v=>liveStock[cartKey(p.id,v[0])]>0)?'':'disabled'}>${variantList(p).some(v=>liveStock[cartKey(p.id,v[0])]>0)?'Add to Cart':'OUT OF STOCK'}</button>
         </div>
       </div>
     </article>
@@ -250,29 +255,41 @@ let pendingCartId=null,pendingCartStorage=null,pendingCartQty=1;
 function add(id){openVariantPicker(id);}
 function openVariantPicker(id){
  const p=products.find(x=>x.id===id);if(!p)return;
- pendingCartId=id;pendingCartQty=1;
- const variants=variantList(p);pendingCartStorage=variants.length?null:null;
+ pendingCartId=id;pendingCartQty=1;pendingCartStorage=null;
+ const variants=variantList(p);
  closeOverlay();
  document.getElementById('variantTitle').textContent=p.brand+' '+p.name;
  const choices=document.getElementById('variantChoices');
- choices.innerHTML=variants.length?variants.map(([storage,price])=>`<button type="button" class="variantOption" data-storage="${storage}" onclick="chooseCartVariant(this)"><strong>${storage}</strong><span>${money(price)}</span></button>`).join(''):'<div class="variantUnavailable">Storage options and Philippine SRP have not yet been verified for this model. You can add it as a quotation request.</div>';
- document.getElementById('variantLabel').textContent=variants.length?'Select storage':'Storage to be confirmed';
+ choices.innerHTML=variants.length?variants.map(([storage,price])=>{
+   const available=(liveStock[cartKey(p.id,storage)]||0)>0;
+   return `<button type="button" class="variantOption" data-storage="${storage}" onclick="chooseCartVariant(this)" ${available?'':'disabled'}><strong>${storage}</strong><span>${available?money(price):'OUT OF STOCK'}</span></button>`;
+ }).join(''):'<div class="variantUnavailable">OUT OF STOCK</div>';
+ document.getElementById('variantLabel').textContent='Select storage';
  document.getElementById('variantQty').textContent='1';
- document.getElementById('variantPrice').textContent=variants.length?'Choose a storage option to see its price':'Price on request';
- const confirm=document.getElementById('confirmVariant');confirm.disabled=variants.length>0;
- confirm.textContent=variants.length?'Select storage to continue':'Add quotation item to cart';
+ document.getElementById('variantPrice').textContent='Choose an available storage option';
+ const confirm=document.getElementById('confirmVariant');
+ confirm.disabled=true;
+ confirm.textContent=variants.length?'Select storage to continue':'OUT OF STOCK';
  document.getElementById('variantOverlay').classList.add('open');
 }
+
 function chooseCartVariant(button){
  pendingCartStorage=button.dataset.storage;
  document.querySelectorAll('#variantChoices .variantOption').forEach(el=>el.classList.toggle('selected',el===button));
  const p=products.find(x=>x.id===pendingCartId);
  const v=variantList(p).find(x=>x[0]===pendingCartStorage);
  document.getElementById('variantPrice').textContent=v?money(v[1])+' · Published PH SRP':'Price on request';
- document.getElementById('confirmVariant').disabled=false;
- document.getElementById('confirmVariant').textContent='Confirm Add to Cart';
+ const remaining=Math.max(0,(liveStock[cartKey(p.id,pendingCartStorage)]||0)-(Number(cart[cartKey(p.id,pendingCartStorage)])||0));
+ pendingCartQty=1;document.getElementById('variantQty').textContent='1';
+ document.getElementById('confirmVariant').disabled=remaining<1;
+ document.getElementById('confirmVariant').textContent=remaining<1?'MAX AVAILABILITY REACHED':'Confirm Add to Cart';
 }
-function adjustVariantQty(delta){pendingCartQty=Math.max(1,Math.min(99,pendingCartQty+delta));document.getElementById('variantQty').textContent=pendingCartQty;}
+function adjustVariantQty(delta){
+ const key=cartKey(pendingCartId,pendingCartStorage);
+ const remaining=Math.max(0,(liveStock[key]||0)-(Number(cart[key])||0));
+ pendingCartQty=Math.max(1,Math.min(remaining,pendingCartQty+delta));
+ document.getElementById('variantQty').textContent=pendingCartQty;
+}
 let ddConfirmBusy=false;
 function confirmCartVariant(){
  if(ddConfirmBusy)return;
@@ -282,6 +299,11 @@ function confirmCartVariant(){
  const key=cartKey(p.id,pendingCartStorage);
  const qty=pendingCartQty;
  const label=p.brand+' '+p.name+(pendingCartStorage?' · '+pendingCartStorage:'');
+ if(!catalogStockLoaded||!pendingCartStorage||qty<1||qty+(Number(cart[key])||0)>(liveStock[key]||0)){
+   ddConfirmBusy=false;
+   alert('OUT OF STOCK or maximum availability reached. Please refresh and try again.');
+   return;
+ }
  try {
    // Cart persistence and cart counter are the only required updates here.
    // Full catalog render is unnecessary and may fail on this page.

@@ -6,6 +6,7 @@ let cart={};try{cart=JSON.parse(localStorage.getItem('doneDealCart')||'{}')}catc
 const validQty=q=>Number.isInteger(Number(q))&&Number(q)>0;
 for(const [k,v] of Object.entries(cart))if(!validQty(v))delete cart[k];
 let selected=new Set(Object.keys(cart)),quote=null,customer=null,requestNumber=0;
+const checkoutStock={};let checkoutStockLoaded=false;
 function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart))}
 function items(){return Object.entries(cart).filter(([k,q])=>selected.has(k)&&validQty(q)).map(([sku,quantity])=>({sku,quantity:Number(quantity)}))}
 function safeNode(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!=null)el.textContent=text;return el}
@@ -29,12 +30,14 @@ function renderCart(){
   const count=safeNode('span',null,String(cart[key]));
   const plus=safeNode('button',null,'+');plus.type='button';plus.setAttribute('aria-label','Increase quantity');
   minus.addEventListener('click',()=>change(key,-1));plus.addEventListener('click',()=>change(key,1));
+  plus.disabled=!checkoutStockLoaded||Number(cart[key])>=(checkoutStock[key]||0);
+  if(checkoutStockLoaded&&(checkoutStock[key]||0)<1)side.append(safeNode('div','error','OUT OF STOCK'));
   qty.append(minus,count,plus);side.append(qty);
   const remove=safeNode('button','remove-item','Remove');remove.type='button';remove.addEventListener('click',()=>{delete cart[key];selected.delete(key);save();refresh()});side.append(remove);
   row.append(check,photo,info,side);list.append(row);
  }
 }
-function change(key,d){const n=Number(cart[key]||0)+d;if(n<=0){delete cart[key];selected.delete(key)}else cart[key]=Math.min(n,20);save();refresh()}
+function change(key,d){const n=Number(cart[key]||0)+d;if(d>0&&(!checkoutStockLoaded||n>(checkoutStock[key]||0))){alert('Maximum availability reached.');return}if(n<=0){delete cart[key];selected.delete(key)}else cart[key]=Math.min(n,99);save();refresh()}
 async function loadQuote(){
  const request=++requestNumber;quote=null;$('deliveryBtn').disabled=true;$('reviewBtn').disabled=true;$('pay').disabled=true;
  const chosen=items();$('items').replaceChildren();$('total').textContent='—';$('productTotal').textContent='—';
@@ -109,12 +112,14 @@ async function loadCheckoutCatalog(){
   const r=await fetch('/api/catalog',{cache:'no-store'});if(!r.ok)return;
   const d=await r.json();
   for(const p of d.products||[]){
+   checkoutStock[p.sku]=Math.max(0,Number(p.stock)||0);
    const id=p.sku.split('::')[0];
    if(!productCatalog[id])productCatalog[id]={name:p.name,brand:p.brand||''};
    if(!catalogPrices[id])catalogPrices[id]={};
    catalogPrices[id][p.variant]=p.price_centavos/100;
   }
-  renderCart();
+  checkoutStockLoaded=true;
+  refresh();
  }catch(e){console.warn('Catalog preview unavailable',e)}
 }
 loadCheckoutCatalog();
