@@ -145,11 +145,18 @@ function confirmCartVariant(){
  }
  const counter=document.getElementById('cartCount');
  if(counter){counter.classList.remove('dd-cart-bounce');void counter.offsetWidth;counter.classList.add('dd-cart-bounce');}
+ // Keep the confirmation visible long enough to be noticed, then close the picker.
+ // Show the toast only after the modal closes so it cannot be hidden by its backdrop.
  window.setTimeout(()=>{
    closeOverlay();
-   if(button){button.classList.remove('dd-added','dd-success-pop');button.disabled=false;}
    showCartSuccess(label,addedQty);
- },380);
+   window.setTimeout(()=>{
+     if(button){
+       button.classList.remove('dd-added','dd-success-pop');
+       button.disabled=false;
+     }
+   },250);
+ },850);
 }
 function launchAddToCartAnimation(button){
  const bounds=button.getBoundingClientRect();
@@ -204,7 +211,7 @@ function detail(id){
  document.getElementById('detailOverlay').classList.add('open');
 }
 function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return;} window.location.href='checkout.html';}
-document.getElementById('checkoutForm').addEventListener('submit',e=>{
+document.getElementById('checkoutForm')?.addEventListener('submit',e=>{
  e.preventDefault();const d=new FormData(e.target);
  const lines=['DONE DEAL — ORDER REQUEST','Name: '+d.get('name'),'Email: '+d.get('email'),'Phone: '+d.get('phone'),'Delivery address: '+d.get('address'),'','Requested items:'];
  for(const key of Object.keys(cart)){const item=cartEntry(key);if(item)lines.push(cart[key]+' x '+item.p.brand+' '+item.p.name+' ('+(item.storage||'storage to confirm')+') — '+money(item.price));}
@@ -228,7 +235,7 @@ document.querySelectorAll('button[onclick="openCheckout()"]').forEach(b=>b.textC
 // Microinteractions for product selection and add-to-cart confirmation.
 (function(){
  const css=`
- .dd-cart-toast{position:fixed;right:24px;bottom:24px;z-index:99999;display:flex;align-items:center;gap:13px;max-width:min(450px,calc(100vw - 32px));padding:15px 17px;background:#24242c;color:#fff;border:1px solid #ed4b8a;border-radius:16px;box-shadow:0 20px 55px #0009;opacity:0;transform:translateY(22px) scale(.96);pointer-events:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1)}
+ .dd-cart-toast{position:fixed;right:24px;top:90px;bottom:auto;z-index:100002;display:flex;align-items:center;gap:13px;max-width:min(450px,calc(100vw - 32px));padding:15px 17px;background:#24242c;color:#fff;border:1px solid #ed4b8a;border-radius:16px;box-shadow:0 20px 55px #0009;opacity:0;transform:translateY(22px) scale(.96);pointer-events:none;transition:opacity .25s ease,transform .3s cubic-bezier(.2,.8,.2,1)}
  .dd-cart-toast.dd-show{opacity:1;transform:translateY(0) scale(1);pointer-events:auto}
  .dd-toast-check{display:grid;place-items:center;flex:0 0 33px;height:33px;border-radius:50%;background:#e33d7d;font-weight:800}
  .dd-cart-toast strong{display:block;font-size:13px}.dd-cart-toast small{display:block;color:#c7c3ce;margin-top:4px;font-size:11px}
@@ -247,7 +254,7 @@ document.querySelectorAll('button[onclick="openCheckout()"]').forEach(b=>b.textC
  .product:hover{transform:translateY(-3px)}
  .variantOption:hover{border-color:#e33d7d;transform:translateY(-2px)}
  @media(hover:hover){.primary:hover,.btn:hover,#confirmVariant:not(:disabled):hover{filter:brightness(1.08);box-shadow:0 8px 24px #e33d7d33}}
- @media(max-width:540px){.dd-cart-toast{right:16px;bottom:16px;left:16px;max-width:none}}
+ @media(max-width:540px){.dd-cart-toast{right:16px;top:80px;bottom:auto;left:16px;max-width:none}}
  @media(prefers-reduced-motion:reduce){.dd-cart-toast,button,.product,.dd-brand-tile,.chip,.variantOption,a,.dd-click-ripple,.dd-fly-to-cart{transition:none!important;animation:none!important}}
  `;
  const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
