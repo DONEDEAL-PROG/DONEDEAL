@@ -57,22 +57,49 @@ $('form').addEventListener('submit',e=>{
  e.preventDefault();if(!quote||!$('form').reportValidity())return;
  customer=Object.fromEntries(new FormData($('form')));
  $('reviewName').textContent=customer.name;$('reviewEmail').textContent=customer.email;$('reviewPhone').textContent=customer.phone;
- $('reviewAddress').textContent=[customer.address,customer.city,customer.province,customer.postal].join(', ');
+ $('reviewAddress').textContent=$('fulfillment').value==='pickup'?'Store pickup — details to be confirmed':[customer.address,customer.city,customer.province,customer.postal].join(', ');
  $('entry').style.display='none';$('review').style.display='block';window.scrollTo({top:0,behavior:'smooth'});
 });
 $('editBtn').addEventListener('click',()=>{$('review').style.display='none';$('entry').style.display='block';$('status').textContent=''});
+$('fulfillment').addEventListener('change',()=>{
+ const pickup=$('fulfillment').value==='pickup';
+ for(const id of ['address','city','province','postal']){
+  const el=$(id);if(el)el.required=!pickup;
+ }
+});
 $('pay').addEventListener('click',async()=>{
  if(!quote||!customer)return;
- const button=$('pay');button.disabled=true;$('status').textContent='Preparing secure payment…';
+ const button=$('pay');button.disabled=true;$('status').textContent='Submitting order request…';
  try{
-  const r=await fetch('/api/create-checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({items:items(),customer})});
-  const d=await r.json();if(!r.ok)throw Error(d.error||'Checkout unavailable');
-  const url=new URL(d.checkout_url);if(url.protocol!=='https:'||!(url.hostname==='checkout.paymongo.com'||url.hostname.endsWith('.paymongo.com')))throw Error('Unexpected payment URL');
-  $('step2').className='step done';$('step3').className='step active';location.assign(d.checkout_url);
+  const r=await fetch('/api/create-checkout',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({items:items(),customer,fulfillment:$('fulfillment').value,payment_method:$('paymentMethod').value})});
+  const d=await r.json();if(!r.ok)throw Error(d.error||'Order unavailable');
+  for(const item of items())delete cart[item.sku];
+  save();
+  $('review').innerHTML='';
+  const box=safeNode('div','');
+  box.append(safeNode('h2',null,'Order request received!'),safeNode('p','muted','Reference: '+d.order_id),safeNode('p','muted',d.message));
+  const a=safeNode('a','btn','Continue shopping');a.href='shop.html';box.append(a);
+  $('review').append(box);
+  $('step2').className='step done';$('step3').className='step active';
+  $('status').textContent='';
  }catch(e){$('status').textContent=e.message;$('status').className='error';button.disabled=false}
 });
-refresh();
 
+refresh();
+async function loadCheckoutCatalog(){
+ try{
+  const r=await fetch('/api/catalog',{cache:'no-store'});if(!r.ok)return;
+  const d=await r.json();
+  for(const p of d.products||[]){
+   const id=p.sku.split('::')[0];
+   if(!productCatalog[id])productCatalog[id]={name:p.name,brand:p.brand||''};
+   if(!catalogPrices[id])catalogPrices[id]={};
+   catalogPrices[id][p.variant]=p.price_centavos/100;
+  }
+  renderCart();
+ }catch(e){console.warn('Catalog preview unavailable',e)}
+}
+loadCheckoutCatalog();
 
 (function(){
  if(window.__ddMotionInstalled)return;

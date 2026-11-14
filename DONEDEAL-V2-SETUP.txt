@@ -1,0 +1,79 @@
+DONE DEAL 2.0 — ADD GADGET + ORDER MANAGEMENT
+============================================
+
+IMPORTANT: THIS IS A DEPLOYMENT PACKAGE, NOT AN ALREADY DEPLOYED WEBSITE.
+Keep a backup of your existing repository. Test checkout in a preview deployment before allowing customers to order.
+
+1. DATABASE FIRST (required):
+   Cloudflare Dashboard > Workers & Pages > D1 > donedeal-db > Console.
+   Run the contents of database/migration-v2.sql against the PRODUCTION database.
+   This creates store_products and store_order_meta; it does not delete existing data.
+   Back up your D1 database before migration.
+   Existing DB binding must remain named DB.
+
+2. DEPLOY THE FILES:
+   Extract this ZIP. Upload the CONTENTS of the DONEDEAL-main folder to your
+   existing GitHub repository's main branch, preserving directory structure.
+   Do not upload the containing folder as an extra nested level.
+   Cloudflare Pages will deploy the updated files.
+
+3. OPEN:
+   https://donedeal-51i.pages.dev/admin/operations.html
+   Log in with your existing admin password.
+   Use Add Gadget to create brand/model/variants, and Orders for manual orders.
+   The existing /admin/ Product Manager has a shortcut to the new dashboard.
+
+4. PRODUCT PHOTO:
+   New gadgets appear in the existing Product Manager after saving.
+   Use its upload button to set the main photo. Existing R2 binding IMAGES required.
+   This release supports ONE MAIN PHOTO PER MODEL, not a multiple-photo gallery.
+
+5. WEBSITE CHECKOUT:
+   COD, GCash, bank transfer create PENDING ORDER REQUESTS in D1.
+   No money is charged and no GCash/bank instructions are automatically sent.
+   Credit/debit cards are disabled until a gateway is configured.
+   Delivery fee is NOT included in the shown product subtotal.
+   Contact the customer to confirm availability, delivery coverage, shipping fee,
+   payment instructions, and pickup details BEFORE treating an order as confirmed.
+   Do not mark paid until payment is independently verified.
+   Orders do not automatically reduce inventory; stock reservation is not implemented.
+   No automated email, SMS, fraud protection, or refund processing is implemented.
+
+6. IMPORTANT LIMITATIONS:
+   - The dashboard displays the latest 300 orders.
+   - Manual order form supports one variant per order; for multi-item manual orders,
+     create separate orders or extend the form.
+   - Legacy PayMongo orders remain in D1 and display in Orders; their status/payment
+     changes must be handled via the original gateway.
+   - Multiple product photos and card payments are NOT yet implemented.
+   - Existing hardcoded catalog products remain; new products are loaded dynamically
+     from store_products + store_variants.
+   - Existing products with zero or disabled stock cannot be ordered via the API.
+   - Keep Cloudflare secrets ADMIN_PASSWORD and ADMIN_SESSION_SECRET configured.
+   - Do not run migration after an unsuccessful partial deployment without reviewing errors.
+
+FILES ADDED:
+ database/migration-v2.sql
+ functions/api/admin/_auth.js
+ functions/api/admin/gadgets.js
+ functions/api/admin/orders.js
+ admin/operations.html
+
+FILES UPDATED:
+ app.js, checkout.js, checkout.html,
+ functions/api/catalog.js, functions/api/create-checkout.js,
+ functions/api/_shared.js, functions/api/admin/product-image.js,
+ admin/index.html
+
+TEST CHECKLIST:
+ [ ] Admin login works.
+ [ ] Existing 42 variants remain unchanged.
+ [ ] Add a test custom gadget with 1 enabled variant and price > 0.
+ [ ] Upload its main image in Product Manager.
+ [ ] Confirm it appears on storefront and in checkout.
+ [ ] Create a test manual order.
+ [ ] Submit a test website checkout with COD.
+ [ ] Confirm both appear in Orders with unpaid status.
+ [ ] Check pickup checkout without address; delivery requires address.
+ [ ] Verify card payments disabled.
+ [ ] Confirm old catalog products and images still display.

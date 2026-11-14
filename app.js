@@ -94,6 +94,15 @@ async function loadLiveVariants() {
     const data = await response.json();
 
     for (const product of data.products || []) {
+      // New models are read from D1; the old hardcoded models remain intact.
+      const newId = String(product.sku||'').split('::')[0];
+      if (/^custom-[0-9a-f-]{36}$/.test(newId) && !products.some(p=>p.id===newId)) {
+        const safe = value => String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        const brand=safe(product.brand||'Other'),model=safe(product.model||product.name||'Gadget');
+        products.push({id:newId,brand,name:model,desc:safe(product.description||'New arrival'),spec:'Storage and color options available',tag:'New',price:null});
+        if(!entries[brand])entries[brand]=[];
+      }
+
       const separator = product.sku.lastIndexOf("::");
       if (separator === -1) continue;
 
@@ -155,7 +164,7 @@ function render() {
   document.getElementById('resultCount').textContent = data.length + ' products';
   document.getElementById('catalog').innerHTML = data.map(p => `
     <article class="product">
-      <div class="visual" style="--shade:${shades[p.brand]}">
+      <div class="visual" style="--shade:${shades[p.brand]||'#bca3b5'}">
         <span class="tag">${p.tag}</span>
         ${productImages[p.id]
           ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`
@@ -166,7 +175,7 @@ function render() {
         <h3>${p.name}</h3>
         <div class="desc">${p.desc}</div>
         <div class="spec">${p.spec}</div>
-        <div class="price">${money(productPrice(p))}<small>Published PH SRP where verified • confirm availability</small></div>
+        <div class="price">${money(productPrice(p))}<small>Confirm price and availability at checkout</small></div>
         <div class="actions">
           <button class="outline" onclick="detail('${p.id}')">View Details</button>
           <button class="primary" onclick="add('${p.id}')">Add to Cart</button>
@@ -296,7 +305,7 @@ function detail(id){
  const specRows=specsFor(p).map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('');
  const picker=variants.length?`<label class="storageLabel">Choose storage variant<select class="storageSelect" onchange="setDetailVariant('${p.id}',this.value)">${variants.map(([v,price])=>`<option value="${v}" ${selected&&selected[0]===v?'selected':''}>${v} — ₱${price.toLocaleString('en-PH')}</option>`).join('')}</select></label>`:'';
  const price=selected?'₱'+selected[1].toLocaleString('en-PH'):'PH SRP not confirmed';
- document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]};height:200px;border-radius:12px">${productImages[p.id] ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">` : `<div class="mini"></div>`}</div><p style="color:#eee">${p.desc}</p><h3>Full product specifications</h3><table class="specTable"><tbody>${specRows}</tbody></table>${picker}<div class="detailPrice">${price}</div><div class="detailPriceNote">${selected?`Published Philippine SRP for ${selected[0]} · <a href="${phSources[p.brand]}" target="_blank" rel="noopener">Source</a>`:'A reliable published Philippine SRP for this exact variant was not established. Request a quotation before checkout.'}</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
+ document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]||'#bca3b5'};height:200px;border-radius:12px">${productImages[p.id] ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">` : `<div class="mini"></div>`}</div><p style="color:#eee">${p.desc}</p><h3>Full product specifications</h3><table class="specTable"><tbody>${specRows}</tbody></table>${picker}<div class="detailPrice">${price}</div><div class="detailPriceNote">${selected?`Price for ${selected[0]} · Confirm at checkout`:'A reliable published Philippine SRP for this exact variant was not established. Request a quotation before checkout.'}</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
  document.getElementById('detailOverlay').classList.add('open');
 }
 function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return;} window.location.href='checkout.html';}
