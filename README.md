@@ -1,7 +1,5 @@
-# Done Deal Phone & Gadgets — Premium Homepage Update
+DONE DEAL — Seamless Hero Update
 
-Upload `index.html`, `app.js`, `hero-model.jpg`, and `hero-product.webp` to the **root** of your existing GitHub DONEDEAL repository, replacing the existing files with matching names. Cloudflare Pages should deploy from the `main` branch automatically.
+The hero model and right-hand product image now fade smoothly into the charcoal background using layered gradients. Product catalog, brand links and cart remain unchanged.
 
-This update preserves the existing 35-phone catalog, filtering, cart and demo checkout. Apple and Huawei marks use CDN-hosted SVG icons; the other brand wordmarks are rendered as styled text. For reliable branding, replace CDN icons with appropriately licensed local logo assets before production.
-
-The iPhone 18 Pro visuals and claims are promotional concepts and must not be represented as verified Apple specifications. The checkout is a demo and does not process real payments.
+Upload index.html, app.js, hero-model.jpg, hero-product.webp to the root of your DONEDEAL GitHub repository and commit. Cloudflare Pages will redeploy automatically.
