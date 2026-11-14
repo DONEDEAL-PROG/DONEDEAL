@@ -71,3 +71,11 @@ html[data-dd-store-theme="light"] .brandBar .vivo{color:#3453c2!important}
 @media(max-width:650px){
  html[data-dd-store-theme="light"] .brandBar .brandTile{border-bottom-color:#e8dfe6!important}
 }
+
+/* Light-mode logo correction: use the transparent light-background emblem. */
+html[data-dd-store-theme="light"] img.ddBrandMark {
+  content: url("done-deal-mark-light.png") !important;
+  filter: drop-shadow(0 2px 3px rgba(71,38,59,.12)) !important;
+}
+html[data-dd-store-theme="light"] .nav .logo { color: #29212b !important; }
+html[data-dd-store-theme="light"] .nav .logo span { color: #b72b6a !important; }
