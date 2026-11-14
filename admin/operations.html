@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Done Deal | Gadgets & Orders</title><style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#111116;color:#f9f6fb;font:15px system-ui,sans-serif}header{padding:20px 5%;background:#1c1a23;border-bottom:1px solid #403443}main{max-width:1180px;margin:auto;padding:24px}h1{margin:0;font-size:25px}h2{font-size:20px;margin:0 0 14px}p,.muted{color:#bdb3c3}.pink{color:#ff70b7}.panel,.tile{background:#211e29;border:1px solid #3d3546;border-radius:18px;padding:20px}.panel{margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.space{justify-content:space-between}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;flex:1;min-width:180px}input,select,textarea,button{font:inherit;padding:11px;border-radius:10px}input,select,textarea{width:100%;background:#2d2935;border:1px solid #5b4c61;color:white}button{background:#e83291;color:#fff;border:0;font-weight:750;cursor:pointer}button.secondary{background:#38303e}button:disabled{opacity:.5;cursor:wait}a{color:#ff8bc5}label{color:#e6dce8;font-size:13px}small{color:#bcb1c1}nav{display:flex;gap:10px;margin:18px 0}.tab.active{background:#e83291}.hide{display:none!important}.variant{padding:14px;border:1px solid #514054;border-radius:12px;margin-bottom:10px}.status{padding:10px;border-radius:9px;color:#ffc2df;white-space:pre-wrap}.tag{background:#403044;color:#ffc1df;border-radius:9px;padding:5px 8px;font-size:12px}.order{margin-bottom:12px}.order h3{margin:0 0 8px;font-size:16px}.order pre{white-space:pre-wrap;font:13px system-ui;color:#ddd}.order select{width:auto;max-width:100%}@media(max-width:600px){main{padding:14px}.panel{padding:15px}}
+</style></head><body>
+<header><div class="row space"><div><h1>DONE DEAL <span class="pink">/ CONTROL CENTER</span></h1><small>Add gadgets • manage orders • graphite + hot pink</small></div><a href="/admin/">← Product Manager</a></div></header>
+<main>
+<section id="login" class="panel" style="max-width:420px;margin:50px auto"><h2>Admin sign in</h2><form id="loginForm"><div class="field"><label>Password</label><input type="password" id="password" autocomplete="current-password" required></div><button>Sign In</button></form><p id="loginMsg"></p></section>
+<div id="app" class="hide">
+<div class="grid" id="stats"></div>
+<nav><button class="tab active" data-tab="gadgets">＋ Add Gadget</button><button class="tab secondary" data-tab="orders">▤ Orders</button></nav>
+<section id="gadgets" class="panel"><h2>New gadget</h2><p>Create a new model with independent storage, color, prices and stock. New models appear on the storefront after saving.</p>
+<div class="row"><div class="field"><label>Brand</label><input id="brand" maxlength="40" placeholder="e.g. Apple or new brand"></div><div class="field"><label>Model</label><input id="model" maxlength="100" placeholder="e.g. Phone Model"></div></div>
+<div class="field"><label>Description</label><textarea id="description" rows="3" maxlength="1200" placeholder="Describe the gadget"></textarea></div>
+<h3>Variants</h3><div id="variants"></div><div class="row"><button class="secondary" id="addVariant">＋ Add Variant</button><button id="saveGadget">Save Gadget & Variants</button></div><p class="status" id="gadgetMsg"></p>
+<p class="muted">After saving, use the existing <a href="/admin/">Product Manager</a> to upload the gadget's main photo. Product photos are shared by all variants of one model.</p></section>
+<section id="orders" class="hide">
+<div class="panel"><div class="row space"><h2>Orders Dashboard</h2><button id="refreshOrders" class="secondary">↻ Refresh</button></div><div class="row"><div class="field"><label>Find order / customer</label><input id="orderSearch" placeholder="Search reference, name, phone"></div><div class="field"><label>Status</label><select id="orderFilter"><option value="">All statuses</option><option>pending</option><option>confirmed</option><option>processing</option><option>shipped</option><option>delivered</option><option>cancelled</option></select></div></div><p class="status" id="ordersMsg"></p><div id="orderList"></div></div>
+<div class="panel"><h2>＋ Manual Order</h2><p>For Messenger, walk-in, or phone orders. Prices and availability are checked against D1.</p>
+<div class="row"><div class="field"><label>Customer name</label><input id="manualName"></div><div class="field"><label>Phone</label><input id="manualPhone"></div><div class="field"><label>Address (required for delivery)</label><input id="manualAddress"></div></div>
+<div class="row"><div class="field"><label>Fulfillment</label><select id="manualFulfillment"><option value="pickup">Store Pickup</option><option value="delivery">Delivery</option></select></div><div class="field"><label>Payment method</label><select id="manualPayment"><option value="cash">Cash</option><option value="cod">COD</option><option value="gcash">GCash</option><option value="bank_transfer">Bank Transfer</option></select></div></div>
+<div class="row"><div class="field"><label>Gadget variant</label><select id="manualSku"></select></div><div class="field"><label>Quantity</label><input id="manualQty" type="number" min="1" max="10" value="1"></div></div>
+<div class="field"><label>Notes</label><textarea id="manualNotes" rows="2"></textarea></div><button id="saveManual">Create Manual Order</button><p class="status" id="manualMsg"></p>
+</div></section></div></main>
+<script>
+const $=id=>document.getElementById(id);
+let orders=[],catalog=[];
+const money=c=>'₱'+(Number(c||0)/100).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const el=(tag,txt,cls)=>{const n=document.createElement(tag);if(txt!=null)n.textContent=txt;if(cls)n.className=cls;return n};
+async function api(url,options={}){const r=await fetch(url,{credentials:'same-origin',...options});const d=await r.json();if(!r.ok)throw Error(d.error||'Request failed');return d}
+const post=(url,data)=>api(url,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)});
+function addVariant(){
+ const div=el('div',null,'variant');
+ div.innerHTML='<div class="row"><div class="field"><label>Storage / RAM</label><input class="storage" maxlength="60" placeholder="8GB / 256GB"></div><div class="field"><label>Color (optional)</label><input class="color" maxlength="60" placeholder="Black"></div></div><div class="row"><div class="field"><label>Price in PHP</label><input class="price" type="number" min="0.01" step="0.01" placeholder="0.00"></div><div class="field"><label>Stock</label><input class="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label>Published</label><select class="enabled"><option value="0">Not yet</option><option value="1">Yes</option></select></div></div>';
+ const b=el('button','Remove variant','secondary');b.type='button';b.onclick=()=>div.remove();div.append(b);$('variants').append(div);
+}
+$('addVariant').onclick=addVariant;addVariant();
+$('saveGadget').onclick=async()=>{
+ const btn=$('saveGadget');btn.disabled=true;$('gadgetMsg').textContent='Saving...';
+ try{
+ const variants=[...document.querySelectorAll('#variants .variant')].map(v=>({storage:v.querySelector('.storage').value,color:v.querySelector('.color').value,price_centavos:Math.round(Number(v.querySelector('.price').value)*100),stock:Number(v.querySelector('.stock').value),enabled:Number(v.querySelector('.enabled').value)}));
+ if(variants.some(v=>!v.storage||v.price_centavos<=0))throw Error('Each variant needs storage/RAM and positive price');
+ const d=await post('/api/admin/gadgets',{brand:$('brand').value,model:$('model').value,description:$('description').value,variants});
+ $('gadgetMsg').textContent='Saved '+d.name+' with '+d.variants+' variant(s)! Go to Product Manager to upload its photo.';
+ $('brand').value='';$('model').value='';$('description').value='';$('variants').replaceChildren();addVariant();await loadCatalog();
+ }catch(e){$('gadgetMsg').textContent=e.message}finally{btn.disabled=false}
+};
+async function loadCatalog(){
+ const d=await api('/api/admin/products');catalog=d.products||[];
+ const select=$('manualSku');select.replaceChildren();
+ for(const p of catalog.filter(p=>p.enabled===1&&p.stock>0&&p.price_centavos>=100)){
+ const o=el('option',p.name+' · '+p.variant+' · '+money(p.price_centavos)+' · '+p.stock+' in stock');o.value=p.sku;select.append(o);
+ }
+}
+function orderCard(o){
+ const box=el('div',null,'panel order');
+ const head=el('div',null,'row space'),title=el('h3',o.id),badge=el('span',o.source||'legacy','tag');head.append(title,badge);box.append(head);
+ let customer={},items=[];try{customer=JSON.parse(o.customer_json||'{}');items=JSON.parse(o.items_json||'[]')}catch{}
+ box.append(el('p',(customer.name||'Customer unknown')+' · '+(customer.phone||'')+' · '+(customer.email||'')));
+ box.append(el('p',money(o.total_centavos)+' product subtotal · '+(o.fulfillment||'legacy')+' · '+(o.payment_method||'gateway/legacy')));
+ const itemsBox=el('div',null,'muted');itemsBox.textContent=items.map(i=>(i.quantity||1)+'× '+(i.name||i.sku)+' '+(i.variant||'')).join(' • ');box.append(itemsBox);
+ const addr=el('p',[customer.address,customer.city,customer.province,customer.postal].filter(Boolean).join(', '));box.append(addr);
+ if(o.notes)box.append(el('p','Notes: '+o.notes));
+ const controls=el('div',null,'row');
+ const st=el('select');for(const s of ['pending','confirmed','processing','shipped','delivered','cancelled']){const x=el('option',s);x.value=s;st.append(x)}st.value=o.status;
+ const pay=el('select');for(const s of ['unpaid','pending_verification','paid','refunded']){const x=el('option',s);x.value=s;pay.append(x)}pay.value=o.payment_status||'unpaid';
+ const save=el('button','Save statuses');const msg=el('small','');
+ save.onclick=async()=>{save.disabled=true;try{await post('/api/admin/orders',{action:'status',id:o.id,status:st.value,payment_status:pay.value});msg.textContent='Saved';await loadOrders()}catch(e){msg.textContent=e.message}finally{save.disabled=false}};
+ controls.append(el('span','Order:'),st,el('span','Payment:'),pay,save,msg);box.append(controls);return box;
+}
+function renderOrders(){
+ const term=$('orderSearch').value.toLowerCase(),status=$('orderFilter').value;
+ const filtered=orders.filter(o=>(!status||o.status===status)&&[o.id,o.customer_json,o.items_json].join(' ').toLowerCase().includes(term));
+ $('orderList').replaceChildren(...filtered.map(orderCard));
+ if(!filtered.length)$('orderList').append(el('p','No matching orders.'));
+ $('stats').replaceChildren();
+ for(const [label,n] of [['Total orders',orders.length],['Pending',orders.filter(o=>o.status==='pending').length],['Processing',orders.filter(o=>o.status==='processing').length],['Delivered',orders.filter(o=>o.status==='delivered').length]]){
+ const t=el('div',null,'tile');t.append(el('small',label),el('h2',String(n)));$('stats').append(t);
+ }
+}
+async function loadOrders(){try{const d=await api('/api/admin/orders');orders=d.orders||[];$('ordersMsg').textContent='Showing latest '+orders.length+' orders. No card payment is active.';renderOrders()}catch(e){$('ordersMsg').textContent=e.message}}
+$('orderSearch').oninput=renderOrders;$('orderFilter').onchange=renderOrders;$('refreshOrders').onclick=loadOrders;
+$('saveManual').onclick=async()=>{
+ const b=$('saveManual');b.disabled=true;
+ try{
+ const d=await post('/api/admin/orders',{action:'manual',customer:{name:$('manualName').value,phone:$('manualPhone').value,address:$('manualAddress').value},fulfillment:$('manualFulfillment').value,payment_method:$('manualPayment').value,items:[{sku:$('manualSku').value,quantity:Number($('manualQty').value)}],notes:$('manualNotes').value});
+ $('manualMsg').textContent='Manual order created: '+d.id;await loadOrders();
+ }catch(e){$('manualMsg').textContent=e.message}finally{b.disabled=false}
+};
+for(const btn of document.querySelectorAll('.tab'))btn.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('active',x===btn);x.classList.toggle('secondary',x!==btn)});$('gadgets').classList.toggle('hide',btn.dataset.tab!=='gadgets');$('orders').classList.toggle('hide',btn.dataset.tab!=='orders')};
+async function start(){try{await loadCatalog();$('login').classList.add('hide');$('app').classList.remove('hide');await loadOrders()}catch(e){$('loginMsg').textContent='Sign in to continue. '+e.message}}
+$('loginForm').onsubmit=async e=>{e.preventDefault();try{await post('/api/admin/login',{password:$('password').value});$('password').value='';await start()}catch(e){$('loginMsg').textContent=e.message}};
+start();
+</script></body></html>

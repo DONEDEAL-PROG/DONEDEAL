@@ -97,7 +97,7 @@ button:not(:disabled):hover{filter:brightness(1.08)}
 </head>
 <body>
 <header><h1>DONE DEAL</h1><div class="subtitle">PRIVATE ADMIN DASHBOARD</div></header>
-<main>
+<main><div style="margin:0 0 18px"><a href="/admin/operations.html" style="display:inline-block;background:#e83291;color:#fff;padding:13px 17px;border-radius:12px;text-decoration:none;font-weight:800">＋ Add Gadget &amp; Manage Orders →</a></div>
 <section id="loginPanel" class="panel">
 <h2>Admin Sign In</h2>
 <form id="loginForm">
@@ -352,7 +352,7 @@ function renderProduct(item) {
     const file = imageInput.files?.[0];
     if (!file) {photoMessage.textContent = "Choose a photo first.";return;}
     const productId = item.sku.split("::")[0];
-    if (!/^[A-Za-z]+-\d+$/.test(productId)) {
+    if (!/^(?:[A-Za-z]+-\d+|custom-[0-9a-f-]{36})$/.test(productId)) {
       photoMessage.textContent = "Invalid product ID.";return;
     }
     upload.disabled = true;imageInput.disabled = true;
