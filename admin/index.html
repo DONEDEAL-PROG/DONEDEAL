@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Done Deal | Admin</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #111116;
+      color: #fff;
+      font-family: system-ui, sans-serif;
+    }
+    .panel {
+      width: min(420px, 92vw);
+      padding: 32px;
+      background: #1d1d26;
+      border: 1px solid #37303a;
+      border-radius: 18px;
+    }
+    h1 { margin: 0 0 8px; }
+    .subtitle { color: #ff4da6; }
+    input, button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 12px;
+      border-radius: 9px;
+      font: inherit;
+    }
+    input {
+      background: #292933;
+      border: 1px solid #454550;
+      color: white;
+    }
+    button {
+      border: 0;
+      background: #ec2991;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    #message { color: #ffb5d8; }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <h1>DONE DEAL</h1>
+    <p class="subtitle">Private Admin Portal</p>
+    <form id="login">
+      <input
+        id="password"
+        type="password"
+        placeholder="Admin password"
+        autocomplete="current-password"
+        required
+      >
+      <button type="submit">Sign In</button>
+    </form>
+    <p id="message" role="status"></p>
+  </main>
+  <script>
+    document.getElementById("login").addEventListener(
+      "submit", async (event) => {
+        event.preventDefault();
+        const message = document.getElementById("message");
+        message.textContent = "Signing in...";
+        try {
+          const response = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({
+              password: document.getElementById("password").value
+            })
+          });
+          if (!response.ok) {
+            throw new Error("Login failed or backend not configured.");
+          }
+          message.textContent = "Signed in. Dashboard setup is next.";
+          document.getElementById("password").value = "";
+        } catch (error) {
+          message.textContent = error.message;
+        }
+      }
+    );
+  </script>
+</body>
+</html>
