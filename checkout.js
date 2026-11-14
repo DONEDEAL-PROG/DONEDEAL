@@ -98,6 +98,7 @@ $('pay').addEventListener('click',async()=>{
   box.append(safeNode('p','muted','Thank you! Your order is awaiting confirmation.'));
   box.append(safeNode('p','muted','Order reference: '+(d.order_id||'Pending')));
   if(d.message)box.append(safeNode('p','muted',d.message));
+  const track=safeNode('a','btn','Track My Order');track.href='track-order.html?order='+encodeURIComponent(d.order_id||'');box.append(track);
   const a=safeNode('a','btn','Continue shopping');a.href='shop.html';box.append(a);
   $('review').append(box);
   window.scrollTo({top:0,behavior:'smooth'});

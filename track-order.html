@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Track My Order | Done Deal Phone and Gadgets</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f3f2;color:#29252b;font:16px/1.55 system-ui,-apple-system,sans-serif}
+header{background:#fff;border-bottom:1px solid #e6dfe3;padding:18px max(20px,calc((100vw - 850px)/2))}
+header a{color:#a63871;text-decoration:none;font-weight:750}main{max-width:780px;margin:40px auto;padding:0 18px}
+.card{background:white;border:1px solid #e6dfe3;border-radius:18px;padding:clamp(22px,4vw,36px);box-shadow:0 8px 30px #4030400a}
+h1{font-size:clamp(27px,5vw,36px);margin:0 0 6px}h2{font-size:21px;margin:0 0 12px}.muted{color:#716a71;margin:0 0 24px}
+label{display:block;font-weight:650;margin:16px 0 6px}input{width:100%;padding:14px;border:1px solid #d8cdd5;border-radius:10px;background:#fcfafb;font:inherit;color:#29252b}
+input:focus{outline:3px solid #eed2e0;border-color:#a63871}button{width:100%;background:#a63871;color:white;border:0;border-radius:10px;padding:14px;font:inherit;font-weight:750;cursor:pointer;margin-top:24px}
+button:disabled{opacity:.65;cursor:wait}.result{margin-top:22px;padding:20px;background:#fff;border:1px solid #e6dfe3;border-radius:14px}
+.pill{display:inline-block;border-radius:999px;background:#f5e1ea;color:#87305c;padding:5px 12px;font-size:13px;font-weight:800;text-transform:capitalize}
+.info{background:#faf3f6;border-radius:10px;padding:13px;margin-top:15px;color:#70445b}
+.err{color:#a52d4a;font-weight:650;margin-top:16px}.detail{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:12px 0}
+.detail strong{overflow-wrap:anywhere}.small{font-size:13px;color:#716a71}
+</style></head><body>
+<header><a href="/">← Done Deal Phone and Gadgets</a></header>
+<main><section class="card"><div class="small">CUSTOMER ORDER TRACKING</div>
+<h1>Track My Order</h1><p class="muted">Enter your order reference and the phone number used at checkout to see the latest status.</p>
+<form id="trackForm"><label for="ref">Order reference</label><input id="ref" required maxlength="39" placeholder="DD-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
+<label for="phone">Phone number used on your order</label><input id="phone" required type="tel" inputmode="tel" maxlength="30" placeholder="09XXXXXXXXX" autocomplete="tel">
+<button id="submit" type="submit">Check Order Status</button></form>
+<p id="error" class="err" role="alert" hidden></p><section id="result" class="result" aria-live="polite" hidden></section>
+</section><p class="small" style="text-align:center;margin:20px">Need help? Contact Done Deal using the contact details on our website.</p></main>
+<script>
+const $=id=>document.getElementById(id);
+const labels={pending:'Pending confirmation',confirmed:'Confirmed',processing:'Processing',shipped:'Shipped',delivered:'Completed / Delivered',cancelled:'Cancelled'};
+const pickupLabels={pending:'Awaiting confirmation',confirmed:'Confirmed',preparing:'Preparing gadget',ready:'Ready for pickup',claimed:'Claimed',cancelled:'Cancelled'};
+const info={pending:'Your order request is awaiting store confirmation.',confirmed:'Your order has been confirmed.',processing:'Your order is being prepared.',shipped:'Your order is on its way.',delivered:'Your order has been completed.',cancelled:'Your order has been cancelled. It will not be processed further. If you have already paid, please contact the store about your refund.'};
+$('trackForm').addEventListener('submit',async e=>{
+ e.preventDefault();$('error').hidden=true;$('result').hidden=true;
+ const button=$('submit');button.disabled=true;button.textContent='Checking…';
+ try{
+  const response=await fetch('/api/track-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({order_id:$('ref').value.trim(),phone:$('phone').value.trim()}),cache:'no-store'});
+  const data=await response.json();if(!response.ok)throw Error(data.error||'Could not find your order');
+  const o=data.order,box=$('result');box.replaceChildren();
+  function line(label,value){const row=document.createElement('div');row.className='detail';const a=document.createElement('span');a.textContent=label;const b=document.createElement('strong');b.textContent=value;row.append(a,b);box.append(row)}
+  const title=document.createElement('h2');title.textContent='Your Order';box.append(title);
+  line('Order reference',o.id);
+  line('Placed',o.created_at?new Date(o.created_at).toLocaleString('en-PH'):'Date unavailable');
+  line('Fulfillment',o.fulfillment==='pickup'?'Store Pickup':o.fulfillment==='delivery'?'Delivery':'Not recorded');
+  const badge=document.createElement('span');badge.className='pill';badge.textContent=labels[o.status]||o.status||'Unknown';box.append(badge);
+  if(o.fulfillment==='pickup'){
+   const p=document.createElement('p');p.className='info';
+   p.textContent=o.status==='cancelled'?'This pickup order was cancelled.':o.pickup_status?('Pickup progress: '+(pickupLabels[o.pickup_status]||o.pickup_status)):('Pickup progress: '+(o.status==='delivered'?'Completed': 'Awaiting preparation'));
+   box.append(p);
+  }
+  const note=document.createElement('p');note.className='info';note.textContent=info[o.status]||'Contact the store for an update.';box.append(note);
+  $('result').hidden=false;
+ }catch(e){$('error').textContent=e.message;$('error').hidden=false}
+ finally{button.disabled=false;button.textContent='Check Order Status'}
+});
+const saved=new URLSearchParams(location.search).get('order');
+if(saved&&/^DD-[0-9a-f-]{36}$/i.test(saved))$('ref').value=saved;
+</script></body></html>
