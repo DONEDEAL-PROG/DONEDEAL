@@ -147,7 +147,66 @@ const shades={Huawei:'#d1a1a0',Samsung:'#829cdb',OPPO:'#a4c5b3',vivo:'#8aacee',X
 const products=Object.entries(entries).flatMap(([brand,items])=>items.map((x,i)=>({id:brand+'-'+i,brand,name:x[0],desc:x[1],spec:x[2],tag:x[3],price:null})));
 let filter='All',cart=JSON.parse(localStorage.getItem('doneDealCart')||'{}');
 const money=p=>p==null?'PH SRP pending verification':'₱'+p.toLocaleString('en-PH');
-function render(){let q=document.getElementById('search').value.toLowerCase(),sort=document.getElementById('sort').value;let data=products.filter(p=>(filter==='All'||p.brand===filter)&&(p.brand+' '+p.name+' '+p.desc+' '+p.spec).toLowerCase().includes(q));if(sort==='az')data.sort((a,b)=>a.name.localeCompare(b.name));if(sort==='brand')data.sort((a,b)=>a.brand.localeCompare(b.brand));document.getElementById('resultCount').textContent=data.length+' products';document.getElementById('catalog').innerHTML=data.map(p=>`<article class="product"><div class="visual" style="--shade:${shades[p.brand]}"><span class="tag">${p.tag}</span><div class="mini"></div></div><div class="pbody"><div class="brand">${p.brand}</div><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="spec">${p.spec}</div><div class="price">${money(productPrice(p))}<small>Published PH SRP where verified • confirm availability</small></div><div class="actions"><button class="outline" onclick="detail('${p.id}')">View Details</button><button class="primary" onclick="add('${p.id}')">Add to Cart</button></div></div></article>`).join('')||'<div class="empty">No phones found. Try another search.</div>';}
+
+function render() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const sort = document.getElementById('sort').value;
+
+  let data = products.filter(p =>
+    (filter === 'All' || p.brand === filter) &&
+    (p.brand + ' ' + p.name + ' ' + p.desc + ' ' + p.spec)
+      .toLowerCase().includes(q)
+  );
+
+  if (sort === 'az') {
+    data.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  if (sort === 'brand') {
+    data.sort((a, b) => a.brand.localeCompare(b.brand));
+  }
+
+  document.getElementById('resultCount').textContent =
+    data.length + ' products';
+
+  document.getElementById('catalog').innerHTML =
+    data.map(p => `
+      <article class="product">
+        <div class="visual" style="--shade:${shades[p.brand]}">
+          <span class="tag">${p.tag}</span>
+          ${productImages[p.id]
+            ? `<img
+                src="${productImages[p.id]}"
+                alt="${p.brand} ${p.name}"
+                loading="lazy"
+                style="width:100%;height:100%;object-fit:contain;
+                       position:relative;z-index:1"
+              >`
+            : `<div class="mini"></div>`}
+        </div>
+        <div class="pbody">
+          <div class="brand">${p.brand}</div>
+          <h3>${p.name}</h3>
+          <div class="desc">${p.desc}</div>
+          <div class="spec">${p.spec}</div>
+          <div class="price">
+            ${money(productPrice(p))}
+            <small>Published PH SRP where verified • confirm availability</small>
+          </div>
+          <div class="actions">
+            <button class="outline" onclick="detail('${p.id}')">
+              View Details
+            </button>
+            <button class="primary" onclick="add('${p.id}')">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </article>
+    `).join('') ||
+    '<div class="empty">No phones found. Try another search.</div>';
+}
+
 function renderBrands(){document.getElementById('brands').innerHTML=['All',...Object.keys(entries)].map(b=>`<button class="chip ${filter===b?'active':''}" onclick="filter='${b}';renderBrands();render()">${b==='All'?'All Brands':b}</button>`).join('')}
 function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart));document.getElementById('cartCount').textContent='('+Object.values(cart).reduce((a,b)=>a+Number(b||0),0)+')'}
 function cartKey(id,storage){return storage?id+'::'+storage:id;}
