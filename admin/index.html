@@ -258,8 +258,27 @@ function renderGadgetControls(item){
   if(!storage.value.trim()||!/^[0-9]+(\.[0-9]{1,2})?$/.test(raw)||cents<1||!/^[0-9]+$/.test(rawStock)){message.textContent='Enter storage, valid price and stock.';return;}
   save.disabled=true;message.textContent='Saving...';
   try{
-   await adminVariantPost({action:'create',product_id:id,storage:storage.value.trim(),price_centavos:cents,stock:Number(rawStock)});
+   const result=await adminVariantPost({action:'create',product_id:id,storage:storage.value.trim(),price_centavos:cents,stock:Number(rawStock)});
+   // A successful create refreshes the list; highlight and expand the newly created card.
+   const newSku=result.sku||id+'::'+storage.value.trim();
+   const search=$('productSearch');
+   if(search)search.value='';
    await loadProducts();
+   const newCard=Array.from(document.querySelectorAll('#products .product')).find(el=>el.dataset.sku===newSku);
+   if(!newCard)throw Error('Variant saved, but its card was not found after refresh. Reload the admin page to see it.');
+   if(newCard){
+     const edit=newCard.querySelector('.editBtn');
+     if(edit)edit.click();
+     newCard.style.outline='3px solid #ff3e9e';
+     newCard.style.outlineOffset='3px';
+     newCard.scrollIntoView({behavior:'smooth',block:'center'});
+   }
+   const toast=document.createElement('div');
+   toast.setAttribute('role','status');
+   toast.textContent='✓ Storage Variant Added Successfully! '+storage.value.trim()+' — Deactivated. Activate it when ready.';
+   toast.style.cssText='position:fixed;z-index:99999;top:18px;left:50%;transform:translateX(-50%);max-width:min(92vw,620px);background:#22212b;border:2px solid #ff3e9e;border-radius:14px;padding:18px 22px;color:#fff;font-weight:800;box-shadow:0 15px 50px #000b;text-align:center';
+   document.body.append(toast);
+   setTimeout(()=>toast.remove(),6500);
   }catch(e){message.textContent=e.message;save.disabled=false;}
  };
  return panel;
@@ -267,6 +286,7 @@ function renderGadgetControls(item){
 function renderProduct(item) {
   const card = document.createElement("article");
   card.className = "product";
+  card.dataset.sku = item.sku;
   const head = document.createElement("div");
   head.className = "productHead";
   const identity = document.createElement("div");
