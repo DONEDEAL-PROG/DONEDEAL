@@ -1,0 +1,11 @@
+PREMIUM PHOTO UPDATE
+
+Removed unreliable automatic Wikimedia Commons photo search. This prevents mismatched or unprofessional photos.
+
+Add accurate, authorized manufacturer studio images via Store Manager > Photo URL for each model. Images must be HTTPS URLs, and saved overrides are browser-local only. The storefront shows a premium text fallback for models without verified imagery.
+
+For permanent public photos, host licensed images in your website repository or a storage service, and set the corresponding image URLs in your product data.
+
+Keep hero-unified.webp, hero-model.jpg and hero-product.webp from your existing repository. These are not included in this ZIP.
+
+This is a front-end styling/photo-source upgrade, not a live inventory or payment integration.

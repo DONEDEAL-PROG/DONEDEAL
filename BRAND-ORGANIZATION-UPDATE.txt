@@ -1,0 +1,8 @@
+DONE DEAL — ORGANIZED BY BRAND
+
+The Shop Phones catalog is now organized into dedicated sections in this order:
+Apple, Samsung, Huawei, Xiaomi, OPPO, vivo.
+Each section has a heading and phone count. Search, brand filters, sorting, wishlist, comparison, product photos, cart, and storage selection are preserved.
+
+UPLOAD: index.html and brand-sections.js, plus the existing files in this folder. Keep your existing homepage images in the repository.
+The checkout still prepares an order request; it is not connected to a live order/payment backend.
