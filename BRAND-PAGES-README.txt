@@ -1,15 +1,9 @@
-DONE DEAL — Dedicated brand pages
+DONE DEAL — STANDALONE BRAND PAGES
 
-Upload ALL files to the root of your existing GitHub website. Keep existing homepage image assets.
+Upload all files together into your existing website root. Preserve your existing hero image assets.
 
-Clicking a brand on the homepage now navigates to its own URL:
-brand-apple.html
-brand-samsung.html
-brand-huawei.html
-brand-xiaomi.html
-brand-oppo.html
-brand-vivo.html
+Brand buttons now navigate to a distinct HTML page (not a homepage filter). Each page displays only the selected brand, with its own brand hero, logo in the header, and catalog. The active pink chip follows the brand. All Brands opens shop.html. Clicking the logo returns home.
 
-Each brand page displays only that brand’s phones. Search, storage selector, wishlist, cart and checkout continue to work. Home breadcrumb returns to the homepage.
+Pages: brand-apple.html, brand-samsung.html, brand-huawei.html, brand-xiaomi.html, brand-oppo.html, brand-vivo.html and shop.html.
 
-This is static multi-page navigation, not a backend.
+Checkout still prepares an order request and does not accept payment or submit orders.

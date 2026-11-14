@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="#18191d" name="theme-color"/><title>Shop All Phones | Done Deal</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/><style>
+:root{--navy:#0b1730;--blue:#205cf5;--muted:#66758c;--line:#e5eaf3;--bg:#f5f7fb}*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--navy);background:#fff}button,input,select{font:inherit}button{cursor:pointer}.top{background:var(--navy);color:white;text-align:center;font-size:12px;padding:9px}.nav{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 max(5%,calc((100vw - 1280px)/2));border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:5;gap:18px}.logo{font-weight:900;font-size:23px;letter-spacing:-1px}.logo span{color:var(--blue)}.navlinks{display:flex;gap:24px;font-size:13px;color:#45516b}.navlinks a{text-decoration:none;color:inherit}.nav button,.btn{border:0;border-radius:10px;background:var(--blue);color:#fff;padding:12px 18px;font-weight:700}.nav button{white-space:nowrap}.container{max-width:1280px;margin:auto;padding:0 24px}.hero{background:linear-gradient(112deg,#0b1730,#123675 65%,#205cf5);color:white;overflow:hidden}.heroInner{max-width:1280px;margin:auto;padding:76px 24px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;min-height:430px}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:12px;color:#a9c5ff;font-weight:800}.hero h1{font-size:clamp(40px,5vw,72px);letter-spacing:-3px;line-height:1.04;margin:16px 0}.hero p{color:#cbd9f5;line-height:1.7;max-width:550px}.hero .btn{background:white;color:var(--navy);margin-top:18px}.phoneart{height:290px;position:relative;display:flex;align-items:center;justify-content:center}.device{width:155px;height:300px;background:linear-gradient(135deg,#eef5ff,#88a3db 45%,#15284b);border:8px solid #111b31;border-radius:31px;transform:rotate(17deg);box-shadow:30px 35px 65px #0008;position:relative}.device:before{content:'';position:absolute;top:15px;left:14px;width:65px;height:65px;border-radius:18px;background:radial-gradient(circle at 22px 22px,#071326 0 11px,#7183a0 12px 17px,transparent 18px),radial-gradient(circle at 47px 45px,#071326 0 11px,#7183a0 12px 17px,transparent 18px),#c2d0e6}.device.two{position:absolute;transform:rotate(-16deg) translate(-100px,-20px);background:linear-gradient(135deg,#1b58e5,#091934);z-index:0}.device.one{z-index:1}.benefits{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:28px 0}.benefit{border:1px solid var(--line);border-radius:13px;padding:19px;font-size:13px}.benefit strong{display:block;font-size:15px;margin-bottom:6px}.benefit span{color:var(--muted)}.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:48px 0 22px}.sectionhead h2{font-size:31px;letter-spacing:-1px;margin:0}.sectionhead p{color:var(--muted);margin:8px 0 0}.controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px}.controls input,.controls select{padding:13px 14px;border:1px solid #dce3ed;border-radius:10px;background:#fff;min-width:180px;color:var(--navy)}.controls input{flex:1}.brands{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}.chip{padding:10px 17px;background:#fff;border:1px solid var(--line);border-radius:25px;font-weight:700;font-size:12px;color:#56657e}.chip.active{background:var(--navy);color:white}.catalog{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:70px}.product{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:white;display:flex;flex-direction:column;transition:box-shadow .2s}.product:hover{box-shadow:0 16px 35px #0b173015}.visual{height:215px;background:linear-gradient(140deg,#f7f9fd,#edf2fc);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}.visual .mini{width:96px;height:174px;border:6px solid #18243c;border-radius:19px;background:linear-gradient(135deg,var(--shade),#f7faff 60%,#192e60);box-shadow:12px 17px 20px #0b17302e;transform:rotate(-11deg);position:relative}.mini:before{content:'';position:absolute;width:36px;height:49px;left:8px;top:8px;border-radius:10px;background:radial-gradient(circle at 12px 12px,#0b1730 0 7px,#a9b7d0 8px 10px,transparent 11px),radial-gradient(circle at 25px 31px,#0b1730 0 7px,#a9b7d0 8px 10px,transparent 11px),#b8c8e2}.visual .tag{position:absolute;top:13px;left:13px;background:white;color:#3553a0;border-radius:20px;padding:6px 10px;font-size:10px;font-weight:800}.pbody{padding:17px;display:flex;flex-direction:column;flex:1}.brand{color:var(--blue);font-size:11px;font-weight:900;letter-spacing:1px;text-transform:uppercase}.pbody h3{font-size:17px;margin:8px 0}.desc{font-size:12px;color:var(--muted);line-height:1.55;min-height:55px}.spec{font-size:11px;color:#53627a;margin:10px 0 16px;line-height:1.6}.price{font-size:18px;font-weight:900;margin-top:auto}.price small{font-size:11px;color:var(--muted);font-weight:500;display:block;margin-top:4px}.actions{display:flex;gap:8px;margin-top:13px}.actions button{flex:1;padding:11px 7px;border-radius:9px;font-size:12px;font-weight:800}.outline{background:white;border:1px solid #cad5e9;color:var(--navy)}.primary{background:var(--blue);color:white;border:1px solid var(--blue)}.footer{background:var(--navy);color:white;padding:42px 0}.footer p{color:#b6c5e1;font-size:13px;line-height:1.8}.footgrid{display:grid;grid-template-columns:2fr 1fr;gap:25px}.overlay{position:fixed;inset:0;background:#071327aa;z-index:10;display:none}.overlay.open{display:block}.drawer{position:absolute;right:0;top:0;bottom:0;width:min(440px,100%);background:white;padding:24px;overflow:auto}.modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(660px,94%);max-height:90vh;overflow:auto;background:white;padding:28px;border-radius:18px}.close{float:right;border:0;background:#eef2f8;border-radius:8px;padding:8px 12px}.cartitem{display:flex;justify-content:space-between;gap:10px;padding:15px 0;border-bottom:1px solid var(--line);font-size:13px}.cartitem button{border:0;background:#edf2ff;color:#1748b3;padding:5px 9px;border-radius:6px}.checkout input,.checkout select{width:100%;margin:7px 0 12px;padding:12px;border:1px solid #d9e1ef;border-radius:9px}.checkout label{font-size:12px;font-weight:700}.notice{padding:13px;background:#eef4ff;border-radius:10px;font-size:12px;color:#3d5c95;line-height:1.6}.empty{text-align:center;padding:40px;color:var(--muted)}@media(max-width:980px){.catalog{grid-template-columns:repeat(3,1fr)}.navlinks{display:none}}@media(max-width:700px){.catalog{grid-template-columns:repeat(2,1fr);gap:12px}.heroInner{grid-template-columns:1fr;padding:52px 24px}.phoneart{display:none}.benefits{grid-template-columns:1fr}.sectionhead h2{font-size:26px}.visual{height:170px}.pbody{padding:12px}.desc{min-height:70px}.footgrid{grid-template-columns:1fr}.nav{height:66px;padding:0 18px}.logo{font-size:19px}}@media(max-width:400px){.catalog{grid-template-columns:1fr}.visual{height:220px}}
+
+/* Done Deal: professional graphite gray with vivid fuchsia accents, no pastel pink */
+:root{--navy:#292a30;--blue:#c2185b;--muted:#686970;--line:#d1d1d4;--bg:#e7e7e9}
+body{background:#e7e7e9;color:#292a30}
+.top{background:#303036;color:#fff;letter-spacing:1.1px}
+.nav{background:#f4f4f5;border-bottom-color:#d1d1d4;box-shadow:0 2px 14px #25232a0a}
+.logo{color:#292a30;letter-spacing:-.7px}.logo span{color:#c2185b}
+.navlinks{color:#545159}.navlinks a:hover{color:#c2185b}
+.nav button,.btn,.primary{background:#c2185b;color:white;border-color:#c2185b}
+.nav button:hover,.btn:hover,.primary:hover{background:#9e1249}
+.hero{background:linear-gradient(115deg,#292a30 0%,#414148 70%,#55545b 100%)}
+.eyebrow{color:#f04a8e}.hero h1{color:#fff}.hero h1::first-line{color:#fff}
+.hero p{color:#e1e1e4}.hero .btn{background:#c2185b;color:#fff}
+.device{background:linear-gradient(135deg,#bfc0c5,#85858e 48%,#44414a);border-color:#27262b}
+.device.two{background:linear-gradient(135deg,#c2185b,#48434c)}
+.benefit{background:#f7f7f8;border-color:#d8d8dc}
+.sectionhead h2{color:#333037}.sectionhead p{color:#767079}
+.controls input,.controls select,.chip{background:#fafafa;border-color:#d6d6d9;color:#38343b}
+.chip.active{background:#3b383f;color:#fff;border-color:#3b383f}
+.product{background:#fff;border-color:#d9d9dd}.product:hover{box-shadow:0 16px 35px #25232a1b}
+.visual{background:linear-gradient(140deg,#f0f0f2,#dcdce0)}
+.visual .mini{border-color:#39353d;background:linear-gradient(135deg,var(--shade),#dcdce0 60%,#55545d)}
+.visual .tag{color:#c2185b;background:#fff}.brand{color:#c2185b}
+.pbody h3{color:#302d34}.desc,.spec{color:#66666d}
+.outline{border-color:#c7c7cb;color:#423a42;background:#fff}
+.footer{background:#303036}.footer .logo{color:#fff}.footer p{color:#d3d3d7}
+.overlay{background:#242127b8}.drawer,.modal{background:#f8f8f9}.close{background:#e5e5e8}
+.cartitem button{background:#e5e5e8;color:#a01249}.notice{background:#ebebed;color:#45454c}
+.checkout input,.checkout select{border-color:#d0d0d5;background:#fff}
+:focus-visible{outline:3px solid #c2185b;outline-offset:2px}
+
+/* Refined typography: editorial Manrope headings, legible DM Sans body */
+:root{--font-display:'Manrope',Arial,sans-serif;--font-body:'DM Sans',Arial,sans-serif}
+body{font-family:var(--font-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input,select{font-family:var(--font-body)}
+h1,h2,h3,.logo,.price,.benefit strong{font-family:var(--font-display)}
+.logo{font-size:21px;font-weight:800;letter-spacing:-1.05px;line-height:1.2}
+.logo span{font-weight:700;letter-spacing:-.65px}
+.top{font-size:10px;font-weight:700;letter-spacing:2.1px}
+.navlinks{font-size:13px;font-weight:600;letter-spacing:.1px}
+.eyebrow{font-family:var(--font-body);font-size:11px;font-weight:700;letter-spacing:2.8px}
+.hero h1{font-family:var(--font-display);font-size:clamp(42px,5.1vw,70px);font-weight:800;letter-spacing:-3.5px;line-height:1.09}
+.hero p{font-size:15px;line-height:1.85;letter-spacing:.08px}
+.sectionhead h2{font-size:clamp(26px,3vw,35px);font-weight:800;letter-spacing:-1.5px;line-height:1.2}
+.sectionhead p{font-size:14px;line-height:1.65}
+.benefit strong{font-size:14px;font-weight:800;letter-spacing:-.35px}
+.benefit span{font-size:12px;line-height:1.6}
+.brand{font-size:10px;font-weight:700;letter-spacing:1.8px}
+.pbody h3{font-size:17px;font-weight:800;letter-spacing:-.55px;line-height:1.35}
+.desc{font-size:12.5px;line-height:1.7}
+.spec{font-size:11.5px;line-height:1.75}
+.price{font-size:19px;font-weight:800;letter-spacing:-.65px}
+.btn,.nav button,.actions button,.chip{font-weight:700;letter-spacing:.1px}
+.btn,.nav button{font-size:13px}
+.chip{font-size:12px}
+.footer p{line-height:1.85}
+.modal h2,.drawer h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.8px}
+@media(max-width:700px){.logo{font-size:16px;letter-spacing:-.65px}.hero h1{letter-spacing:-2.2px}.pbody h3{font-size:15px}}
+
+/* 2026 redesign: deep graphite, restrained electric-rose details */
+:root{--navy:#17181d;--blue:#e02973;--muted:#a0a1ac;--line:#383941;--bg:#1d1e23}
+html{scroll-behavior:smooth}body{background:#1d1e23;color:#f1f1f4}
+.top{background:#111216;color:#d1d1d7;border-bottom:1px solid #303039}
+.nav{background:#202126ee;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid #3c3c44;box-shadow:0 10px 35px #0002}
+.logo{color:#fafafd}.logo span{color:#ee3d85}.navlinks{color:#c3c3cb}.navlinks a:hover{color:#f64b92}
+.nav button,.btn,.primary{background:#d92570;border-color:#d92570;color:#fff;transition:transform .2s,background .2s,box-shadow .2s}
+.nav button:hover,.btn:hover,.primary:hover{background:#ef3885;transform:translateY(-2px);box-shadow:0 8px 24px #d9257040}
+.hero{background:radial-gradient(ellipse at 80% 30%,#69304c 0%,transparent 42%),linear-gradient(120deg,#121317,#25252c 62%,#30242d);border-bottom:1px solid #444049}
+.heroInner{min-height:470px}.eyebrow{color:#ff6aa5}.hero h1{color:#fff;letter-spacing:-3.3px}.hero p{color:#c7c5cd}.hero .btn{background:#e02973;color:#fff}
+.device{border-color:#0f1014;background:linear-gradient(135deg,#9c9ba5,#56525e 55%,#1e1d26);box-shadow:30px 35px 65px #000b}.device.two{background:linear-gradient(135deg,#ec3d85,#42313f)}
+.benefits{gap:14px}.benefit{background:#27282e;border:1px solid #3b3c45;border-radius:16px;box-shadow:0 8px 24px #00000016}.benefit strong{color:#fff}.benefit span{color:#aeb0bb}
+.sectionhead h2{color:#fff}.sectionhead p{color:#aaabb5}
+.controls input,.controls select{background:#292a31;border:1px solid #484953;color:#f5f5f8;border-radius:12px}.controls input::placeholder{color:#9899a5}
+.chip{background:#292a30;border-color:#42434c;color:#d2d2da;transition:all .2s}.chip:hover{border-color:#e02973;color:#fff}.chip.active{background:#e02973;color:#fff;border-color:#e02973}
+.catalog{gap:18px}.product{background:#292a30;border:1px solid #3c3d46;border-radius:18px;box-shadow:0 6px 22px #0000001c;transition:transform .25s,border-color .25s,box-shadow .25s}
+.product:hover{transform:translateY(-6px);border-color:#9e416a;box-shadow:0 20px 40px #0005}
+.visual{background:radial-gradient(circle at 50% 40%,#50515b,#34353d 68%,#2c2d34);height:235px}.visual .mini{border-color:#15161b;background:linear-gradient(135deg,var(--shade),#b8b5c0 60%,#373641);box-shadow:14px 20px 30px #0007}.visual .tag{background:#24252be8;color:#ff7bb0;border:1px solid #5b4553;backdrop-filter:blur(5px)}
+.pbody{padding:19px}.brand{color:#ff69a3}.pbody h3{color:#fafafd;font-size:18px}.desc,.spec{color:#b3b4bf}.price{color:#fff}.price small{color:#a9aab6}
+.outline{background:#34353d;border:1px solid #555661;color:#f5f5f7}.outline:hover{background:#454650}.actions button{border-radius:11px}
+.footer{background:#131418;border-top:1px solid #373841}.footer .logo{color:#fff}.footer p{color:#a9aab6}
+.overlay{background:#08090cce;backdrop-filter:blur(5px)}.drawer,.modal{background:#25262d;color:#f6f6f8;border:1px solid #474852;box-shadow:0 25px 80px #0009}.close{background:#3b3c45;color:#fff}
+.cartitem{border-color:#41424b}.cartitem button{background:#45313d;color:#ff80b3}.checkout input,.checkout select{background:#33343d;border:1px solid #565762;color:#fff}.checkout input::placeholder{color:#b1b2bc}.checkout label{color:#e8e8ed}.notice{background:#35303a;color:#e2c4d3;border:1px solid #654458}.empty{color:#b5b5bf}
+:focus-visible{outline:3px solid #ff68a4;outline-offset:3px}
+@media(max-width:700px){.heroInner{min-height:360px}.visual{height:190px}.catalog{gap:12px}.pbody{padding:14px}.hero h1{letter-spacing:-2px}}
+
+/* Editorial campaign homepage */
+.hero{background:#101115!important;position:relative;overflow:hidden}
+.heroInner{max-width:none;min-height:530px;padding:0;display:grid;grid-template-columns:53% 47%;position:relative}
+.heroPhoto{background-image:linear-gradient(90deg,transparent 75%,#101115 100%),url('hero-model.jpg');background-position:center 40%;background-size:cover;min-height:530px}
+.heroCopy{padding:90px clamp(25px,6vw,110px) 65px 25px;align-self:center;position:relative;z-index:1}
+.heroCopy h1{font-size:clamp(43px,5vw,78px);line-height:1.06;letter-spacing:-3px;margin:20px 0}
+.heroCopy h1 em{font-style:normal;color:#f43b88}
+.heroCopy p{max-width:460px;font-size:16px}
+.heroFine{font-size:10px!important;color:#9999a2!important;margin-top:25px}
+.hero .btn{padding:15px 30px;border-radius:30px;box-shadow:0 9px 28px #d9296950}
+.nav{backdrop-filter:blur(20px)}
+@media(max-width:700px){.heroInner{display:flex;flex-direction:column;min-height:0}.heroPhoto{min-height:310px;background-image:linear-gradient(0deg,#101115,transparent 35%),url('hero-model.jpg');background-position:center 30%}.heroCopy{padding:15px 24px 50px}.heroCopy h1{font-size:44px;letter-spacing:-2px}.heroCopy p{font-size:14px}}
+
+/* Screenshot-inspired premium store strip and brand selector */
+.storePerks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:24px 0 22px;gap:0;border-bottom:1px solid #292a30}
+.perk{display:flex;align-items:center;justify-content:center;gap:15px;padding:2px 18px;border-right:1px solid #484950;min-width:0}.perk:last-child{border-right:0}.perk svg{width:35px;height:35px;flex:none;color:#f2f2f5}.perk div{display:flex;flex-direction:column;gap:5px}.perk strong{color:#f7f7f9;font:750 13px Manrope,Arial,sans-serif;white-space:nowrap}.perk span{color:#b6b6bf;font-size:11px}
+.brandShowcase{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;padding:24px 0 8px}.brandTile{border:1px solid #3c3d45;border-radius:16px;background:linear-gradient(130deg,#303137,#25262c);height:84px;color:#fff;font:800 20px Manrope,Arial,sans-serif;letter-spacing:.2px;display:flex;align-items:center;justify-content:center;gap:7px;transition:transform .2s,border-color .2s,box-shadow .2s}.brandTile:hover,.brandTile:focus-visible{border-color:#f13b88;box-shadow:0 0 0 1px #f13b88;transform:translateY(-2px)}.brandTile:first-child{border-color:#e02973}.brandTile .appleGlyph{font-size:25px;line-height:1}.brandTile.samsung{letter-spacing:1px;font-size:18px}.brandTile.huawei{font-size:19px;letter-spacing:1px}.brandTile.oppo{font-size:29px;font-weight:500;letter-spacing:-2px}.brandTile.vivo{font-size:30px;font-weight:500;letter-spacing:-1px}.brandTile.xiaomi{font-size:22px}.brandTile.xiaomi small{font-size:18px;font-weight:600}
+.featuredHeading{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:27px 0 4px}.featuredHeading h2{font:800 clamp(24px,3vw,34px) Manrope,Arial,sans-serif;color:#fff;letter-spacing:-1px;margin:0;display:flex;align-items:center;gap:8px}.featuredHeading h2:before{content:"";height:30px;width:4px;background:#ed3281;border-radius:5px;margin-right:9px}.featuredHeading em{font-style:normal;color:#ee3c87}.featuredHeading a{color:#f4f4f5;text-decoration:none;font-size:13px;white-space:nowrap}.featuredHeading a:hover{color:#f04a8e}.featuredHeading a span{margin-left:5px}
+#shop>.sectionhead{margin-top:12px}#shop>.sectionhead h2{display:none}#shop>.sectionhead p{margin-top:0}
+@media(max-width:1000px){.storePerks{grid-template-columns:repeat(2,1fr);row-gap:18px}.perk:nth-child(2){border-right:0}.brandShowcase{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.storePerks{grid-template-columns:1fr 1fr;gap:12px}.perk{padding:7px 5px;gap:7px;justify-content:flex-start;border-right:0}.perk svg{width:25px;height:25px}.perk strong{font-size:10px;white-space:normal}.perk span{font-size:9px}.brandShowcase{grid-template-columns:repeat(3,1fr);gap:8px}.brandTile{height:65px;border-radius:12px;font-size:14px!important}.brandTile.oppo,.brandTile.vivo{font-size:22px!important}.brandTile.xiaomi small{font-size:12px}.featuredHeading h2{font-size:22px;flex-wrap:wrap;gap:4px}.featuredHeading a{font-size:11px}}
+
+/* Approved campaign layout */
+.top{display:none}.nav{height:73px;background:#15161a;position:sticky;top:0;padding:0 max(4%,calc((100vw - 1700px)/2));border-bottom:1px solid #37373d}.logo{font-size:21px}.navlinks{font-size:15px;gap:42px}.nav button{border-radius:12px;padding:13px 25px}.hero{background:#111216!important}.heroInner{max-width:none;min-height:495px;display:grid;grid-template-columns:52% 48%;padding:0}.heroPhoto{background-image:linear-gradient(90deg,transparent 85%,#111216 100%),url('hero-model.jpg');background-size:cover;background-position:center center;min-height:495px}.heroCopy{padding:40px clamp(30px,4vw,85px) 35px 18px}.heroCopy h1{font-size:clamp(40px,4.1vw,72px);letter-spacing:-2px;line-height:1.1;margin:18px 0 8px;white-space:nowrap}.appleTitle{font-size:.8em}.heroCopy h2{font-size:clamp(23px,2.2vw,38px);font-weight:500;letter-spacing:-1.2px;margin:0 0 18px;line-height:1.2}.heroCopy h2 em{font-style:normal;color:#f13788;font-weight:800}.heroCopy p{font-size:14px;line-height:1.7;max-width:600px}.heroFeatures{display:flex;gap:0;margin:25px 0 29px}.heroFeatures span{flex:1;padding:5px 12px;border-right:1px solid #55545c;font-size:12px;line-height:1.35;font-weight:700}.heroFeatures span:first-child{padding-left:0}.heroFeatures span:last-child{border:0}.hero .btn{padding:16px 31px;border-radius:18px}.heroFine{font-size:10px!important;color:#9999a5!important;margin-top:15px}.brandBar{background:#141519;border-block:1px solid #36373c;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding:0 max(4%,calc((100vw - 1700px)/2))}.brandBar .brandTile{border:0;border-right:1px solid #3d3e44;border-radius:0;background:transparent;height:85px;box-shadow:none;font-size:22px;white-space:nowrap}.brandBar .brandTile:last-child{border-right:0}.brandBar .brandTile:hover{transform:none;background:#24242b}.brandBar .appleGlyph{font-size:29px}.brandBar .huaweiMark{color:#f2374d;font-size:31px}.brandBar .miMark{display:inline-grid;place-items:center;background:#ff6900;border-radius:10px;width:34px;height:34px;font-size:20px}.brandBar .oppo{color:#13b75d;font-size:34px}.brandBar .vivo{color:#526bff;font-size:34px}.storePerks{padding:24px 0 18px}.perkIcon{font-size:30px;line-height:1;color:#fff}.featuredHeading{padding:24px 0 12px}.featuredHeading h2:before{display:none}.container{max-width:1450px}
+@media(max-width:1050px){.heroInner{grid-template-columns:50% 50%}.heroCopy h1{font-size:clamp(32px,4vw,50px)}.heroFeatures{flex-wrap:wrap;gap:10px}.heroFeatures span{flex:1 1 42%;border:0;padding:0}.brandBar .brandTile{font-size:17px;height:70px}.brandBar .oppo,.brandBar .vivo{font-size:25px}}
+@media(max-width:700px){.heroInner{display:flex;flex-direction:column}.heroPhoto{width:100%;min-height:290px;background-position:center center;background-image:linear-gradient(0deg,#111216,transparent 35%),url('hero-model.jpg')}.heroCopy{padding:8px 22px 35px}.heroCopy h1{font-size:clamp(32px,8vw,48px)}.heroCopy h2{font-size:25px}.heroFeatures{margin:20px 0}.brandBar{grid-template-columns:repeat(3,minmax(0,1fr));padding:0 8px}.brandBar .brandTile{height:63px;font-size:15px;border-bottom:1px solid #333}.brandBar .oppo,.brandBar .vivo{font-size:24px}.brandBar .huaweiMark{font-size:20px}.brandBar .miMark{width:25px;height:25px;font-size:14px}.storePerks{grid-template-columns:1fr 1fr}.featuredHeading{gap:8px}.featuredHeading h2{font-size:22px}}
+
+/* Premium campaign refinement — responsive, live HTML controls */
+.nav{height:78px;background:#0d0e12;padding:0 clamp(20px,4.5vw,95px)}
+.logo{font-size:clamp(16px,1.45vw,25px);letter-spacing:-.9px;display:flex;align-items:center;gap:4px;white-space:nowrap}.logoPhone{display:inline-grid;place-items:center;color:#ff087b;border:2px solid #f50778;border-radius:6px;font-size:29px;width:28px;height:42px;margin-right:8px;line-height:1}
+.navlinks{gap:52px;font-size:16px}.navlinks a:first-child{color:white;border-bottom:3px solid #f40778;padding-bottom:12px}.nav button,.hero .btn{background:#ed0871;border-radius:12px;box-shadow:0 12px 28px #ed087122}
+.hero{background:#0b0b10!important}.heroInner{min-height:clamp(440px,31.5vw,610px);grid-template-columns:43% 33% 24%;position:relative;overflow:hidden}
+.heroPhoto{min-height:inherit;background-size:cover;background-position:53% center;background-image:linear-gradient(90deg,transparent 70%,#0b0b10 100%),url('hero-model.jpg')}
+.heroCopy{z-index:2;padding:42px 0 30px 15px;align-self:center;position:relative}.heroCopy .eyebrow{font-size:14px;color:#ff1681;letter-spacing:1.1px;display:flex;align-items:center;gap:13px}.eyebrowLine{width:80px;height:1px;background:linear-gradient(90deg,#e30a72,transparent)}
+.heroCopy h1{font-size:clamp(32px,3.1vw,61px);white-space:nowrap;display:flex;align-items:center;gap:12px;letter-spacing:-2px;margin:12px 0 7px}.appleLogo{display:inline-block;object-fit:contain;filter:invert(1)}.heroApple{width:clamp(31px,3.1vw,55px);height:clamp(35px,3.5vw,60px);flex-shrink:0}.heroCopy h2{font-size:clamp(20px,2.05vw,38px);white-space:nowrap;margin:0 0 20px}.heroCopy p{font-size:clamp(12px,.95vw,16px);max-width:490px;line-height:1.65;color:#ececf0}.heroFeatures{margin:22px 0 30px;gap:0}.heroFeatures span{display:flex;align-items:center;gap:8px;padding:0 10px;font-size:clamp(10px,.83vw,14px);line-height:1.35}.heroFeatures b{color:#ff1784;font-size:24px}.hero .btn{font-size:16px;padding:16px 27px;border-radius:15px}.heroFine{font-size:10px!important;color:#9c99a6!important;margin-top:16px!important}
+.heroProduct{height:100%;min-height:inherit;background-image:url('hero-product.webp');background-repeat:no-repeat;background-position:55% center;background-size:cover;position:relative}.heroProduct:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0b0b10 0%,transparent 18%)}
+.brandBar{background:#0b0c10;border-color:#34343b}.brandBar .brandTile{height:93px;font-size:24px;display:flex;align-items:center;justify-content:center;gap:9px}.brandApple{height:39px;width:33px}.brandIcon{height:32px;width:32px;object-fit:contain}.huaweiIcon{filter:invert(21%) sepia(99%) saturate(5909%) hue-rotate(345deg) brightness(100%)}.brandBar .samsungWord{font-weight:900;letter-spacing:1px}.brandBar .oppo{font-weight:600}.brandBar .vivo{font-weight:700}.brandBar .miMark{width:42px;height:42px;border-radius:12px;font-size:23px}
+@media(max-width:1150px){.heroInner{grid-template-columns:43% 40% 17%}.heroCopy h1{font-size:clamp(29px,3.1vw,42px)}.heroCopy h2{font-size:clamp(20px,2.2vw,30px)}.heroProduct{background-position:38% center}.heroFeatures span{font-size:10px}.brandBar .brandTile{font-size:18px}}
+@media(max-width:760px){.nav{height:68px}.logoPhone{height:30px;width:22px;font-size:19px}.heroInner{display:grid;grid-template-columns:1fr;min-height:0}.heroPhoto{min-height:310px;background-size:cover;background-position:center 38%;background-image:linear-gradient(0deg,#0b0b10 0%,transparent 32%),url('hero-model.jpg')}.heroCopy{padding:4px 24px 40px}.heroCopy h1{font-size:clamp(31px,7.8vw,48px)}.heroCopy h2{font-size:clamp(22px,5vw,30px);white-space:normal}.heroCopy p{font-size:14px}.heroProduct{display:none}.heroFeatures span{font-size:11px}.brandBar .brandTile{height:72px;font-size:15px}.brandApple{width:24px;height:27px}.brandIcon{width:23px;height:23px}}
+@media(max-width:420px){.heroCopy h1{font-size:30px;gap:7px}.heroApple{width:28px;height:32px}.heroFeatures span{padding:0 6px;font-size:10px}.heroFeatures b{font-size:16px}.logo{font-size:15px}}
+
+/* Seamless editorial hero: soft image-to-charcoal transitions */
+@media(min-width:761px){
+.heroInner{background:#0b0b10;isolation:isolate}
+.heroPhoto{position:relative;background-image:linear-gradient(90deg,rgba(11,11,16,.04) 0%,rgba(11,11,16,.07) 48%,rgba(11,11,16,.36) 72%,#0b0b10 100%),linear-gradient(0deg,rgba(11,11,16,.20),transparent 45%),url('hero-model.jpg');background-position:53% center;background-size:cover}
+.heroPhoto:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 45%,rgba(11,11,16,.18) 67%,#0b0b10 100%);pointer-events:none}
+.heroCopy{background:transparent;z-index:3}
+.heroProduct{background-image:linear-gradient(90deg,#0b0b10 0%,rgba(11,11,16,.66) 15%,rgba(11,11,16,.17) 48%,rgba(11,11,16,.15) 100%),linear-gradient(0deg,rgba(11,11,16,.26),transparent 40%),url('hero-product.webp');background-position:55% center;background-size:cover}
+.heroProduct:before{background:linear-gradient(90deg,#0b0b10 0%,rgba(11,11,16,.55) 14%,transparent 45%)}
+}
+@media(max-width:760px){.heroPhoto{background-image:linear-gradient(0deg,#0b0b10 0%,rgba(11,11,16,.28) 25%,transparent 65%),url('hero-model.jpg')}.heroCopy{background:#0b0b10}}
+
+/* Final approved homepage: visible photographic imagery, soft transitions and clear copy */
+.hero{background:#101015}
+.heroInner{display:grid;grid-template-columns:minmax(0,39%) minmax(0,35%) minmax(0,26%);min-height:550px;max-width:none;width:100%;padding:0;background:radial-gradient(ellipse at 50% 45%,#242329 0%,#101015 74%);overflow:hidden;position:relative}
+.heroPhoto{background-image:linear-gradient(90deg,rgba(12,12,17,.02) 0%,rgba(12,12,17,.03) 65%,rgba(12,12,17,.66) 90%,#101015 100%),url('hero-model.jpg');background-size:cover;background-position:49% center;min-height:550px;position:relative}
+.heroPhoto:after{background:linear-gradient(90deg,transparent 67%,rgba(16,16,21,.42) 87%,#101015 100%)}
+.heroCopy{padding:48px 14px 42px 2px;z-index:3;position:relative;align-self:center;background:transparent;text-shadow:0 1px 10px rgba(0,0,0,.35)}
+.heroCopy h1{font-size:clamp(34px,3.05vw,61px);letter-spacing:-2.2px;white-space:nowrap}
+.heroCopy h2{font-size:clamp(21px,1.85vw,36px);white-space:nowrap}
+.heroCopy p{font-size:clamp(12px,.91vw,16px);line-height:1.62;color:#f1f1f5}
+.heroFeatures{display:flex;align-items:center;justify-content:space-between;gap:3px}
+.heroFeatures span{font-size:clamp(10px,.75vw,13px);padding:0 7px}
+.heroProduct{background-image:linear-gradient(90deg,#101015 0%,rgba(16,16,21,.36) 16%,transparent 44%),url('hero-product.webp');background-size:cover;background-position:51% center;filter:brightness(1.06);min-height:550px}
+.heroProduct:before{background:linear-gradient(90deg,#101015 0%,rgba(16,16,21,.34) 18%,transparent 55%)}
+.hero .btn{box-shadow:0 9px 25px rgba(233,0,104,.25)}
+.brandBar{border-top:1px solid #44414a}
+@media(max-width:1180px){.heroInner{grid-template-columns:36% 42% 22%;min-height:480px}.heroPhoto,.heroProduct{min-height:480px}.heroCopy h1{font-size:clamp(30px,3.25vw,42px)}.heroCopy h2{font-size:clamp(20px,2.3vw,29px)}.heroProduct{background-position:42% center}}
+@media(max-width:760px){.heroInner{grid-template-columns:1fr;min-height:0}.heroPhoto{min-height:320px;background-image:linear-gradient(0deg,#101015 0%,rgba(16,16,21,.12) 40%,transparent 80%),url('hero-model.jpg');background-position:center 37%}.heroPhoto:after{background:linear-gradient(0deg,#101015,transparent 24%)}.heroCopy{padding:4px 24px 35px;background:#101015}.heroCopy h1{font-size:clamp(30px,7vw,44px)}.heroCopy h2{white-space:normal;font-size:clamp(21px,5vw,29px)}.heroCopy p{font-size:14px}.heroProduct{display:none}}
+
+/* Seamless premium campaign: single visual plane, no hard image panels */
+@media (min-width:761px){
+.hero,.heroInner{background:#0d0c12!important}
+.heroInner{display:block!important;position:relative;isolation:isolate;min-height:clamp(510px,34vw,640px);overflow:hidden}
+.heroPhoto{position:absolute;inset:0 auto 0 0;width:49%;min-height:0!important;background-image:url('hero-model.jpg')!important;background-size:cover;background-position:54% 46%;z-index:0}
+.heroPhoto:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,12,18,.03) 0%,rgba(13,12,18,.04) 45%,rgba(13,12,18,.55) 76%,#0d0c12 100%),linear-gradient(0deg,rgba(13,12,18,.17),transparent 30%);pointer-events:none}
+.heroProduct{position:absolute;inset:0 0 0 auto;width:30%;height:100%;min-height:0!important;background-image:url('hero-product.webp')!important;background-size:cover;background-position:62% center;filter:none;z-index:0}
+.heroProduct:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#0d0c12 0%,rgba(13,12,18,.87) 13%,rgba(13,12,18,.25) 38%,transparent 67%),linear-gradient(0deg,rgba(13,12,18,.1),transparent 35%);pointer-events:none}
+.heroCopy{position:relative;z-index:2;margin-left:40%;width:39%;min-height:clamp(510px,34vw,640px);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:40px 20px 40px 12px!important;background:transparent!important;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.heroCopy h1{font-size:clamp(31px,3.1vw,59px);white-space:nowrap;line-height:1.12}
+.heroCopy h2{font-size:clamp(21px,1.95vw,36px);white-space:normal;line-height:1.25}
+.heroCopy p{font-size:clamp(12px,.92vw,16px);max-width:510px}
+.heroFeatures{width:100%;gap:0}
+.heroFeatures span{font-size:clamp(10px,.8vw,13px);min-width:0}
+}
+@media(min-width:761px) and (max-width:1100px){.heroPhoto{width:47%}.heroProduct{width:25%}.heroCopy{margin-left:37%;width:44%}.heroCopy h1{font-size:clamp(29px,3.4vw,42px)}}
+@media(max-width:760px){.heroInner{display:flex!important;flex-direction:column;background:#0d0c12!important}.heroPhoto{width:100%;min-height:310px!important;background-image:linear-gradient(0deg,#0d0c12 0%,transparent 36%),url('hero-model.jpg')!important;background-position:54% 37%}.heroPhoto:after{display:none}.heroCopy{background:#0d0c12!important;padding:12px 24px 36px!important}.heroProduct{display:none!important}.heroCopy h1{white-space:normal}.heroCopy h2{white-space:normal}}
+
+/* Updated uncropped product visual */
+@media(min-width:761px){
+.heroProduct{width:34%!important;background-image:linear-gradient(90deg,#0d0c12 0%,rgba(13,12,18,.68) 12%,transparent 36%),url('hero-product.webp')!important;background-size:100% 100%,contain!important;background-repeat:no-repeat!important;background-position:center,right center!important;background-color:#0d0c12!important}
+.heroProduct:before{background:linear-gradient(90deg,#0d0c12 0%,rgba(13,12,18,.25) 24%,transparent 52%)!important}
+}
+
+/* Responsive seamless three-zone hero: image edges fade into one canvas */
+@media (min-width:761px){
+.heroInner{height:clamp(500px,35vw,610px)!important;min-height:0!important;overflow:hidden!important;background:#0d0c12!important}
+.heroPhoto{left:0!important;right:auto!important;top:0!important;bottom:0!important;width:39%!important;height:100%!important;background-image:url('hero-model.jpg')!important;background-size:cover!important;background-position:56% 48%!important;-webkit-mask-image:linear-gradient(to right,#000 0%,#000 65%,transparent 100%);mask-image:linear-gradient(to right,#000 0%,#000 65%,transparent 100%)}
+.heroPhoto:after{display:none!important}
+.heroProduct{right:0!important;left:auto!important;top:0!important;bottom:0!important;width:35%!important;height:100%!important;background-image:url('hero-product.webp')!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;-webkit-mask-image:linear-gradient(to right,transparent 0%,#000 35%,#000 100%);mask-image:linear-gradient(to right,transparent 0%,#000 35%,#000 100%)}
+.heroProduct:before{display:none!important}
+.heroCopy{position:absolute!important;left:35%!important;top:0!important;bottom:0!important;margin:0!important;width:38%!important;height:100%!important;min-height:0!important;box-sizing:border-box!important;padding:28px 10px 28px 0!important;justify-content:center!important;z-index:3!important}
+.heroCopy h1{font-size:clamp(29px,3.0vw,54px)!important;white-space:nowrap!important}
+.heroCopy h2{font-size:clamp(21px,1.9vw,34px)!important}
+.heroCopy p{font-size:clamp(12px,.9vw,15px)!important}
+.heroFeatures span{font-size:clamp(10px,.78vw,13px)!important}
+}
+@media (min-width:761px) and (max-width:1050px){.heroPhoto{width:35%!important}.heroCopy{left:31%!important;width:44%!important}.heroProduct{width:32%!important}}
+@media (max-width:760px){.heroPhoto{position:relative!important;inset:auto!important;width:100%!important;min-height:310px!important;-webkit-mask-image:none!important;mask-image:none!important}.heroCopy{position:relative!important;width:100%!important;margin:0!important}.heroProduct{display:none!important}}
+
+/* Unified image hero: one photographic background, real HTML overlay */
+.heroInner{position:relative!important;display:block!important;min-height:0!important;height:clamp(500px,36vw,680px)!important;background:#0c0b12 url('hero-unified.webp') center center / cover no-repeat!important;overflow:hidden!important}
+.heroPhoto,.heroProduct{display:none!important}
+.heroInner:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,transparent 0%,rgba(10,9,15,.08) 30%,rgba(10,9,15,.44) 38%,rgba(10,9,15,.54) 63%,rgba(10,9,15,.08) 77%,transparent 100%)}
+.heroCopy{position:absolute!important;z-index:2!important;left:36%!important;top:50%!important;bottom:auto!important;transform:translateY(-50%)!important;width:37%!important;height:auto!important;padding:24px 10px!important;margin:0!important;background:none!important;box-sizing:border-box!important}
+.heroCopy h1{font-size:clamp(30px,3.1vw,58px)!important;white-space:nowrap!important;line-height:1.08!important}
+.heroCopy h2{font-size:clamp(22px,2vw,37px)!important;white-space:normal!important}
+.heroCopy p{max-width:590px!important}
+@media(max-width:1100px) and (min-width:761px){.heroCopy{left:32%!important;width:43%!important}.heroInner{background-position:center!important}.heroCopy h1{font-size:clamp(29px,3.1vw,42px)!important}}
+@media(max-width:760px){.heroInner{height:auto!important;min-height:0!important;background-size:auto 340px!important;background-position:28% top!important;background-repeat:no-repeat!important;background-color:#0c0b12!important;padding-top:330px!important}.heroInner:before{background:linear-gradient(0deg,#0c0b12 0%,transparent 40%)!important;height:340px!important;bottom:auto!important}.heroCopy{position:relative!important;left:auto!important;top:auto!important;bottom:auto!important;transform:none!important;width:100%!important;height:auto!important;padding:12px 24px 36px!important;background:#0c0b12!important}.heroCopy h1{font-size:clamp(30px,8vw,44px)!important;white-space:normal!important}.heroCopy h2{font-size:clamp(22px,5vw,30px)!important}}
+
+/* Corrected hero: preserve complete panoramic composition and avoid cropping */
+@media(min-width:761px){
+.heroInner{height:auto!important;min-height:0!important;aspect-ratio:1920/700!important;background-image:url('hero-unified.webp')!important;background-size:100% 100%!important;background-position:center!important}
+.heroInner:before{background:linear-gradient(90deg,transparent 29%,rgba(10,9,15,.20) 39%,rgba(10,9,15,.32) 62%,transparent 77%)!important}
+.heroCopy{left:38%!important;width:34%!important}
+.heroCopy h1{font-size:clamp(28px,3vw,56px)!important}
+}
+
+/* Final readability refinement: preserve panoramic image, strengthen only the copy */
+@media(min-width:761px){
+.heroInner:before{background:linear-gradient(90deg,transparent 22%,rgba(7,6,12,.10) 31%,rgba(7,6,12,.43) 39%,rgba(7,6,12,.54) 57%,rgba(7,6,12,.34) 67%,transparent 79%)!important}
+.heroCopy{filter:drop-shadow(0 3px 12px rgba(0,0,0,.45));}
+.heroCopy h1{font-weight:800!important;text-shadow:0 3px 14px rgba(0,0,0,.92),0 1px 3px #000!important}
+.heroCopy h2{font-weight:650!important;text-shadow:0 3px 12px rgba(0,0,0,.9)!important}
+.heroCopy h2 em{color:#ff328d!important;font-weight:850!important;text-shadow:0 2px 9px rgba(0,0,0,.85)!important}
+.heroCopy p:not(.heroFine){color:#fff!important;font-weight:550!important;text-shadow:0 2px 7px #000,0 3px 14px rgba(0,0,0,.85)!important}
+.heroFeatures span{color:#fff!important;text-shadow:0 2px 7px #000!important}
+.heroFine{color:#e0dce4!important;text-shadow:0 2px 8px #000!important}
+}
+@media(max-width:760px){.heroCopy h1,.heroCopy h2,.heroCopy p,.heroFeatures{ text-shadow:0 2px 8px rgba(0,0,0,.75)!important}.heroCopy h2 em{color:#ff328d!important}}
+
+/* Clearer product specification presentation */
+.detailSpecs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 20px}
+.detailSpec{background:#30313a;border:1px solid #4c4d58;border-radius:12px;padding:12px 14px;min-width:0}
+.detailSpec dt{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#ffa1c9;font-weight:800;margin-bottom:5px}
+.detailSpec dd{margin:0;color:#f6f6fa;font-size:13px;line-height:1.55;overflow-wrap:anywhere}
+.detailPrice{font-size:24px;font-weight:800;color:white;margin:14px 0 3px}
+.detailPriceNote{color:#c9c9d3;font-size:12px;margin-bottom:16px}
+.detailSpecsIntro{font-size:13px;color:#d4d4dc}
+.modal .notice{color:#e9d2df}
+@media(max-width:480px){.detailSpecs{grid-template-columns:1fr}}
+
+.specTable{width:100%;border-collapse:collapse;margin:16px 0 20px;color:#f4f4f7;font-size:13px}
+.specTable th,.specTable td{border-bottom:1px solid #454550;padding:11px 8px;text-align:left;vertical-align:top}
+.specTable th{width:37%;font-weight:600;color:#c8c8d2}
+.specTable td{font-weight:500;color:#fff}
+.storageLabel{display:block;font-size:13px;font-weight:700;color:#fff;margin:14px 0}
+.storageSelect{display:block;width:100%;padding:13px;margin-top:8px;background:#303039;color:white;border:1px solid #656571;border-radius:9px}
+.detailPrice{font-size:25px;font-weight:800;color:#fff;margin-top:14px}
+.detailPriceNote{font-size:12px;color:#bcbcc7;margin-top:6px;line-height:1.5}
+.detailPriceNote a{color:#ff3b91}
+
+/* Shopee-inspired product variation selection */
+.variantModal{max-width:520px;background:#25252d;color:#fff}
+.variantModal h2{font-size:23px;margin:8px 0 18px;padding-right:36px}
+.variantModal .variantLabel{font-size:13px;font-weight:700;color:#dedee6;margin:18px 0 10px}
+.variantChoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.variantOption{display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;border:1px solid #5a5a67;background:#303039;color:#fff;padding:14px;border-radius:10px;min-height:70px}
+.variantOption span{font-size:12px;color:#c8c8d1}
+.variantOption.selected{border:2px solid #ff1680;background:#49243a;box-shadow:0 0 0 1px #ff168033}
+.variantUnavailable{background:#35303a;border:1px solid #654458;border-radius:10px;padding:15px;font-size:13px;line-height:1.5;color:#e2c4d3;grid-column:1/-1}
+.variantBottom{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0}
+.variantQtyControls{display:flex;align-items:center;gap:16px}
+.variantQtyControls button{width:36px;height:36px;border-radius:8px;border:1px solid #60606b;background:#363640;color:#fff}
+.variantPrice{font-size:18px;font-weight:800;color:#fff;margin:18px 0}
+#confirmVariant{width:100%;background:#e51b75;color:#fff;border:0;border-radius:10px;padding:15px;font-weight:800}
+#confirmVariant:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:480px){.variantChoices{grid-template-columns:1fr}.variantModal{padding:20px}}
+
+/* Done Deal 2026 functional storefront improvements */
+.ddBrandMark{height:52px;width:56px;object-fit:contain;flex:none;filter:drop-shadow(0 0 5px #ef277133)}
+.nav .logo{gap:7px;font-size:clamp(12px,1.4vw,21px)}
+.catalog .visual .mini{display:none}
+.catalog .visual .productPhoto{width:90%;height:92%;object-fit:contain;filter:drop-shadow(0 14px 15px #0006)}
+.detailPhoto{display:block;max-width:100%;width:100%;height:235px;object-fit:contain;background:#25252d;border-radius:12px}
+.shopExtras{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px;align-items:center}
+.shopExtras select,.shopExtras input{background:#2b2b32;border:1px solid #53535d;border-radius:10px;color:white;padding:11px;max-width:190px}
+.shopExtras label{color:#ddd;font-size:12px;display:flex;align-items:center;gap:7px}
+.secondaryAction{border:1px solid #5d5360;background:#313038;color:#fff;padding:10px 13px;border-radius:9px;cursor:pointer}
+.secondaryAction:hover{border-color:#ec2c81}
+.wishButton{position:absolute;top:12px;right:12px;border:1px solid #ffffff55;background:#17171bde;color:#fff;font-size:20px;width:37px;height:37px;border-radius:50%;z-index:1}
+.wishButton.on{color:#ff4e98}
+.product .actions{flex-wrap:wrap}.product .actions .compareBtn{flex:1 0 100%}
+.ddInfo{margin:25px 0 55px;padding:23px;border:1px solid #41414b;border-radius:16px;background:#25252c}
+.ddInfo h2{margin-top:0}.ddInfo p{color:#bcbcc7;font-size:13px;line-height:1.7}
+.adminOverlay{z-index:15}.adminPanel{width:min(760px,96%);max-height:92vh}
+.adminGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.adminStat{padding:13px;border-radius:12px;background:#33333c;border:1px solid #494954}.adminStat b{display:block;font-size:21px}
+.adminForm{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px}.adminForm label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:#d9d9e0}.adminForm input,.adminForm select{padding:10px;border-radius:8px;border:1px solid #575762;background:#34343e;color:white;min-width:0}
+.adminProducts{max-height:280px;overflow:auto;margin:14px 0}.adminRow{padding:10px 0;border-bottom:1px solid #4a4a54;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
+.adminRow input{width:105px;padding:7px;border:1px solid #555;background:#34343c;color:#fff;border-radius:6px}
+.adminRow button{background:#d92570;color:white;border:0;padding:8px;border-radius:7px}
+.comparePanel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.compareCard{background:#34343d;padding:12px;border-radius:10px;font-size:12px}.compareCard strong{color:#ff82b5}
+.ddNotice{font-size:12px;color:#bfc0cb;line-height:1.6}
+@media(max-width:700px){.ddBrandMark{width:37px;height:39px}.nav .logo{font-size:12px;white-space:normal;line-height:1.1}.adminForm{grid-template-columns:1fr}.comparePanel{grid-template-columns:1fr}.shopExtras select{max-width:150px}}
+
+/* Actual product photographs are loaded when available from Wikimedia Commons or your own product image links. */
+.catalog .visual .productPhoto{display:block;width:95%;height:95%;object-fit:contain;filter:drop-shadow(0 12px 16px #0005)}
+.catalog .visual .photoPending{font-size:11px;color:#c5c5d0;text-align:center;padding:20px}
+.detailPhoto{object-fit:contain}
+.orderRequestActions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}.orderRequestActions button{padding:12px 15px;border:0;border-radius:9px;background:#e02973;color:white;font-weight:700}
+
+/* Premium consistent product studio treatment */
+.catalog .product{overflow:hidden;min-width:0}
+.catalog .visual{height:250px;background:linear-gradient(145deg,#f5f5f7 0%,#e9e9ed 60%,#dedee4 100%);border-bottom:1px solid #d4d4dc;isolation:isolate;padding:18px}
+.catalog .visual .productPhoto{width:100%!important;height:100%!important;max-width:95%;max-height:225px;object-fit:contain!important;object-position:center;filter:drop-shadow(0 13px 12px rgba(27,29,36,.18))!important;transition:transform .25s ease}
+.catalog .product:hover .productPhoto{transform:scale(1.035)}
+.catalog .visual .tag{z-index:3;background:rgba(24,25,31,.92);color:#fff;border:0;font-size:10px}
+.catalog .visual .wishButton{z-index:4}
+.premiumFallback{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;text-align:center;color:#22232b;padding:35px 18px}
+.premiumFallback .fallbackBrand{text-transform:uppercase;letter-spacing:3px;font-size:10px;font-weight:800;color:#c51e65}
+.premiumFallback strong{font:800 clamp(19px,2vw,26px)/1.2 Manrope,Arial,sans-serif;letter-spacing:-.8px}
+.premiumFallback small{font-size:10px;color:#7a7b85}
+#detailBody .visual{background:linear-gradient(145deg,#f7f7f9,#e6e6eb)!important;min-height:275px!important;height:300px!important;display:flex;align-items:center;justify-content:center}
+#detailBody .detailPhoto{max-width:90%;max-height:270px;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 12px 14px rgba(0,0,0,.2))}
+.catalog .price{line-height:1.35;overflow-wrap:anywhere}
+.catalog .price small{line-height:1.45;margin-top:8px;letter-spacing:0;overflow-wrap:anywhere}
+.catalog .pbody{min-width:0}
+@media(max-width:700px){.catalog .visual{height:205px;padding:12px}.catalog .visual .productPhoto{max-height:185px}.premiumFallback strong{font-size:18px}}
+
+/* Dedicated brand pages */
+body[data-brand] .hero,body[data-brand] .brandBar,body[data-brand] .storePerks{display:none!important}
+body[data-brand] .dd-breadcrumb{padding:25px 0 6px;color:#a6a7b2;font-size:13px}
+body[data-brand] .dd-breadcrumb a{color:#f04b95;text-decoration:none}
+body[data-brand] #shop{padding-top:8px}
+body[data-brand] #shop>.sectionhead h2{display:block!important}
+body[data-brand] .dd-brand-heading{border-bottom:1px solid #444}
+</style><style id="dd-brand-sections-css">
+#catalog.catalog{display:block;margin-bottom:70px}
+.dd-brand-section{margin:0 0 42px;scroll-margin-top:100px}
+.dd-brand-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 18px;padding:0 0 13px;border-bottom:1px solid #41414a}
+.dd-brand-heading h3,.dd-brand-section>h3{font-family:Manrope,Arial,sans-serif;font-size:clamp(21px,2.2vw,29px);font-weight:800;color:#f7f7f9;letter-spacing:-.8px;margin:0}
+.dd-brand-heading h3:before{content:'';display:inline-block;width:4px;height:23px;background:#ed3281;border-radius:4px;margin-right:12px;vertical-align:-3px}
+.dd-brand-heading span{color:#b1b0ba;font-size:12px;white-space:nowrap}
+.dd-brand-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.dd-brand-grid .product{min-width:0}
+@media(max-width:980px){.dd-brand-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.dd-brand-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.dd-brand-section{margin-bottom:32px}}
+@media(max-width:400px){.dd-brand-grid{grid-template-columns:1fr}}
+</style><style id="standalone-brand-style">body[data-brand] .hero,body[data-brand] .brandBar,body[data-brand] .storePerks,body[data-brand] .featuredHeading{display:none!important}body[data-brand] .brandLanding{background:linear-gradient(115deg,#14151a,#2b202a);border-bottom:1px solid #45404a;padding:48px 0 38px}body[data-brand] .brandLanding .crumb{font-size:13px;color:#b9b7c2;margin-bottom:22px}body[data-brand] .brandLanding .crumb a{color:#ff75ac;text-decoration:none}body[data-brand] .brandLanding h1{font:800 clamp(35px,5vw,64px) Manrope,Arial,sans-serif;letter-spacing:-2px;margin:0 0 12px;color:white}body[data-brand] .brandLanding h1 span{color:#f13c88}body[data-brand] .brandLanding p{color:#c6c2cb;max-width:600px}body[data-brand] #shop{padding-top:10px}body[data-brand] #shop .sectionhead h2{font-size:26px!important}body[data-brand] #brands button:first-child{display:none!important}body[data-brand] .nav .logoLink{display:flex;align-items:center;text-decoration:none;color:inherit}body[data-brand] .dd-breadcrumb{display:none!important}.nav .logoLink{display:flex;align-items:center;text-decoration:none;color:inherit}@media(max-width:700px){body[data-brand] .brandLanding{padding:32px 0 28px}}</style><style id="dd-premium-square-grid">
+/* Done Deal 2026: premium square product gallery, all storefront pages */
+#catalog.catalog{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:22px!important;align-items:stretch}
+#catalog .dd-brand-section{grid-column:1/-1;min-width:0;margin:0 0 24px}
+#catalog .dd-brand-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:22px!important}
+#catalog .product{min-width:0;width:100%;display:flex;flex-direction:column;border-radius:18px;overflow:hidden;background:#25262c;border:1px solid #42434d;box-shadow:0 8px 26px #0003;transition:transform .2s,border-color .2s,box-shadow .2s}
+#catalog .product:hover{transform:translateY(-5px);border-color:#d93b7b;box-shadow:0 18px 38px #0007}
+#catalog .product .visual{height:auto!important;aspect-ratio:1/1!important;min-height:0!important;width:100%;padding:22px!important;display:flex;align-items:center;justify-content:center;position:relative;background:radial-gradient(circle at 50% 35%,#fff 0%,#f0f0f3 52%,#e3e3e8 100%)!important;overflow:hidden}
+#catalog .product .visual img.productPhoto{width:100%!important;height:100%!important;max-width:88%!important;max-height:88%!important;object-fit:contain!important;filter:drop-shadow(0 13px 15px #2223)!important}
+#catalog .product .visual .premiumFallback{padding:18px!important;gap:8px;justify-content:center}
+#catalog .product .visual .premiumFallback:before{content:'';display:block;width:68px;height:110px;border:5px solid #444650;border-radius:16px;background:linear-gradient(135deg,#bfc1c9,#787b87 65%,#494c57);box-shadow:12px 14px 20px #0002;transform:rotate(-8deg);margin:0 0 8px}
+#catalog .product .visual .premiumFallback strong{font-size:clamp(12px,1.3vw,17px);line-height:1.25}
+#catalog .product .visual .premiumFallback small{font-size:10px}
+#catalog .product .visual .photoPending{color:#4e505b!important;font-size:12px}
+#catalog .product .pbody{padding:19px!important;display:flex;flex-direction:column;flex:1;min-width:0}
+#catalog .product .pbody h3{font-size:17px!important;line-height:1.35;min-height:2.7em;margin:7px 0 9px}
+#catalog .product .desc{min-height:0!important;font-size:12px;line-height:1.55;margin-bottom:10px}
+#catalog .product .spec{min-height:0!important;font-size:11px;line-height:1.55;margin:0 0 16px;color:#a9aab5}
+#catalog .product .price{margin-top:auto;font-size:21px;line-height:1.3}
+#catalog .product .price small{font-size:10px;line-height:1.5;margin-top:6px}
+#catalog .product .actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+#catalog .product .actions button{min-width:0;width:100%;font-size:11px;padding:11px 6px;white-space:normal}
+#catalog .product .actions .compareBtn{grid-column:1/-1}
+body[data-brand] #catalog .dd-brand-heading{display:none!important}
+body[data-brand] #catalog .dd-brand-section{margin-bottom:0}
+body[data-brand] #brands{display:none!important}
+body[data-brand] #shop .sectionhead{margin-top:22px}
+@media(max-width:1120px){#catalog.catalog,#catalog .dd-brand-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:760px){#catalog.catalog,#catalog .dd-brand-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}#catalog .product .pbody{padding:12px!important}#catalog .product .visual{padding:12px!important}#catalog .product .pbody h3{font-size:14px!important;min-height:2.7em}#catalog .product .desc{font-size:11px}#catalog .product .spec{font-size:10px}#catalog .product .price{font-size:17px}#catalog .product .actions{grid-template-columns:1fr}#catalog .product .actions .compareBtn{grid-column:auto}#catalog .product .actions button{font-size:11px}}
+@media(max-width:360px){#catalog.catalog,#catalog .dd-brand-grid{grid-template-columns:1fr!important}}
+</style><link rel="stylesheet" href="premium-store.css"/></head><body><div class="top">PREMIUM SMARTPHONE COLLECTION • 35 CURATED MODELS</div><header class="nav"><a aria-label="Done Deal homepage" class="logoLink" href="index.html"><div class="logo"><img alt="Done Deal emblem" class="ddBrandMark" src="done-deal-mark.png"/> DONE DEAL<span> GADGETS &amp; SUPPLIES.</span></div></a><nav class="navlinks"><a href="#home">Home</a><a href="#shop">Shop Phones</a><a href="#about">About</a></nav><button onclick="openCart()">Cart <span id="cartCount">(0)</span></button></header><main id="home"><div class="container"><section id="shop"><div class="sectionhead"><div><h2>Discover your next phone.</h2><p>Browse the collection and explore standout features.</p></div><div id="resultCount" style="font-size:13px;color:#66758c"></div></div><div class="controls"><input aria-label="Search phones" id="search" placeholder="Search phones, brands, features…"/><select aria-label="Sort products" id="sort"><option value="featured">Sort: Featured</option><option value="az">Name: A to Z</option><option value="brand">Brand</option></select></div><div class="brands" id="brands"></div><div class="catalog" id="catalog"></div></section></div></main><footer class="footer" id="about"><div class="container footgrid"><div><div class="logo">DONE DEAL<span> PHONE &amp; GADGETS.</span></div><p>Done Deal Phone and Gadgets — explore premium smartphones and find your next device.</p></div><div><strong>Important information</strong><p>Product visuals are stylized illustrations, not official photographs. Prices, availability, warranty, and shipping must be configured before launch. This is a demonstration storefront; no real payments are processed.</p></div></div></footer><div class="overlay" id="cartOverlay" onclick="if(event.target===this)closeOverlay()"><aside class="drawer"><button class="close" onclick="closeOverlay()">✕</button><h2>Your shopping cart</h2><div id="cartItems"></div><h3 id="cartTotal"></h3><button class="btn" onclick="openCheckout()" style="width:100%;margin-top:16px">Prepare Order Request</button></aside></div><div class="overlay" id="detailOverlay" onclick="if(event.target===this)closeOverlay()"><div class="modal"><button class="close" onclick="closeOverlay()">✕</button><div id="detailBody"></div></div></div><div class="overlay" id="variantOverlay" onclick="if(event.target===this)closeOverlay()"><div aria-label="Choose product variation" aria-modal="true" class="modal variantModal" role="dialog"><button class="close" onclick="closeOverlay()">✕</button><div class="brand">CHOOSE PRODUCT VARIATION</div><h2 id="variantTitle"></h2><div class="variantLabel" id="variantLabel">Select storage</div><div class="variantChoices" id="variantChoices"></div><div class="variantBottom"><strong>Quantity</strong><div class="variantQtyControls"><button aria-label="Decrease quantity" onclick="adjustVariantQty(-1)" type="button">−</button><span id="variantQty">1</span><button aria-label="Increase quantity" onclick="adjustVariantQty(1)" type="button">+</button></div></div><div class="variantPrice" id="variantPrice"></div><button disabled="" id="confirmVariant" onclick="confirmCartVariant()" type="button">Choose storage</button></div></div><div class="overlay" id="checkoutOverlay" onclick="if(event.target===this)closeOverlay()"><div class="modal"><button class="close" onclick="closeOverlay()">✕</button><h2>Order Request</h2><p style="color:#b8b8c3;font-size:13px">Prepare your order details to share with the store. Availability and final price are confirmed by the seller.</p><form class="checkout" id="checkoutForm"><label>Full name<input autocomplete="name" name="name" required=""/></label><label>Email<input autocomplete="email" name="email" required="" type="email"/></label><label>Mobile number<input autocomplete="tel" name="phone" required=""/></label><label>Delivery address<input autocomplete="street-address" name="address" required=""/></label><button class="btn" style="width:100%;margin-top:16px" type="submit">Prepare Order Details</button></form><div id="orderConfirmation"></div></div></div><script>
+function selectBrand(brand){document.getElementById('shop').scrollIntoView({behavior:'smooth'});const buttons=[...document.querySelectorAll('#brands button')];const match=buttons.find(b=>b.textContent.trim().toLowerCase()===brand.toLowerCase());if(match)match.click();}
+function resetBrand(){const buttons=[...document.querySelectorAll('#brands button')];const match=buttons.find(b=>/all/i.test(b.textContent));if(match)match.click();}
+</script><div class="overlay adminOverlay" id="adminOverlay" onclick="if(event.target===this)closeOverlay()"><div class="modal adminPanel"><button class="close" onclick="closeOverlay()">✕</button><h2>Store manager — local demo</h2><p class="ddNotice">Changes are saved only in this browser. This is not a secure, shared admin account. A production dashboard needs authentication and a database.</p><div class="adminGrid" id="adminStats"></div><h3>Update selling prices</h3><div class="adminProducts" id="adminProducts"></div><h3>Add a catalog item</h3><form class="adminForm" id="adminAddForm"><label>Brand<select name="brand"><option>Apple</option><option>Samsung</option><option>Huawei</option><option>OPPO</option><option>vivo</option><option>Xiaomi</option></select></label><label>Model<input maxlength="90" name="model" required=""/></label><label>Short description<input maxlength="180" name="description" required=""/></label><label>Specification highlights<input maxlength="200" name="spec" required=""/></label><label>Reference image URL (HTTPS, optional)<input name="image" placeholder="https://..." type="url"/></label><label>Local selling price (PHP, optional)<input min="0" name="price" step="1" type="number"/></label><button class="btn" type="submit">Add product to local demo</button><button class="secondaryAction" onclick="resetDemo()" type="button">Reset local demo changes</button></form></div></div><div class="overlay" id="compareOverlay" onclick="if(event.target===this)closeOverlay()"><div class="modal"><button class="close" onclick="closeOverlay()">✕</button><h2>Compare smartphones</h2><div id="compareBody"></div></div></div><script src="app.js"></script><script src="enhancements.js"></script><script src="product-photos.js"></script><script src="brand-sections.js"></script><script src="brand-navigation.js"></script></body></html>
