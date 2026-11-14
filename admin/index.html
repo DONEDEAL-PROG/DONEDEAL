@@ -2,93 +2,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>Done Deal | Admin</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: #111116;
-      color: #fff;
-      font-family: system-ui, sans-serif;
-    }
-    .panel {
-      width: min(420px, 92vw);
-      padding: 32px;
-      background: #1d1d26;
-      border: 1px solid #37303a;
-      border-radius: 18px;
-    }
-    h1 { margin: 0 0 8px; }
-    .subtitle { color: #ff4da6; }
-    input, button {
-      width: 100%;
-      padding: 13px;
-      margin-top: 12px;
-      border-radius: 9px;
-      font: inherit;
-    }
-    input {
-      background: #292933;
-      border: 1px solid #454550;
-      color: white;
-    }
-    button {
-      border: 0;
-      background: #ec2991;
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    #message { color: #ffb5d8; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Done Deal | Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#111116;color:white;font-family:system-ui,sans-serif}
+header{background:#1d1d26;padding:20px 5%;border-bottom:1px solid #37303a}
+h1{margin:0;font-size:24px}
+.subtitle{color:#ff4da6}
+main{max-width:1000px;margin:35px auto;padding:0 20px}
+.panel,.product{background:#1d1d26;border:1px solid #37303a;border-radius:16px;padding:22px;margin-bottom:16px}
+#loginPanel{max-width:420px;margin:60px auto}
+input,button{font:inherit;border-radius:9px;padding:12px}
+input{background:#292933;border:1px solid #454550;color:white;width:100%;min-width:0}
+button{background:#ec2991;border:0;color:white;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:wait}
+button.secondary{background:#34343f}
+label{display:block;margin-bottom:7px;color:#ccc;font-size:14px}
+.fields{display:grid;grid-template-columns:1fr 100px;gap:12px;margin:16px 0}
+.productHead{display:flex;justify-content:space-between;gap:10px;align-items:center}
+small{color:#aaa;overflow-wrap:anywhere}
+.actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.notice{color:#ffb5d8}
+.success{color:#7fe0a0}
+#dashboard{display:none}
+@media(max-width:520px){.fields{grid-template-columns:1fr 90px}}
+</style>
 </head>
 <body>
-  <main class="panel">
-    <h1>DONE DEAL</h1>
-    <p class="subtitle">Private Admin Portal</p>
-    <form id="login">
-      <input
-        id="password"
-        type="password"
-        placeholder="Admin password"
-        autocomplete="current-password"
-        required
-      >
-      <button type="submit">Sign In</button>
-    </form>
-    <p id="message" role="status"></p>
-  </main>
-  <script>
-    document.getElementById("login").addEventListener(
-      "submit", async (event) => {
-        event.preventDefault();
-        const message = document.getElementById("message");
-        message.textContent = "Signing in...";
-        try {
-          const response = await fetch("/api/admin/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "same-origin",
-            body: JSON.stringify({
-              password: document.getElementById("password").value
-            })
-          });
-          if (!response.ok) {
-            throw new Error("Login failed or backend not configured.");
-          }
-          message.textContent = "Signed in. Dashboard setup is next.";
-          document.getElementById("password").value = "";
-        } catch (error) {
-          message.textContent = error.message;
-        }
+<header>
+  <h1>DONE DEAL</h1>
+  <div class="subtitle">PRIVATE ADMIN DASHBOARD</div>
+</header>
+<main>
+<section id="loginPanel" class="panel">
+  <h2>Admin Sign In</h2>
+  <form id="loginForm">
+    <label for="password">Admin password</label>
+    <input id="password" type="password"
+      autocomplete="current-password" required>
+    <button type="submit" style="width:100%;margin-top:14px">
+      Sign In
+    </button>
+  </form>
+  <p id="loginMessage" class="notice" role="status"></p>
+</section>
+
+<section id="dashboard">
+  <div class="panel">
+    <div class="productHead">
+      <div>
+        <h2>Product Manager</h2>
+        <p class="subtitle">Manage prices, stock and availability</p>
+      </div>
+      <button class="secondary" id="refreshBtn">Refresh</button>
+    </div>
+    <p id="status" role="status"></p>
+  </div>
+  <div id="products"></div>
+</section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const money = cents => (cents / 100).toFixed(2);
+
+function showDashboard() {
+  $("loginPanel").style.display = "none";
+  $("dashboard").style.display = "block";
+}
+
+function showLogin() {
+  $("loginPanel").style.display = "block";
+  $("dashboard").style.display = "none";
+}
+
+async function loadProducts() {
+  $("status").textContent = "Loading products...";
+  $("products").replaceChildren();
+
+  try {
+    const response = await fetch("/api/admin/products", {
+      credentials: "same-origin",
+      cache: "no-store"
+    });
+
+    if (response.status === 401) {
+      showLogin();
+      $("loginMessage").textContent =
+        "Please sign in to continue.";
+      return;
+    }
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "Unable to load products.");
+    }
+
+    showDashboard();
+    const products = data.products || [];
+
+    $("status").textContent =
+      products.length + " product variant(s) found.";
+
+    if (!products.length) {
+      $("status").textContent =
+        "No products yet. Existing products will appear here.";
+    }
+
+    products.forEach(renderProduct);
+  } catch (error) {
+    $("status").textContent = error.message;
+  }
+}
+
+function renderProduct(item) {
+  const card = document.createElement("article");
+  card.className = "product";
+
+  const head = document.createElement("div");
+  head.className = "productHead";
+
+  const title = document.createElement("div");
+  const name = document.createElement("strong");
+  name.textContent = item.name;
+  const details = document.createElement("small");
+  details.textContent = item.variant + " · " + item.sku;
+  title.append(name, document.createElement("br"), details);
+  head.append(title);
+
+  const fields = document.createElement("div");
+  fields.className = "fields";
+
+  const priceBox = document.createElement("div");
+  const priceLabel = document.createElement("label");
+  priceLabel.textContent = "Price (PHP)";
+  const price = document.createElement("input");
+  price.type = "number";
+  price.min = "0.01";
+  price.step = "0.01";
+  price.value = money(item.price_centavos);
+  priceBox.append(priceLabel, price);
+
+  const stockBox = document.createElement("div");
+  const stockLabel = document.createElement("label");
+  stockLabel.textContent = "Stock";
+  const stock = document.createElement("input");
+  stock.type = "number";
+  stock.min = "0";
+  stock.step = "1";
+  stock.value = item.stock;
+  stockBox.append(stockLabel, stock);
+
+  fields.append(priceBox, stockBox);
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+
+  const available = document.createElement("input");
+  available.type = "checkbox";
+  available.checked = item.enabled === 1;
+  available.style.width = "auto";
+
+  const availableLabel = document.createElement("label");
+  availableLabel.style.margin = "0";
+  availableLabel.append(available, " Available for sale");
+
+  const save = document.createElement("button");
+  save.textContent = "Save Changes";
+
+  const message = document.createElement("small");
+  message.setAttribute("role", "status");
+
+  save.addEventListener("click", async () => {
+    const rawPrice = price.value.trim();
+    const rawStock = stock.value.trim();
+    const php = Number(rawPrice);
+    const quantity = Number(rawStock);
+    const cents = Math.round(php * 100);
+
+    if (!/^\d+(\.\d{1,2})?$/.test(rawPrice) ||
+        !Number.isSafeInteger(cents) ||
+        cents < 1 ||
+        !/^\d+$/.test(rawStock) ||
+        !Number.isSafeInteger(quantity)) {
+      message.textContent = "Enter a valid price and stock.";
+      return;
+    }
+
+    save.disabled = true;
+    message.textContent = "Saving...";
+
+    try {
+      const response = await fetch("/api/admin/products", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          sku: item.sku,
+          price_centavos: cents,
+          stock: quantity,
+          enabled: available.checked ? 1 : 0
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Save failed.");
       }
-    );
-  </script>
+
+      message.textContent = "Saved successfully!";
+      message.className = "success";
+    } catch (error) {
+      message.textContent = error.message;
+      message.className = "notice";
+    } finally {
+      save.disabled = false;
+    }
+  });
+
+  actions.append(availableLabel, save, message);
+  card.append(head, fields, actions);
+  $("products").append(card);
+}
+
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  $("loginMessage").textContent = "Signing in...";
+
+  try {
+    const response = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      credentials: "same-origin",
+      body: JSON.stringify({password:$("password").value})
+    });
+
+    if (!response.ok) throw new Error("Invalid login.");
+    $("password").value = "";
+    showDashboard();
+    await loadProducts();
+  } catch (error) {
+    $("loginMessage").textContent = error.message;
+  }
+});
+
+$("refreshBtn").addEventListener("click", loadProducts);
+loadProducts();
+</script>
 </body>
 </html>
