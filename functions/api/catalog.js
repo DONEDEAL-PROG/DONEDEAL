@@ -16,11 +16,15 @@ const result = await env.DB.prepare(`
     v.variant,
     v.price_centavos,
     v.stock,
-    i.image_key
+    i.image_key,
+    p.brand,
+    p.model,
+    p.description
   FROM store_variants AS v
   LEFT JOIN store_product_images AS i
     ON i.product_id =
       substr(v.sku, 1, instr(v.sku, '::') - 1)
+  LEFT JOIN store_products AS p ON p.id = substr(v.sku, 1, instr(v.sku, '::') - 1)
   WHERE v.enabled = 1
   ORDER BY v.name, v.variant
 `).all();

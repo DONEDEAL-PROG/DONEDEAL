@@ -1,1 +1,20 @@
-import{json,err,priceCart,sameOrigin}from './_shared.js';export async function onRequestPost({request,env}){if(!sameOrigin(request))return err('Origin not allowed',403);if(!env.DB||!env.PAYMONGO_SECRET_KEY)return err('Payments not configured',503);let orderId;try{const body=await request.json();const c=body.customer||{};for(const k of ['name','email','phone','address','city','province','postal'])if(typeof c[k]!=='string'||!c[k].trim()||c[k].length>400)throw Error('Complete all delivery fields');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email))throw Error('Invalid email');const quote=await priceCart(env.DB,body.items);orderId='DD-'+crypto.randomUUID();const origin=new URL(request.url).origin;await env.DB.prepare('INSERT INTO store_orders (id,status,total_centavos,customer_json,items_json,created_at) VALUES (?,?,?,?,?,?)').bind(orderId,'pending',quote.total,JSON.stringify(c),JSON.stringify(quote.items),new Date().toISOString()).run();const attrs={line_items:quote.items.map(x=>({name:x.name+' — '+x.variant,amount:x.amount,currency:'PHP',quantity:x.quantity})),payment_method_types:['gcash','paymaya','qrph','card'],success_url:origin+'/payment-status.html?order='+encodeURIComponent(orderId),cancel_url:origin+'/checkout.html',reference_number:orderId,description:'Done Deal smartphone order '+orderId,send_email_receipt:true,metadata:{order_id:orderId}};const auth=btoa(env.PAYMONGO_SECRET_KEY+':');const resp=await fetch('https://api.paymongo.com/v2/checkout_sessions',{method:'POST',headers:{'Authorization':'Basic '+auth,'Content-Type':'application/json'},body:JSON.stringify({data:{attributes:attrs}})});const data=await resp.json();if(!resp.ok){console.error('PayMongo checkout creation failed',resp.status,JSON.stringify(data).slice(0,500));return err('Payment provider could not create checkout. Please try again.',502)}const url=data?.data?.attributes?.checkout_url;const session=data?.data?.id;if(!url||!session||!url.startsWith('https://checkout.paymongo.com/'))return err('Payment provider returned invalid checkout',502);await env.DB.prepare('UPDATE store_orders SET checkout_session_id=? WHERE id=?').bind(session,orderId).run();return json({checkout_url:url,order_id:orderId})}catch(e){console.error('Checkout request error',String(e));return err(e.message==='Failed to fetch'?'Payment provider unavailable':e.message)}}
+import {json,err,priceCart,sameOrigin} from './_shared.js';
+export async function onRequestPost({request,env}){
+ if(!sameOrigin(request))return err('Origin not allowed',403);
+ if(!env.DB)return err('Store database not configured',503);
+ try{
+  const b=await request.json(),c=b.customer||{};
+  if(typeof c.name!=='string'||!c.name.trim()||c.name.length>120||typeof c.phone!=='string'||!c.phone.trim()||c.phone.length>30||typeof c.email!=='string'||c.email.length>160)return err('Complete your contact details');
+  if(c.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email))return err('Invalid email');
+  if(!['delivery','pickup'].includes(b.fulfillment))return err('Choose delivery or pickup');
+  if(b.fulfillment==='delivery'&&(!c.address||!c.city||!c.province||!c.postal))return err('Complete the delivery address');
+  if(!['cod','gcash','bank_transfer'].includes(b.payment_method))return err('Choose an available payment method. Card payments coming soon');
+  const quote=await priceCart(env.DB,b.items);
+  const id='DD-'+crypto.randomUUID();
+  await env.DB.batch([
+   env.DB.prepare('INSERT INTO store_orders(id,status,total_centavos,customer_json,items_json,created_at) VALUES(?,?,?,?,?,?)').bind(id,'pending',quote.total,JSON.stringify(c),JSON.stringify(quote.items),new Date().toISOString()),
+   env.DB.prepare(`INSERT INTO store_order_meta(order_id,source,fulfillment,payment_method,payment_status,shipping_note) VALUES(?,'website',?,?,'unpaid',?)`).bind(id,b.fulfillment,b.payment_method,b.fulfillment==='delivery'?'Shipping fee to be confirmed before dispatch':'Pickup time and location to be confirmed')
+  ]);
+  return json({ok:true,order_id:id,status:'pending',message:'Order request received. No payment has been collected. We will contact you to confirm availability and any shipping fees.'},201);
+ }catch(e){return err(e.message||'Unable to submit order')}
+}
