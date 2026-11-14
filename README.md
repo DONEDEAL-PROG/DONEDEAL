@@ -1,3 +1,1 @@
-DONE DEAL — Updated hero product image (uncropped)
-
-Upload all five site files (index.html, app.js, hero-model.jpg, hero-product.webp, apple-logo.svg) to the root of GitHub DONEDEAL repository, replacing existing files, then commit to main. Cloudflare Pages will deploy automatically. The site remains a demo storefront without live payment processing.
+DONE DEAL unified homepage hero. Upload all files in this folder to the root of DONEDEAL GitHub repository and commit to main. Cloudflare Pages redeploys automatically. The unified hero background is hero-unified.webp. Existing catalog and cart code are retained.
