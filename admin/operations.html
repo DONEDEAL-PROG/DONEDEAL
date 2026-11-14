@@ -34,11 +34,37 @@ a,.pink{color:#a63871}
 .pickupPanel .pickupCode{font-size:17px;font-weight:800;color:#8b3464;letter-spacing:.04em}
 .pickupPanel button{max-width:100%}
 </style><link rel="stylesheet" href="/admin/dd-shell.css">
-</head><body>
+
+<style>
+/* Readable order detail cards: presentation only */
+.orderDetails{padding:16px!important;background:#faf7f9!important}
+.orderDetails summary{font-size:15px;padding:5px 0}
+.orderDetails .dd-order-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-top:16px}
+.dd-detail-card{min-width:0;background:#fff;border:1px solid #e8dce4;border-radius:14px;padding:18px}
+.dd-detail-card h4{margin:0 0 14px;color:#8e3468;font-size:15px}
+.dd-detail-field{display:flex;flex-direction:column;gap:4px;margin:12px 0;min-width:0}
+.dd-detail-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#827781;font-weight:750}
+.dd-detail-value{font-size:14px;line-height:1.55;color:#27222a;overflow-wrap:anywhere;user-select:text}
+.dd-products-card{grid-column:1/-1}
+.dd-order-products{display:flex;flex-direction:column;gap:10px}
+.dd-order-product{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:14px;border-radius:11px;background:#faf7f9;border:1px solid #f0e5eb}
+.dd-product-identity{min-width:0;display:flex;flex-direction:column;gap:5px}
+.dd-product-identity strong{font-size:14px;line-height:1.5;color:#29232b}
+.dd-product-variant,.dd-product-qty{color:#756b75;font-size:12px}
+.dd-product-amount{text-align:right;display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.dd-product-amount strong{font-size:14px;color:#8e3468}
+.dd-order-total{display:flex;justify-content:space-between;gap:12px;border-top:1px solid #eadde5;margin-top:15px;padding-top:16px;font-size:17px;color:#30242d}
+html[data-dd-theme=dark] .orderDetails{background:#211e27!important;border-color:#493a47}
+html[data-dd-theme=dark] .dd-detail-card{background:#29252f;border-color:#4c3b4a}
+html[data-dd-theme=dark] .dd-order-product{background:#342b36;border-color:#4b3c49}
+html[data-dd-theme=dark] .dd-detail-value,html[data-dd-theme=dark] .dd-product-identity strong,html[data-dd-theme=dark] .dd-order-total{color:#f8edf5}
+@media(max-width:700px){.orderDetails .dd-order-layout{grid-template-columns:1fr}.dd-order-product{flex-wrap:wrap}.dd-product-amount{text-align:left}}
+</style>
+<style>.dd-inventory-shortcut{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-left:4px solid #b03b7b!important}.dd-inventory-shortcut h2{margin:0 0 6px}.dd-inventory-shortcut p{margin:0}.dd-inventory-link{display:inline-block;background:#a63871;color:white!important;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:750}</style></head><body>
 <header><div class="row space"><div><h1>DONE DEAL <span class="pink">/ CONTROL CENTER</span></h1><small>Add gadgets • manage orders • Warm Light admin</small></div><a href="/admin/">← Product Manager</a></div></header>
 <main>
 <section id="login" class="panel" style="max-width:420px;margin:50px auto"><h2>Admin sign in</h2><form id="loginForm"><div class="field"><label>Password</label><input type="password" id="password" autocomplete="current-password" required></div><button>Sign In</button></form><p id="loginMsg"></p></section>
-<div id="app" class="hide">
+<div id="app" class="hide"><section class="panel dd-inventory-shortcut" aria-label="Inventory shortcut"><div><h2>📱 Manage Gadgets</h2><p>View gadgets, update prices, manage stock, and edit storage variants.</p></div><a href="/admin/#inventory" class="dd-inventory-link">Open Inventory / Stock →</a></section>
 <div class="grid" id="stats"></div>
 <nav><button class="tab active" data-tab="gadgets">＋ Add Gadget</button><button class="tab secondary" data-tab="orders">▤ Orders</button></nav>
 <section id="gadgets" class="panel"><h2>New gadget</h2><p>Create a new model with independent storage, color, prices and stock. New models appear on the storefront after saving.</p>
@@ -129,16 +155,35 @@ function orderCard(o){
  box.append(el('p',(customer.name||'Customer unknown')+' · '+money(o.total_centavos)));
  const details=document.createElement('details');details.className='orderDetails';
  const summary=document.createElement('summary');summary.textContent='View complete order details';details.append(summary);
- const info=el('div',null,'orderMeta');
- const addInfo=(title,value)=>{const card=el('div');card.append(el('strong',title),el('p',String(value||'—')));info.append(card)};
- addInfo('Customer',[(customer.name||''),(customer.phone||''),(customer.email||'')].filter(Boolean).join(' · '));
- addInfo('Fulfillment',(o.fulfillment||'Legacy')+' · '+(o.payment_method||'Gateway / legacy'));
- addInfo('Delivery address',[customer.address,customer.city,customer.province,customer.postal].filter(Boolean).join(', '));
- addInfo('Payment',o.payment_status||'Not recorded');
- addInfo('Products',items.map(i=>(i.quantity||1)+'× '+(i.name||i.sku||'Item')+' '+(i.variant||'')+' — '+money(i.line_total_centavos||i.total_centavos||0)).join(' | '));
- addInfo('Subtotal',money(o.total_centavos));
- if(o.shipping_note)addInfo('Shipping / pickup note',o.shipping_note);
- if(o.notes)addInfo('Admin notes',o.notes);
+ const info=el('div',null,'dd-order-layout');
+ const section=(title,cls='')=>{const node=el('section',null,'dd-detail-card '+cls);node.append(el('h4',title));info.append(node);return node};
+ const field=(parent,label,value)=>{const line=el('div',null,'dd-detail-field');line.append(el('span',label,'dd-detail-label'),el('span',String(value||'—'),'dd-detail-value'));parent.append(line)};
+ const contact=section('👤 Customer information','dd-customer-card');
+ field(contact,'Name',customer.name);field(contact,'Phone',customer.phone);field(contact,'Email',customer.email);
+ const address=section('📍 Delivery / pickup');
+ field(address,'Fulfillment',o.fulfillment||'Legacy');
+ field(address,'Address',[customer.address,customer.city,customer.province,customer.postal].filter(Boolean).join(', '));
+ const payment=section('💳 Payment');
+ field(payment,'Method',o.payment_method||'Gateway / legacy');field(payment,'Status',o.payment_status||'Not recorded');
+ const products=section('📦 Products ordered','dd-products-card');
+ const productList=el('div',null,'dd-order-products');
+ if(!items.length)productList.append(el('p','No product details available.','muted'));
+ for(const item of items){
+   const row=el('div',null,'dd-order-product');
+   const identity=el('div',null,'dd-product-identity');
+   identity.append(el('strong',item.name||item.sku||'Item'));
+   if(item.variant)identity.append(el('span',String(item.variant),'dd-product-variant'));
+   row.append(identity);
+   const right=el('div',null,'dd-product-amount');
+   right.append(el('span','Qty '+(item.quantity||1),'dd-product-qty'));
+   const lineCents=item.line_total_centavos??item.total_centavos;
+   right.append(el('strong',lineCents==null?'Price unavailable':money(lineCents)));
+   row.append(right);productList.append(row);
+ }
+ products.append(productList);
+ const total=el('div',null,'dd-order-total');total.append(el('strong','Order total'),el('strong',money(o.total_centavos)));products.append(total);
+ if(o.shipping_note){const note=section('🚚 Shipping / pickup note');note.append(el('p',o.shipping_note))}
+ if(o.notes){const note=section('📝 Admin notes');note.append(el('p',o.notes))}
  details.append(info);box.append(details);
  if(o.fulfillment==='pickup'&&o.source!=='legacy'){
   const pickup=el('div',null,'pickupPanel');
