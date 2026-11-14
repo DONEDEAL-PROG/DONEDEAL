@@ -41,18 +41,68 @@ Apple:[
 ['iPhone 16e','Affordable entry into modern iPhone features.','6.1-inch OLED • A18 • 48MP main','Value'],
 ['iPhone 15','Modern iPhone with Dynamic Island and USB-C.','6.1-inch OLED • A16 Bionic • 48MP main','Value']]
 };
+// Philippine SRP configuration. Enter only verified official Philippine SRPs.
+// Format: 'Apple-0': { amount: 0, variant: '256GB', source: 'Official PH link' }
+// Unverified prices deliberately remain unlisted.
+const philippineSRP = {};
+const specificationLabels = {
+  'inch':'Display', 'OLED':'Display', 'AMOLED':'Display',
+  'Snapdragon':'Processor', 'Dimensity':'Processor', 'Kirin':'Processor', 'Bionic':'Processor',
+  'MP':'Camera', 'mAh':'Battery', 'charging':'Charging', 'foldable':'Form factor',
+  'rear display':'Secondary display'
+};
+function parseSpecs(p){
+  const parts=p.spec.split(' • ').filter(Boolean);
+  const result=[];
+  for(const part of parts){
+    let label='Feature';
+    if(/inch|OLED|AMOLED|ProMotion|inner/i.test(part))label='Display';
+    else if(/Snapdragon|Dimensity|Kirin|Bionic|\bA1[89]\b/i.test(part))label='Processor';
+    else if(/MP|telephoto|camera/i.test(part))label='Camera';
+    else if(/mAh/i.test(part))label='Battery';
+    else if(/charging|\b[0-9]+W\b/i.test(part))label='Charging';
+    else if(/foldable/i.test(part))label='Form factor';
+    else if(/rear display/i.test(part))label='Secondary display';
+    result.push({label,value:part});
+  }
+  result.push({label:'Storage & RAM',value:'Select the Philippine variant; exact configurations to be confirmed'});
+  result.push({label:'Connectivity',value:'Regional network bands and SIM support to be confirmed'});
+  result.push({label:'Warranty',value:'Confirm official Philippine warranty and included accessories'});
+  return result;
+}
+function srpFor(p){return philippineSRP[p.id] || null;}
+function productPrice(p){const v=srpFor(p);return v && Number.isFinite(v.amount) && v.amount>0?v.amount:null;}
 const shades={Huawei:'#d1a1a0',Samsung:'#829cdb',OPPO:'#a4c5b3',vivo:'#8aacee',Xiaomi:'#f0b381',Apple:'#c2c8d3'};
 const products=Object.entries(entries).flatMap(([brand,items])=>items.map((x,i)=>({id:brand+'-'+i,brand,name:x[0],desc:x[1],spec:x[2],tag:x[3],price:null})));
 let filter='All',cart=JSON.parse(localStorage.getItem('doneDealCart')||'{}');
-const money=p=>p==null?'Price on request':'₱'+p.toLocaleString('en-PH');
-function render(){let q=document.getElementById('search').value.toLowerCase(),sort=document.getElementById('sort').value;let data=products.filter(p=>(filter==='All'||p.brand===filter)&&(p.brand+' '+p.name+' '+p.desc+' '+p.spec).toLowerCase().includes(q));if(sort==='az')data.sort((a,b)=>a.name.localeCompare(b.name));if(sort==='brand')data.sort((a,b)=>a.brand.localeCompare(b.brand));document.getElementById('resultCount').textContent=data.length+' products';document.getElementById('catalog').innerHTML=data.map(p=>`<article class="product"><div class="visual" style="--shade:${shades[p.brand]}"><span class="tag">${p.tag}</span><div class="mini"></div></div><div class="pbody"><div class="brand">${p.brand}</div><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="spec">${p.spec}</div><div class="price">${money(p.price)}<small>Availability and final pricing to be confirmed</small></div><div class="actions"><button class="outline" onclick="detail('${p.id}')">View Details</button><button class="primary" onclick="add('${p.id}')">Add to Cart</button></div></div></article>`).join('')||'<div class="empty">No phones found. Try another search.</div>';}
+const money=p=>p==null?'PH SRP pending verification':'₱'+p.toLocaleString('en-PH');
+function render(){let q=document.getElementById('search').value.toLowerCase(),sort=document.getElementById('sort').value;let data=products.filter(p=>(filter==='All'||p.brand===filter)&&(p.brand+' '+p.name+' '+p.desc+' '+p.spec).toLowerCase().includes(q));if(sort==='az')data.sort((a,b)=>a.name.localeCompare(b.name));if(sort==='brand')data.sort((a,b)=>a.brand.localeCompare(b.brand));document.getElementById('resultCount').textContent=data.length+' products';document.getElementById('catalog').innerHTML=data.map(p=>`<article class="product"><div class="visual" style="--shade:${shades[p.brand]}"><span class="tag">${p.tag}</span><div class="mini"></div></div><div class="pbody"><div class="brand">${p.brand}</div><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="spec">${p.spec}</div><div class="price">${money(productPrice(p))}<small>Official PH SRP • subject to variant and availability</small></div><div class="actions"><button class="outline" onclick="detail('${p.id}')">View Details</button><button class="primary" onclick="add('${p.id}')">Add to Cart</button></div></div></article>`).join('')||'<div class="empty">No phones found. Try another search.</div>';}
 function renderBrands(){document.getElementById('brands').innerHTML=['All',...Object.keys(entries)].map(b=>`<button class="chip ${filter===b?'active':''}" onclick="filter='${b}';renderBrands();render()">${b==='All'?'All Brands':b}</button>`).join('')}
 function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart));document.getElementById('cartCount').textContent='('+Object.values(cart).reduce((a,b)=>a+b,0)+')'}
 function add(id){cart[id]=(cart[id]||0)+1;save();openCart()}
 function changeQty(id,d){cart[id]=(cart[id]||0)+d;if(cart[id]<=0)delete cart[id];save();openCart()}
 function closeOverlay(){document.querySelectorAll('.overlay').forEach(e=>e.classList.remove('open'))}
-function openCart(){closeOverlay();document.getElementById('cartOverlay').classList.add('open');let ids=Object.keys(cart);document.getElementById('cartItems').innerHTML=ids.length?ids.map(id=>{let p=products.find(x=>x.id===id);return `<div class="cartitem"><div><strong>${p.brand} ${p.name}</strong><div style="color:#66758c;margin-top:5px">${money(p.price)}</div></div><div><button onclick="changeQty('${id}',-1)">−</button> ${cart[id]} <button onclick="changeQty('${id}',1)">+</button></div></div>`}).join(''):'<div class="empty">Your cart is empty.</div>';document.getElementById('cartTotal').textContent=ids.length?'Final total: to be quoted':'Add a phone to get started.'}
-function detail(id){let p=products.find(x=>x.id===id);closeOverlay();document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]};height:260px;border-radius:12px"><div class="mini"></div></div><p>${p.desc}</p><h3>Key specifications</h3><p style="line-height:1.9;color:#52617b">${p.spec.replaceAll(' • ','<br>')}</p><p><strong>${money(p.price)}</strong></p><div class="notice">Key specifications are a quick overview. Confirm exact regional variant, storage, connectivity, warranty and full technical specifications before purchase.</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;document.getElementById('detailOverlay').classList.add('open')}
+function openCart(){closeOverlay();document.getElementById('cartOverlay').classList.add('open');let ids=Object.keys(cart);document.getElementById('cartItems').innerHTML=ids.length?ids.map(id=>{let p=products.find(x=>x.id===id);return `<div class="cartitem"><div><strong>${p.brand} ${p.name}</strong><div style="color:#66758c;margin-top:5px">${money(productPrice(p))}</div></div><div><button onclick="changeQty('${id}',-1)">−</button> ${cart[id]} <button onclick="changeQty('${id}',1)">+</button></div></div>`}).join(''):'<div class="empty">Your cart is empty.</div>';document.getElementById('cartTotal').textContent=ids.length?'Final total: to be quoted':'Add a phone to get started.'}
+function detail(id){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  closeOverlay();
+  const specs=parseSpecs(p);
+  const srp=srpFor(p);
+  const specHTML=specs.map(s=>`<div class="detailSpec"><dt>${s.label}</dt><dd>${s.value}</dd></div>`).join('');
+  document.getElementById('detailBody').innerHTML=`
+    <div class="brand">${p.brand} / ${p.tag}</div>
+    <h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2>
+    <div class="visual" style="--shade:${shades[p.brand]};height:235px;border-radius:12px"><div class="mini"></div></div>
+    <p style="color:#f0f0f4">${p.desc}</p>
+    <h3 style="color:#fff;margin-bottom:6px">Product specifications</h3>
+    <p class="detailSpecsIntro">Specifications shown below are drawn from the current catalog. Unconfirmed details are identified rather than guessed.</p>
+    <dl class="detailSpecs">${specHTML}</dl>
+    <div class="detailPrice">${money(productPrice(p))}</div>
+    <div class="detailPriceNote">${srp&&productPrice(p)?`Philippine SRP • ${srp.variant||'specified variant'}${srp.source?' • '+srp.source:''}`:'An official Philippine SRP has not yet been verified for this model and storage variant.'}</div>
+    <div class="notice">Please confirm exact Philippine variant, storage, warranty, stock and final selling price before purchase.</div>
+    <button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
+  document.getElementById('detailOverlay').classList.add('open');
+}
 function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return}closeOverlay();document.getElementById('checkoutOverlay').classList.add('open');document.getElementById('checkoutForm').style.display='block';document.getElementById('orderConfirmation').innerHTML=''}
 document.getElementById('checkoutForm').addEventListener('submit',e=>{e.preventDefault();let data=new FormData(e.target);let name=String(data.get('name')).replace(/[<>]/g,'');let summary=Object.keys(cart).map(id=>{let p=products.find(x=>x.id===id);return `${cart[id]} × ${p.brand} ${p.name}`}).join(', ');document.getElementById('checkoutForm').style.display='none';document.getElementById('orderConfirmation').innerHTML=`<div class="notice" style="margin-top:20px"><strong>Demo order summary created</strong><p>Thank you, ${name}. This is NOT an actual order. No payment has been taken and no merchant has received your information.</p><p><strong>Items:</strong> ${summary}</p><p>To accept real orders, connect a secure backend, merchant notifications, verified prices, stock management, and a payment provider.</p></div>`});
 document.getElementById('search').addEventListener('input',render);document.getElementById('sort').addEventListener('change',render);renderBrands();render();save();

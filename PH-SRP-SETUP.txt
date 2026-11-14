@@ -1,0 +1,14 @@
+PHILIPPINE SRP SETUP
+
+Open app.js and find const philippineSRP = {}.
+
+Add verified model-specific prices, e.g.
+const philippineSRP = {
+  "Apple-0": {amount: 00000, variant: "256GB", source: "Official PH brand price list"}
+};
+
+Replace 00000 with a verified PHP SRP. The example is NOT a real price.
+
+The existing product catalog has no verified SRP data, so prices remain pending verification rather than showing fabricated amounts.
+
+Keep your existing hero-unified.webp and any other images in your GitHub repository; they are referenced by index.html but were not supplied with this upload.
