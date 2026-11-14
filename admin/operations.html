@@ -1,7 +1,40 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Done Deal | Gadgets & Orders</title><style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#111116;color:#f9f6fb;font:15px system-ui,sans-serif}header{padding:20px 5%;background:#1c1a23;border-bottom:1px solid #403443}main{max-width:1180px;margin:auto;padding:24px}h1{margin:0;font-size:25px}h2{font-size:20px;margin:0 0 14px}p,.muted{color:#bdb3c3}.pink{color:#ff70b7}.panel,.tile{background:#211e29;border:1px solid #3d3546;border-radius:18px;padding:20px}.panel{margin-bottom:18px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.space{justify-content:space-between}.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;flex:1;min-width:180px}input,select,textarea,button{font:inherit;padding:11px;border-radius:10px}input,select,textarea{width:100%;background:#2d2935;border:1px solid #5b4c61;color:white}button{background:#e83291;color:#fff;border:0;font-weight:750;cursor:pointer}button.secondary{background:#38303e}button:disabled{opacity:.5;cursor:wait}a{color:#ff8bc5}label{color:#e6dce8;font-size:13px}small{color:#bcb1c1}nav{display:flex;gap:10px;margin:18px 0}.tab.active{background:#e83291}.hide{display:none!important}.variant{padding:14px;border:1px solid #514054;border-radius:12px;margin-bottom:10px}.status{padding:10px;border-radius:9px;color:#ffc2df;white-space:pre-wrap}.tag{background:#403044;color:#ffc1df;border-radius:9px;padding:5px 8px;font-size:12px}.order{margin-bottom:12px}.order h3{margin:0 0 8px;font-size:16px}.order pre{white-space:pre-wrap;font:13px system-ui;color:#ddd}.order select{width:auto;max-width:100%}@media(max-width:600px){main{padding:14px}.panel{padding:15px}}
+
+/* Warm Light order management */
+:root{color-scheme:light}
+body{background:#f5f3f2;color:#29252b}
+header{background:#fff;border-bottom:1px solid #e5dfe4}
+header small,p,.muted,small{color:#777078}
+.panel,.tile{background:#fff;border:1px solid #e5dfe4;box-shadow:0 3px 16px #33212d09}
+input,select,textarea{background:#fbfafb;border:1px solid #d8cfd6;color:#29252b}
+label{color:#625962}
+button{background:#a63871;color:#fff}
+button.secondary{background:#f2e6ec;color:#763953}
+button.tab.active{background:#a63871;color:#fff}
+a,.pink{color:#a63871}
+.status{color:#854263}
+.tag{background:#f5e4ec;color:#853a63}
+.variant{border-color:#e7dfe5}
+.order{border-left:4px solid #b65589}
+.order h3{font-size:18px;overflow-wrap:anywhere}
+.order select{min-width:150px}
+.orderDetails{margin:12px 0;border:1px solid #eee3e9;border-radius:12px;padding:12px;background:#fcfafb}
+.orderDetails summary{cursor:pointer;color:#923e6c;font-weight:750}
+.orderDetails .orderMeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;padding:14px 0}
+.orderDetails .orderMeta>div{background:white;border:1px solid #eee5ea;padding:12px;border-radius:9px;overflow-wrap:anywhere}
+.orderActions{margin-top:15px;padding-top:12px;border-top:1px solid #e9e1e6}
+.orderActions select{background:#fff}
+.orderNotice{color:#824060;font-size:13px}
+@media(max-width:600px){.orderActions select{width:100%;max-width:none}}
+
+.pickupPanel{margin:16px 0;padding:18px;border:1px solid #ead9e3;border-radius:14px;background:#fdf9fb;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.pickupPanel h4{margin:0;color:#65334e;font-size:17px}
+.pickupPanel p{margin:0}.pickupPanel input{max-width:420px}.pickupPanel label{font-weight:650}
+.pickupPanel .pickupCode{font-size:17px;font-weight:800;color:#8b3464;letter-spacing:.04em}
+.pickupPanel button{max-width:100%}
 </style></head><body>
-<header><div class="row space"><div><h1>DONE DEAL <span class="pink">/ CONTROL CENTER</span></h1><small>Add gadgets • manage orders • graphite + hot pink</small></div><a href="/admin/">← Product Manager</a></div></header>
+<header><div class="row space"><div><h1>DONE DEAL <span class="pink">/ CONTROL CENTER</span></h1><small>Add gadgets • manage orders • Warm Light admin</small></div><a href="/admin/">← Product Manager</a></div></header>
 <main>
 <section id="login" class="panel" style="max-width:420px;margin:50px auto"><h2>Admin sign in</h2><form id="loginForm"><div class="field"><label>Password</label><input type="password" id="password" autocomplete="current-password" required></div><button>Sign In</button></form><p id="loginMsg"></p></section>
 <div id="app" class="hide">
@@ -14,7 +47,7 @@
 <p class="muted">After saving, use the existing <a href="/admin/">Product Manager</a> to upload the gadget's main photo. Product photos are shared by all variants of one model.</p></section>
 <section class="panel" id="manageGadgets"><div class="row space"><h2>Manage Added Gadgets</h2><button class="secondary" id="refreshGadgets" type="button">↻ Refresh</button></div><p class="muted">Hide removes a gadget from the storefront without deleting it. Delete is permanent and only available for custom gadgets without order history.</p><div id="customGadgetList" class="grid"></div><p id="manageMsg" class="status"></p></section>
 <section id="orders" class="hide">
-<div class="panel"><div class="row space"><h2>Orders Dashboard</h2><button id="refreshOrders" class="secondary">↻ Refresh</button></div><div class="row"><div class="field"><label>Find order / customer</label><input id="orderSearch" placeholder="Search reference, name, phone"></div><div class="field"><label>Status</label><select id="orderFilter"><option value="">All statuses</option><option>pending</option><option>confirmed</option><option>processing</option><option>shipped</option><option>delivered</option><option>cancelled</option></select></div></div><p class="status" id="ordersMsg"></p><div id="orderList"></div></div>
+<div class="panel"><div class="row space"><h2>Orders Dashboard</h2><button id="refreshOrders" class="secondary">↻ Refresh</button></div><div class="row"><div class="field"><label>Find order / customer</label><input id="orderSearch" placeholder="Search reference, name, phone"></div><div class="field"><label>Fulfillment</label><select id="fulfillmentFilter"><option value="">All orders</option><option value="delivery">Delivery</option><option value="pickup">Store Pickup</option></select></div><div class="field"><label>Status</label><select id="orderFilter"><option value="">All statuses</option><option>pending</option><option>confirmed</option><option>processing</option><option>shipped</option><option>delivered</option><option>cancelled</option></select></div></div><p class="status" id="ordersMsg"></p><div id="orderList"></div></div>
 <div class="panel"><h2>＋ Manual Order</h2><p>For Messenger, walk-in, or phone orders. Prices and availability are checked against D1.</p>
 <div class="row"><div class="field"><label>Customer name</label><input id="manualName"></div><div class="field"><label>Phone</label><input id="manualPhone"></div><div class="field"><label>Address (required for delivery)</label><input id="manualAddress"></div></div>
 <div class="row"><div class="field"><label>Fulfillment</label><select id="manualFulfillment"><option value="pickup">Store Pickup</option><option value="delivery">Delivery</option></select></div><div class="field"><label>Payment method</label><select id="manualPayment"><option value="cash">Cash</option><option value="cod">COD</option><option value="gcash">GCash</option><option value="bank_transfer">Bank Transfer</option></select></div></div>
@@ -84,24 +117,91 @@ async function manageGadget(g,action){
 }
 $('refreshGadgets').onclick=loadCatalog;
 function orderCard(o){
- const box=el('div',null,'panel order');
- const head=el('div',null,'row space'),title=el('h3',o.id),badge=el('span',o.source||'legacy','tag');head.append(title,badge);box.append(head);
- let customer={},items=[];try{customer=JSON.parse(o.customer_json||'{}');items=JSON.parse(o.items_json||'[]')}catch{}
- box.append(el('p',(customer.name||'Customer unknown')+' · '+(customer.phone||'')+' · '+(customer.email||'')));
- box.append(el('p',money(o.total_centavos)+' product subtotal · '+(o.fulfillment||'legacy')+' · '+(o.payment_method||'gateway/legacy')));
- const itemsBox=el('div',null,'muted');itemsBox.textContent=items.map(i=>(i.quantity||1)+'× '+(i.name||i.sku)+' '+(i.variant||'')).join(' • ');box.append(itemsBox);
- const addr=el('p',[customer.address,customer.city,customer.province,customer.postal].filter(Boolean).join(', '));box.append(addr);
- if(o.notes)box.append(el('p','Notes: '+o.notes));
- const controls=el('div',null,'row');
- const st=el('select');for(const s of ['pending','confirmed','processing','shipped','delivered','cancelled']){const x=el('option',s);x.value=s;st.append(x)}st.value=o.status;
- const pay=el('select');for(const s of ['unpaid','pending_verification','paid','refunded']){const x=el('option',s);x.value=s;pay.append(x)}pay.value=o.payment_status||'unpaid';
- const save=el('button','Save statuses');const msg=el('small','');
- save.onclick=async()=>{save.disabled=true;try{await post('/api/admin/orders',{action:'status',id:o.id,status:st.value,payment_status:pay.value});msg.textContent='Saved';await loadOrders()}catch(e){msg.textContent=e.message}finally{save.disabled=false}};
- controls.append(el('span','Order:'),st,el('span','Payment:'),pay,save,msg);box.append(controls);return box;
+ const box=el('article',null,'panel order');
+ let customer={},items=[];
+ try{customer=JSON.parse(o.customer_json||'{}');items=JSON.parse(o.items_json||'[]')}catch{}
+ const head=el('div',null,'row space');
+ const name=el('h3',o.id),status=el('span',(o.status||'pending').toUpperCase(),'tag');
+ head.append(name,status);box.append(head);
+ const date=el('small',(o.created_at?new Date(o.created_at).toLocaleString('en-PH'):'Date unavailable')+' · '+(o.source||'legacy')+' order');
+ box.append(date);
+ box.append(el('p',(customer.name||'Customer unknown')+' · '+money(o.total_centavos)));
+ const details=document.createElement('details');details.className='orderDetails';
+ const summary=document.createElement('summary');summary.textContent='View complete order details';details.append(summary);
+ const info=el('div',null,'orderMeta');
+ const addInfo=(title,value)=>{const card=el('div');card.append(el('strong',title),el('p',String(value||'—')));info.append(card)};
+ addInfo('Customer',[(customer.name||''),(customer.phone||''),(customer.email||'')].filter(Boolean).join(' · '));
+ addInfo('Fulfillment',(o.fulfillment||'Legacy')+' · '+(o.payment_method||'Gateway / legacy'));
+ addInfo('Delivery address',[customer.address,customer.city,customer.province,customer.postal].filter(Boolean).join(', '));
+ addInfo('Payment',o.payment_status||'Not recorded');
+ addInfo('Products',items.map(i=>(i.quantity||1)+'× '+(i.name||i.sku||'Item')+' '+(i.variant||'')+' — '+money(i.line_total_centavos||i.total_centavos||0)).join(' | '));
+ addInfo('Subtotal',money(o.total_centavos));
+ if(o.shipping_note)addInfo('Shipping / pickup note',o.shipping_note);
+ if(o.notes)addInfo('Admin notes',o.notes);
+ details.append(info);box.append(details);
+ if(o.fulfillment==='pickup'&&o.source!=='legacy'){
+  const pickup=el('div',null,'pickupPanel');
+  pickup.append(el('h4','🏬 Store Pickup Workflow'));
+  const stage=o.pickup_status||(o.status==='cancelled'?'cancelled':o.status==='delivered'?'claimed':'pending');
+  pickup.append(el('p','Current stage: '+stage.toUpperCase(),'muted'));
+  if(o.pickup_code)pickup.append(el('p','Pickup reference: '+o.pickup_code,'pickupCode'));
+  const init=el('button',o.pickup_code?'Refresh pickup details':'Generate Pickup Code','secondary');
+  init.onclick=async()=>{init.disabled=true;try{await post('/api/admin/orders',{action:'pickup_init',id:o.id});await loadOrders()}catch(e){pickup.append(el('p',e.message,'orderNotice'));init.disabled=false}};
+  if(!o.pickup_code&&stage!=='cancelled'&&stage!=='claimed')pickup.append(init);
+  const next={pending:'confirmed',confirmed:'preparing',preparing:'ready',ready:'claimed'}[stage];
+  if(next&&o.pickup_code){
+   const claimant=el('input');claimant.placeholder='Claimant full name';
+   const released=el('input');released.placeholder='Released by (staff name)';
+   const code=el('input');code.placeholder='Enter pickup code to verify';
+   const check=el('input');check.type='checkbox';check.style.width='auto';
+   if(next==='claimed'){
+    pickup.append(el('label','Claimant name'),claimant,el('label','Staff who released gadget'),released,el('label','Pickup code verification'),code);
+    const verify=el('label');verify.append(check,document.createTextNode(' I inspected and physically released the gadget'));pickup.append(verify);
+    pickup.append(el('p','Payment must be marked Paid before claiming.','muted'));
+   }
+   const advance=el('button',next==='claimed'?'Mark Claimed / Completed':'Mark '+next.replace(/^./,x=>x.toUpperCase()));
+   const note=el('small','','orderNotice');
+   advance.onclick=async()=>{
+    if(next==='claimed'&&!confirm('Finalize pickup? This permanently closes the order.'))return;
+    advance.disabled=true;note.textContent='Saving...';
+    try{await post('/api/admin/orders',{action:'pickup',id:o.id,pickup_status:next,claimant_name:claimant.value,released_by:released.value,pickup_code:code.value,release_confirmed:check.checked});await loadOrders()}
+    catch(e){note.textContent=e.message;advance.disabled=false}
+   };
+   pickup.append(advance,note);
+  }
+  if(stage!=='cancelled'&&stage!=='claimed'){
+   const cancel=el('button','Cancel Pickup Order','secondary');
+   cancel.onclick=async()=>{if(!confirm('Cancel pickup order and restore reserved stock? This cannot be undone.'))return;cancel.disabled=true;try{await post('/api/admin/orders',{action:'pickup',id:o.id,pickup_status:'cancelled'});await loadOrders()}catch(e){pickup.append(el('p',e.message,'orderNotice'));cancel.disabled=false}};
+   pickup.append(cancel);
+  }
+  if(stage==='claimed')pickup.append(el('p','Claimed by: '+(o.claimant_name||'—')+' · Released by: '+(o.released_by||'—')+' · '+(o.claimed_at||''),'muted'));
+  box.append(pickup);
+ }
+
+ const controls=el('div',null,'row orderActions');
+ const st=el('select');for(const value of ['pending','confirmed','processing','shipped','delivered','cancelled']){const x=el('option',value);x.value=value;st.append(x)}st.value=o.status;
+ const pay=el('select');for(const value of ['unpaid','pending_verification','paid','refunded']){const x=el('option',value.replaceAll('_',' '));x.value=value;pay.append(x)}pay.value=o.payment_status||'unpaid';
+ const save=el('button','Save Order Changes');
+ const msg=el('small','','orderNotice');
+ if(o.status==='cancelled'||o.status==='delivered'){st.disabled=true;msg.textContent='Final order status is locked for safety.'}
+ if(o.fulfillment==='pickup'){st.disabled=true;msg.textContent='Use the Store Pickup Workflow above to advance this order.'}
+ if(!o.source||o.source==='legacy'){st.disabled=true;pay.disabled=true;save.disabled=true;msg.textContent='Legacy order is read-only.'}
+ save.onclick=async()=>{
+  if(st.value==='cancelled'&&o.status!=='cancelled'){
+   if(!confirm('Cancel this order? Reserved stock will be returned automatically. This cannot be undone.'))return;
+  }
+  if(o.status==='delivered'&&st.value!=='delivered'){msg.textContent='Delivered orders are locked.';return}
+  save.disabled=true;msg.textContent='Saving...';
+  try{await post('/api/admin/orders',{action:'status',id:o.id,status:st.value,payment_status:pay.value});await loadOrders()}
+  catch(e){msg.textContent=e.message;save.disabled=false}
+ };
+ controls.append(el('span','Order status'),st,el('span','Payment'),pay,save,msg);box.append(controls);
+ return box;
 }
+
 function renderOrders(){
- const term=$('orderSearch').value.toLowerCase(),status=$('orderFilter').value;
- const filtered=orders.filter(o=>(!status||o.status===status)&&[o.id,o.customer_json,o.items_json].join(' ').toLowerCase().includes(term));
+ const term=$('orderSearch').value.toLowerCase(),status=$('orderFilter').value,fulfillment=$('fulfillmentFilter').value;
+ const filtered=orders.filter(o=>(!status||o.status===status)&&(!fulfillment||o.fulfillment===fulfillment)&&[o.id,o.customer_json,o.items_json].join(' ').toLowerCase().includes(term));
  $('orderList').replaceChildren(...filtered.map(orderCard));
  if(!filtered.length)$('orderList').append(el('p','No matching orders.'));
  $('stats').replaceChildren();
@@ -110,7 +210,7 @@ function renderOrders(){
  }
 }
 async function loadOrders(){try{const d=await api('/api/admin/orders');orders=d.orders||[];$('ordersMsg').textContent='Showing latest '+orders.length+' orders. No card payment is active.';renderOrders()}catch(e){$('ordersMsg').textContent=e.message}}
-$('orderSearch').oninput=renderOrders;$('orderFilter').onchange=renderOrders;$('refreshOrders').onclick=loadOrders;
+$('fulfillmentFilter').onchange=renderOrders;$('orderSearch').oninput=renderOrders;$('orderFilter').onchange=renderOrders;$('refreshOrders').onclick=loadOrders;
 $('saveManual').onclick=async()=>{
  const b=$('saveManual');b.disabled=true;
  try{
