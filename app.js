@@ -147,7 +147,7 @@ function detail(id){
  document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]};height:200px;border-radius:12px"><div class="mini"></div></div><p style="color:#eee">${p.desc}</p><h3>Full product specifications</h3><table class="specTable"><tbody>${specRows}</tbody></table>${picker}<div class="detailPrice">${price}</div><div class="detailPriceNote">${selected?`Published Philippine SRP for ${selected[0]} · <a href="${phSources[p.brand]}" target="_blank" rel="noopener">Source</a>`:'A reliable published Philippine SRP for this exact variant was not established. Request a quotation before checkout.'}</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
  document.getElementById('detailOverlay').classList.add('open');
 }
-function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return}closeOverlay();document.getElementById('checkoutOverlay').classList.add('open');document.getElementById('checkoutForm').style.display='block';document.getElementById('orderConfirmation').innerHTML=''}
+function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return;} window.location.href='checkout.html';}
 document.getElementById('checkoutForm').addEventListener('submit',e=>{
  e.preventDefault();const d=new FormData(e.target);
  const lines=['DONE DEAL — ORDER REQUEST','Name: '+d.get('name'),'Email: '+d.get('email'),'Phone: '+d.get('phone'),'Delivery address: '+d.get('address'),'','Requested items:'];
@@ -165,3 +165,6 @@ document.getElementById('checkoutForm').addEventListener('submit',e=>{
  actions.append(copy,email);area.append(actions);
 });
 document.getElementById('search').addEventListener('input',render);document.getElementById('sort').addEventListener('change',render);renderBrands();render();save();
+
+// Online checkout uses server-authoritative prices; browser SRP and demo prices never set payment amounts.
+document.querySelectorAll('button[onclick="openCheckout()"]').forEach(b=>b.textContent='Secure Checkout');
