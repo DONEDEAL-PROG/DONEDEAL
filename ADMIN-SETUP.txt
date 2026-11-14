@@ -1,0 +1,15 @@
+DONE DEAL PRIVATE ADMIN — SETUP
+
+1. Upload the contents of this ZIP to the root of your existing GitHub repository (not inside a new DONEDEAL-main folder). Preserve the functions/ and admin/ directories.
+2. In Cloudflare Pages > your project > Settings > Variables and Secrets, add two encrypted SECRET variables for Production:
+   ADMIN_PASSWORD = a long unique password you choose (do not share it in chat or commit it to GitHub).
+   ADMIN_SESSION_SECRET = a separate random secret, ideally 32+ random bytes represented as a long string. Do not reuse your password.
+   If the UI labels them Environment variables, mark them encrypted/secret.
+3. Verify the D1 binding is named DB and points to donedeal-db in the Production environment.
+4. Redeploy the latest deployment so Pages Functions receive the new variables and binding.
+5. Visit https://donedeal-51i.pages.dev/admin/ and sign in with your ADMIN_PASSWORD.
+6. Update prices, stock and enabled status. Existing products will appear. The dashboard cannot add missing variants yet.
+7. For login protection, enable Cloudflare WAF/rate limiting on /api/admin/login (or use Cloudflare Access in front of the admin routes) to limit password guessing. Never put secrets in repository files.
+8. IMPORTANT: This admin dashboard does NOT enable safe live checkout or payment collection. Shipping, order creation, inventory reservations, PayMongo verification and webhook setup still need implementation. Keep payment acceptance disabled until tested.
+
+Security: HMAC-signed HttpOnly Secure SameSite=Strict 8-hour cookie scoped to /api/admin; each admin API request validates the signature. Login is password-only for simplicity; adding Cloudflare Access/MFA is strongly recommended before using this for live business operations.
