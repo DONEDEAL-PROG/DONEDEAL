@@ -1,0 +1,7 @@
+DONE DEAL PREMIUM BRAND BANNERS
+
+Upload all files together to your website repository. Keep all six banner-*.png files in the same directory as brand-*.html and premium-store.css.
+
+Each brand page has a matching panoramic 3:1 banner with no cropping. The shop page includes six linked brand tiles.
+
+The existing homepage, storage picker, cart, and order request are retained. Images are AI-generated promotional art, not verified photos of exact models.
