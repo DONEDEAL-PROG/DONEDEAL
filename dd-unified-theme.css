@@ -36,3 +36,38 @@ html[data-dd-store-theme=light] :is(.hero,.hero-content,.intro,.shop-head,.secti
 html[data-dd-store-theme=light] :is(.hero h1,.hero h2,.section-heading h2,.section-title h2,.shop-head h1,.brand-heading h1){color:var(--dd-text)!important}
 html[data-dd-store-theme=light] :is(.shop-head p,.section-heading p,.brand-heading p){color:var(--dd-muted)!important}
 html[data-dd-store-theme=light] :is(.product,.product-card,.filter-panel,.filter-bar,.search-wrap){border-color:var(--dd-border)!important}
+
+/* Brand mark: transparent emblem on light surfaces; original on dark. */
+html[data-dd-store-theme=light] img.ddBrandMark{content:url('done-deal-mark-light.png');filter:drop-shadow(0 2px 3px #47263b20)!important}
+html[data-dd-store-theme=light] :is(.nav,.logoLink,.logo){color:#29212b!important}
+html[data-dd-store-theme=light] .logo span{color:#b72b6a!important}
+html[data-dd-store-theme=light] .footer .logo{color:#fff!important}
+
+
+/* Brand strip: LIGHT MODE ONLY. Keep original logos, layout and all dark-mode rules. */
+html[data-dd-store-theme="light"] .brandBar{
+  background:#fdfcfd!important;
+  border-top-color:#e8dfe6!important;
+  border-bottom-color:#e8dfe6!important;
+  box-shadow:none!important;
+}
+html[data-dd-store-theme="light"] .brandBar .brandTile{
+  background:transparent!important;
+  color:#302735!important;
+  border-right-color:#e8dfe6!important;
+  border-bottom-color:#e8dfe6!important;
+  text-shadow:none!important;
+}
+html[data-dd-store-theme="light"] .brandBar .brandTile:hover,
+html[data-dd-store-theme="light"] .brandBar .brandTile:focus-visible{
+  background:#f9eff4!important;
+  color:#302735!important;
+}
+html[data-dd-store-theme="light"] .brandBar .samsungWord{color:#302735!important}
+html[data-dd-store-theme="light"] .brandBar .appleLogo{filter:brightness(0)!important}
+html[data-dd-store-theme="light"] .brandBar .huaweiIcon{filter:invert(24%) sepia(95%) saturate(2685%) hue-rotate(333deg) brightness(93%) contrast(92%)!important}
+html[data-dd-store-theme="light"] .brandBar .oppo{color:#167b43!important}
+html[data-dd-store-theme="light"] .brandBar .vivo{color:#3453c2!important}
+@media(max-width:650px){
+ html[data-dd-store-theme="light"] .brandBar .brandTile{border-bottom-color:#e8dfe6!important}
+}
