@@ -12,9 +12,11 @@ export async function onRequestPost({request,env}){
   const quote=await priceCart(env.DB,b.items);
   const id='DD-'+crypto.randomUUID();
   await env.DB.batch([
+   ...quote.items.map(item=>env.DB.prepare('UPDATE store_variants SET stock=CASE WHEN enabled=1 THEN stock-? ELSE -1 END WHERE sku=?').bind(item.quantity,item.sku)),
    env.DB.prepare('INSERT INTO store_orders(id,status,total_centavos,customer_json,items_json,created_at) VALUES(?,?,?,?,?,?)').bind(id,'pending',quote.total,JSON.stringify(c),JSON.stringify(quote.items),new Date().toISOString()),
-   env.DB.prepare(`INSERT INTO store_order_meta(order_id,source,fulfillment,payment_method,payment_status,shipping_note) VALUES(?,'website',?,?,'unpaid',?)`).bind(id,b.fulfillment,b.payment_method,b.fulfillment==='delivery'?'Shipping fee to be confirmed before dispatch':'Pickup time and location to be confirmed')
+   env.DB.prepare(`INSERT INTO store_order_meta(order_id,source,fulfillment,payment_method,payment_status,shipping_note) VALUES(?,'website',?,?,'unpaid',?)`).bind(id,b.fulfillment,b.payment_method,b.fulfillment==='delivery'?'Shipping fee to be confirmed before dispatch':'Pickup time and location to be confirmed'),
+   env.DB.prepare('INSERT INTO store_order_reservations(order_id) VALUES(?)').bind(id)
   ]);
   return json({ok:true,order_id:id,status:'pending',message:'Order request received. No payment has been collected. We will contact you to confirm availability and any shipping fees.'},201);
- }catch(e){return err(e.message||'Unable to submit order')}
+ }catch(e){console.error('Order transaction rejected:',e);return err('Stock changed or order could not be saved. Please refresh and try again.',409)}
 }
