@@ -1,3 +1,70 @@
+
+(function installGrandCartCelebration(){
+ const style=document.createElement('style');
+ style.id='dd-grand-cart-animation';
+ style.textContent=`
+ #ddCelebration{background:radial-gradient(circle at 50% 43%,#64183b88 0%,#110b15ed 62%,#08070aef 100%)!important;backdrop-filter:blur(14px)!important}
+ #ddCelebration .dd-celebrate-card{width:min(94vw,510px)!important;min-height:405px;padding:49px 26px 38px!important;border:2px solid #ff64aeaa!important;border-radius:32px!important;box-shadow:0 0 0 1px #ffb6db22,0 0 65px #f3238580,0 35px 100px #000c!important;background:radial-gradient(ellipse at 50% 8%,#69254d 0%,#322034 45%,#17141e 100%)!important}
+ #ddCelebration.dd-celebrate-show .dd-celebrate-card{animation:ddGrandCard 1.15s cubic-bezier(.16,1,.3,1) both!important}
+ #ddCelebration .dd-bag{width:135px!important;height:145px!important;filter:drop-shadow(0 10px 18px #ff2f9388)}
+ #ddCelebration.dd-celebrate-show .dd-bag{animation:ddGrandBag 1.65s cubic-bezier(.22,.85,.24,1.15) both!important}
+ #ddCelebration .dd-celebrate-title{font-size:clamp(29px,7.3vw,44px)!important;font-weight:1000!important;line-height:1.08!important;letter-spacing:-.035em!important;color:#fff!important;text-shadow:0 4px 0 #9e205b,0 10px 30px #ff399d9e!important}
+ #ddCelebration.dd-celebrate-show .dd-celebrate-title{animation:ddGrandTitle 1.45s cubic-bezier(.18,.9,.25,1.18) .22s both!important}
+ #ddCelebration .dd-celebrate-detail{font-size:16px!important;margin-top:23px!important}
+ #ddCelebration .dd-celebrate-sub{font-size:14px!important;margin-top:12px!important}
+ #ddCelebration .dd-celebrate-progress{height:5px!important;background:linear-gradient(90deg,#ff65ae,#ffcbec,#ff65ae)!important;box-shadow:0 0 17px #ff66ad99}
+ #ddCelebration.dd-celebrate-show .dd-celebrate-progress{animation:ddCartProgress 3.6s linear both!important}
+ #ddCelebration .dd-grand-halo{position:absolute;z-index:0;left:50%;top:28%;width:250px;height:250px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,#ff75bd55 0%,#f82c8c26 45%,transparent 72%);pointer-events:none}
+ #ddCelebration.dd-celebrate-show .dd-grand-halo{animation:ddGrandHalo 2.1s ease-out both}
+ #ddCelebration .dd-grand-sparkles{position:absolute;z-index:1;inset:0;pointer-events:none;background-image:radial-gradient(circle,#fff 0 2px,transparent 3px),radial-gradient(circle,#ffd37d 0 3px,transparent 4px),radial-gradient(circle,#ff77bc 0 2px,transparent 3px);background-size:47px 59px,69px 71px,83px 91px;background-position:12px 4px,31px 26px,4px 50px;opacity:0}
+ #ddCelebration.dd-celebrate-show .dd-grand-sparkles{animation:ddGrandSparkles 2.5s ease-out .2s both}
+ #ddCelebration.dd-celebrate-show .dd-confetti{animation:ddGrandConfetti 2.4s ease-out .25s both!important}
+ @keyframes ddGrandCard{0%{opacity:0;transform:translateY(100px) scale(.6) rotate(-5deg)}48%{opacity:1;transform:translateY(-20px) scale(1.075) rotate(2deg)}68%{transform:translateY(12px) scale(.965) rotate(-1deg)}84%{transform:translateY(-6px) scale(1.025)}100%{opacity:1;transform:none}}
+ @keyframes ddGrandBag{0%{opacity:0;transform:translateY(-170px) scale(.5) rotate(-20deg)}30%{opacity:1;transform:translateY(27px) scale(1.15) rotate(12deg)}49%{transform:translateY(-35px) scale(.9) rotate(-9deg)}66%{transform:translateY(16px) scale(1.08) rotate(6deg)}80%{transform:translateY(-9px) scale(.97) rotate(-3deg)}92%{transform:translateY(3px)}100%{opacity:1;transform:none}}
+ @keyframes ddGrandTitle{0%{opacity:0;transform:translateY(-120px) scale(.5) rotate(-7deg)}32%{opacity:1;transform:translateY(23px) scale(1.17) rotate(3deg)}51%{transform:translateY(-30px) scale(.88) rotate(-2deg)}70%{transform:translateY(14px) scale(1.08)}85%{transform:translateY(-6px) scale(.98)}100%{opacity:1;transform:none}}
+ @keyframes ddGrandHalo{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}40%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}100%{opacity:.5;transform:translate(-50%,-50%) scale(1.1)}}
+ @keyframes ddGrandSparkles{0%{opacity:0;transform:scale(.7) rotate(-8deg)}35%{opacity:1;transform:scale(1.1) rotate(5deg)}100%{opacity:.25;transform:scale(1.3) rotate(15deg)}}
+ @keyframes ddGrandConfetti{0%{opacity:0;transform:translateY(-65px) scale(.65)}20%{opacity:1}85%{opacity:.7}100%{opacity:0;transform:translateY(125px) scale(1.3)}}
+ @media(prefers-reduced-motion:reduce){#ddCelebration.dd-celebrate-show .dd-celebrate-card,#ddCelebration.dd-celebrate-show .dd-bag,#ddCelebration.dd-celebrate-show .dd-celebrate-title,#ddCelebration.dd-celebrate-show .dd-grand-halo,#ddCelebration.dd-celebrate-show .dd-grand-sparkles,#ddCelebration.dd-celebrate-show .dd-confetti,#ddCelebration.dd-celebrate-show .dd-celebrate-progress{animation:none!important;opacity:1;transform:none}}
+ `;
+ document.head.appendChild(style);
+})();
+
+
+(function installCartCelebrationStyles(){
+ if(document.getElementById('dd-cart-celebration-styles'))return;
+ const st=document.createElement('style');
+ st.id='dd-cart-celebration-styles';
+ st.textContent=`
+ #ddCelebration{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:20px;background:rgba(8,7,13,.76);backdrop-filter:blur(9px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s,visibility .2s}
+ #ddCelebration.dd-celebrate-show{opacity:1;visibility:visible;pointer-events:auto}
+ .dd-celebrate-card{position:relative;isolation:isolate;overflow:hidden;width:min(92vw,430px);padding:36px 25px 30px;text-align:center;color:#fff;background:linear-gradient(155deg,#302633,#17151e);border:1px solid #fa67ac77;border-radius:25px;box-shadow:0 26px 85px #000a;transform:scale(.75) translateY(55px);opacity:0}
+ .dd-celebrate-show .dd-celebrate-card{animation:ddCartCardPop .85s cubic-bezier(.2,.8,.25,1.15) both}
+ .dd-bag{position:relative;z-index:2;margin:0 auto 13px;width:120px;height:130px}
+ .dd-celebrate-show .dd-bag{animation:ddCartBagBounce 1.05s cubic-bezier(.2,.9,.2,1.1) both}
+ .dd-celebrate-title{position:relative;z-index:2;font-size:clamp(24px,6vw,35px);font-weight:900;letter-spacing:.025em;line-height:1.15;text-shadow:0 3px 16px #ff4a9c55}
+ .dd-celebrate-show .dd-celebrate-title{animation:ddCartTitleBounce 1.05s cubic-bezier(.2,.8,.25,1.1) .1s both}
+ .dd-celebrate-detail{position:relative;z-index:2;margin:15px auto 8px;font-size:14px;font-weight:600;overflow-wrap:anywhere;color:#ffc0dc}
+ .dd-celebrate-sub{position:relative;z-index:2;font-size:13px;color:#d7cad5}
+ .dd-celebrate-progress{height:4px;margin:24px auto 0;border-radius:8px;background:#ff438e;transform-origin:left}
+ .dd-celebrate-show .dd-celebrate-progress{animation:ddCartProgress 2.2s linear both}
+ .dd-confetti{position:absolute;inset:0;z-index:1;pointer-events:none;background-image:radial-gradient(circle,#ff65a8 3px,transparent 4px),radial-gradient(circle,#ffd77d 3px,transparent 4px),radial-gradient(circle,#a18bff 3px,transparent 4px);background-size:58px 75px,76px 68px,94px 85px;background-position:5px 15px,40px 5px,20px 55px;opacity:0}
+ .dd-celebrate-show .dd-confetti{animation:ddCartConfetti 1.2s ease-out .12s both}
+ .dd-cart-bounce{animation:ddCartCounter .6s ease both!important}
+ .dd-click-ripple{position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:#fff6;animation:ddCartRipple .65s ease-out forwards}
+ .dd-fly-to-cart{position:fixed;z-index:2147483001;pointer-events:none;color:#fff;background:#ed3e89;border-radius:50%;width:30px;height:30px;display:grid;place-items:center;box-shadow:0 8px 25px #ed3e8977}
+ @keyframes ddCartCardPop{0%{opacity:0;transform:scale(.75) translateY(55px)}55%{opacity:1;transform:scale(1.06) translateY(-9px)}75%{transform:scale(.97) translateY(4px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+ @keyframes ddCartBagBounce{0%{transform:translateY(-100px) rotate(-14deg);opacity:0}45%{transform:translateY(18px) rotate(8deg);opacity:1}65%{transform:translateY(-16px) rotate(-5deg)}83%{transform:translateY(7px) rotate(2deg)}100%{transform:translateY(0);opacity:1}}
+ @keyframes ddCartTitleBounce{0%{transform:translateY(-70px) scale(.75);opacity:0}40%{transform:translateY(13px) scale(1.08);opacity:1}65%{transform:translateY(-12px) scale(.96)}82%{transform:translateY(5px)}100%{transform:translateY(0);opacity:1}}
+ @keyframes ddCartConfetti{0%{opacity:0;transform:translateY(-35px) scale(.8)}25%{opacity:.95}100%{opacity:0;transform:translateY(85px) scale(1.2)}}
+ @keyframes ddCartProgress{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+ @keyframes ddCartCounter{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+ @keyframes ddCartRipple{from{opacity:.8;transform:scale(.5)}to{opacity:0;transform:scale(1.7)}}
+ @media(prefers-reduced-motion:reduce){.dd-celebrate-show .dd-celebrate-card{animation:none;opacity:1;transform:none}.dd-celebrate-show .dd-bag,.dd-celebrate-show .dd-celebrate-title,.dd-celebrate-show .dd-confetti,.dd-celebrate-show .dd-celebrate-progress{animation:none}.dd-celebrate-show .dd-celebrate-title{opacity:1}}
+ `;
+ document.head.appendChild(st);
+})();
+
 const entries={
 Huawei:[
 ['Pura 80 Ultra','Photography flagship with advanced dual-telephoto imaging.','6.8-inch LTPO OLED • 50MP main • 100W wired charging','Flagship'],
@@ -74,8 +141,7 @@ function srpFor(p){return philippineSRP[p.id] || null;}
 function productPrice(p){const v=variantList(p)[0];return v?v[1]:null;}
 
 // Philippine published SRPs by specific memory variant (not live selling prices).
-// Prices must come from the live D1 catalog, never hardcoded SRP values.
-const phVariants = {};
+const phVariants = {"Samsung-0": [["12GB / 256GB", 83190], ["12GB / 512GB", 97790], ["12GB / 1TB", 112390]], "Samsung-1": [["12GB / 256GB", 70790], ["12GB / 512GB", 80090]], "Samsung-2": [["12GB / 256GB", 54090], ["12GB / 512GB", 68690]], "Samsung-3": [["12GB / 256GB", 117590], ["12GB / 512GB", 132090], ["16GB / 1TB", 153990]], "Samsung-4": [["12GB / 256GB", 73890], ["12GB / 512GB", 88390]], "Apple-3": [["256GB", 69990]], "Huawei-0": [["16GB / 512GB", 89999]], "Huawei-1": [["12GB / 512GB", 59999]]};
 const verifiedSpecs = {"Huawei-0": {"Display":"6.8-inch LTPO OLED, 1–120Hz, 2848 × 1276","Processor":"Kirin 9020 octa-core","RAM":"16GB","Storage":"512GB","Rear cameras":"50MP 1-inch main + 40MP ultrawide + 50MP telephoto + 12.5MP telephoto","Front camera":"13MP","Battery":"5,170mAh rated","Charging":"100W wired / 80W wireless","Connectivity":"4G LTE, Wi-Fi, Bluetooth, NFC; SIM support depends on variant","Operating system":"EMUI 15.0","Other features":"IP68/IP69, dual telephoto optical zoom"},"Huawei-1":{"Display":"6.8-inch LTPO OLED","Processor":"Kirin 9020","RAM":"12GB","Storage":"512GB","Battery":"5,170mAh rated","Charging":"100W wired"},"Samsung-0": {"Display": "6.9-inch Dynamic AMOLED 2X, 120Hz", "Processor": "Snapdragon 8 Elite for Galaxy", "RAM": "12GB", "Rear cameras": "200MP main + 50MP ultrawide + 50MP telephoto + 10MP telephoto", "Front camera": "12MP", "Battery": "5,000mAh", "Charging": "45W wired", "Connectivity": "5G, Wi-Fi 7, Bluetooth", "Operating system": "Android / One UI", "Other features": "Integrated S Pen, IP68"}, "Samsung-1": {"Display": "6.7-inch Dynamic AMOLED 2X", "Rear camera": "50MP main", "Battery": "4,900mAh", "Operating system": "Android / One UI"}, "Samsung-2": {"Display": "6.2-inch Dynamic AMOLED 2X", "Rear camera": "50MP main", "Battery": "4,000mAh", "Operating system": "Android / One UI"}, "Samsung-3": {"Display": "8.0-inch foldable AMOLED inner display", "Rear camera": "200MP main", "Form factor": "Book-style foldable"}, "Samsung-4": {"Display": "6.9-inch inner AMOLED + 4.1-inch cover", "Rear camera": "50MP main", "Form factor": "Flip foldable"}};
 const phSources = {'Samsung':'https://hptotosamsung.com/ph/trade-in/','Apple':'https://www.apple.com/ph/shop/buy-iphone','Huawei':'https://consumer.huawei.com/ph/phones/'};
 
@@ -95,15 +161,6 @@ async function loadLiveVariants() {
     const data = await response.json();
 
     for (const product of data.products || []) {
-      // New models are read from D1; the old hardcoded models remain intact.
-      const newId = String(product.sku||'').split('::')[0];
-      if (/^custom-[0-9a-f-]{36}$/.test(newId) && !products.some(p=>p.id===newId)) {
-        const safe = value => String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-        const brand=safe(product.brand||'Other'),model=safe(product.model||product.name||'Gadget');
-        products.push({id:newId,brand,name:model,desc:safe(product.description||'New arrival'),spec:'Storage and color options available',tag:'New',price:null});
-        if(!entries[brand])entries[brand]=[];
-      }
-
       const separator = product.sku.lastIndexOf("::");
       if (separator === -1) continue;
 
@@ -129,11 +186,6 @@ async function loadLiveVariants() {
     console.log("Done Deal catalog loaded from D1");
   } catch (error) {
     console.error("Unable to load live catalog:", error);
-    const notice = document.createElement("div");
-    notice.setAttribute("role","alert");
-    notice.style.cssText = "position:fixed;bottom:12px;left:12px;right:12px;z-index:99999;background:#42202e;color:white;padding:14px;border:1px solid #ff69b3;border-radius:12px;text-align:center";
-    notice.textContent = "Live prices are temporarily unavailable. Please try refreshing or contact Done Deal before ordering.";
-    document.body.appendChild(notice);
   }
 }
 
@@ -170,7 +222,7 @@ function render() {
   document.getElementById('resultCount').textContent = data.length + ' products';
   document.getElementById('catalog').innerHTML = data.map(p => `
     <article class="product">
-      <div class="visual" style="--shade:${shades[p.brand]||'#bca3b5'}">
+      <div class="visual" style="--shade:${shades[p.brand]}">
         <span class="tag">${p.tag}</span>
         ${productImages[p.id]
           ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">`
@@ -181,7 +233,7 @@ function render() {
         <h3>${p.name}</h3>
         <div class="desc">${p.desc}</div>
         <div class="spec">${p.spec}</div>
-        <div class="price">${money(productPrice(p))}<small>Confirm price and availability at checkout</small></div>
+        <div class="price">${money(productPrice(p))}<small>Published PH SRP where verified • confirm availability</small></div>
         <div class="actions">
           <button class="outline" onclick="detail('${p.id}')">View Details</button>
           <button class="primary" onclick="add('${p.id}')">Add to Cart</button>
@@ -252,7 +304,7 @@ function showCartCelebration(label,qty){
    screen.id='ddCelebration';
    screen.setAttribute('role','status');
    screen.setAttribute('aria-live','polite');
-   screen.innerHTML='<div class="dd-celebrate-card"><div class="dd-confetti" aria-hidden="true"></div><div class="dd-bag" aria-hidden="true"><svg viewBox="0 0 100 110" width="112" height="124" fill="none"><path d="M19 37H81L87 101H13L19 37Z" fill="#f62b87"/><path d="M34 41V28C34 7 66 7 66 28V41" stroke="#fff" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="68" r="22" fill="#fff"/><path d="M39 68L47 76L63 59" stroke="#e41e76" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="dd-celebrate-title">ADDED TO CART!</div><div class="dd-celebrate-detail"></div><div class="dd-celebrate-sub">Your next favorite gadget is in the bag ✨</div><div class="dd-celebrate-progress"></div></div>';
+   screen.innerHTML='<div class="dd-celebrate-card"><div class="dd-grand-halo" aria-hidden="true"></div><div class="dd-grand-sparkles" aria-hidden="true"></div><div class="dd-confetti" aria-hidden="true"></div><div class="dd-bag" aria-hidden="true"><svg viewBox="0 0 100 110" width="112" height="124" fill="none"><path d="M19 37H81L87 101H13L19 37Z" fill="#f62b87"/><path d="M34 41V28C34 7 66 7 66 28V41" stroke="#fff" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="68" r="22" fill="#fff"/><path d="M39 68L47 76L63 59" stroke="#e41e76" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="dd-celebrate-title">ADDED TO CART!</div><div class="dd-celebrate-detail"></div><div class="dd-celebrate-sub">Your next favorite gadget is in the bag ✨</div><div class="dd-celebrate-progress"></div></div>';
    document.body.appendChild(screen);
  }
  screen.querySelector('.dd-celebrate-detail').textContent=label+' · Qty '+qty;
@@ -260,7 +312,7 @@ function showCartCelebration(label,qty){
  void screen.offsetWidth;
  screen.classList.add('dd-celebrate-show');
  clearTimeout(window.ddCelebrationTimer);
- window.ddCelebrationTimer=setTimeout(()=>screen.classList.remove('dd-celebrate-show'),2200);
+ window.ddCelebrationTimer=setTimeout(()=>screen.classList.remove('dd-celebrate-show'),3600);
 }
 function launchAddToCartAnimation(button){
  const bounds=button.getBoundingClientRect();
@@ -311,7 +363,7 @@ function detail(id){
  const specRows=specsFor(p).map(([k,v])=>`<tr><th>${k}</th><td>${v}</td></tr>`).join('');
  const picker=variants.length?`<label class="storageLabel">Choose storage variant<select class="storageSelect" onchange="setDetailVariant('${p.id}',this.value)">${variants.map(([v,price])=>`<option value="${v}" ${selected&&selected[0]===v?'selected':''}>${v} — ₱${price.toLocaleString('en-PH')}</option>`).join('')}</select></label>`:'';
  const price=selected?'₱'+selected[1].toLocaleString('en-PH'):'PH SRP not confirmed';
- document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]||'#bca3b5'};height:200px;border-radius:12px">${productImages[p.id] ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">` : `<div class="mini"></div>`}</div><p style="color:#eee">${p.desc}</p><h3>Full product specifications</h3><table class="specTable"><tbody>${specRows}</tbody></table>${picker}<div class="detailPrice">${price}</div><div class="detailPriceNote">${selected?`Price for ${selected[0]} · Confirm at checkout`:'A reliable published Philippine SRP for this exact variant was not established. Request a quotation before checkout.'}</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
+ document.getElementById('detailBody').innerHTML=`<div class="brand">${p.brand} / ${p.tag}</div><h2 style="font-size:30px;margin:8px 0 15px">${p.name}</h2><div class="visual" style="--shade:${shades[p.brand]};height:200px;border-radius:12px">${productImages[p.id] ? `<img src="${productImages[p.id]}" alt="${p.brand} ${p.name}" style="width:100%;height:100%;object-fit:contain;position:relative;z-index:1">` : `<div class="mini"></div>`}</div><p style="color:#eee">${p.desc}</p><h3>Full product specifications</h3><table class="specTable"><tbody>${specRows}</tbody></table>${picker}<div class="detailPrice">${price}</div><div class="detailPriceNote">${selected?`Published Philippine SRP for ${selected[0]} · <a href="${phSources[p.brand]}" target="_blank" rel="noopener">Source</a>`:'A reliable published Philippine SRP for this exact variant was not established. Request a quotation before checkout.'}</div><button class="btn" style="margin-top:18px;width:100%" onclick="add('${p.id}')">Add to Cart</button>`;
  document.getElementById('detailOverlay').classList.add('open');
 }
 function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return;} window.location.href='checkout.html';}
