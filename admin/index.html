@@ -255,48 +255,7 @@ $("loginForm").addEventListener("submit", async event => {
 $("refreshBtn").addEventListener("click", loadProducts);
 loadProducts();
   
-document.getElementById("importMissingBtn")
-  ?.addEventListener("click", async () => {
-    const confirmed = confirm(
-      "Import 27 missing gadgets? Existing variants will not be changed."
-    );
 
-    if (!confirmed) return;
-
-    const button = document.getElementById("importMissingBtn");
-    const status = document.getElementById("importMissingStatus");
-
-    button.disabled = true;
-    status.textContent = "Importing missing gadgets...";
-
-    try {
-      const response = await fetch("/api/admin/import-missing", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({})
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Import failed");
-      }
-
-      status.textContent =
-        `Import complete! Added ${data.added} gadgets. ` +
-        `Skipped ${data.skipped} existing entries.`;
-
-      await loadProducts();
-
-    } catch (error) {
-      status.textContent = error.message;
-    } finally {
-      button.disabled = false;
-    }
-  });
 
 </script>
 </body>
