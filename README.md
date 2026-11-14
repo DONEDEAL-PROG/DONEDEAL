@@ -1,7 +1,3 @@
-# Done Deal Phone & Gadgets — Homepage update
+DONE DEAL — Updated hero product image (uncropped)
 
-Upload **all five** website files to the root of your existing `DONEDEAL-PROG/DONEDEAL` GitHub repository, replacing same-named files, then commit to `main`. Cloudflare Pages will automatically deploy.
-
-Files: `index.html`, `app.js`, `hero-model.jpg`, `hero-product.webp`, `apple-logo.svg`.
-
-The website uses responsive HTML/CSS for the hero, and preserves the 35-phone demo catalog and cart. This is not a live checkout/payment integration. The iPhone 18 Pro visual is concept artwork and must not be represented as a verified official Apple product.
+Upload all five site files (index.html, app.js, hero-model.jpg, hero-product.webp, apple-logo.svg) to the root of GitHub DONEDEAL repository, replacing existing files, then commit to main. Cloudflare Pages will deploy automatically. The site remains a demo storefront without live payment processing.
