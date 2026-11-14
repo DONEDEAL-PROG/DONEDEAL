@@ -38,3 +38,11 @@ NEXT PRODUCTION PHASE
 Secure admin auth, database tables for products/variants/stock, image hosting,
 customer checkout/order capture, payment processor, shipping fee rules,
 customer notifications, order tracking, and inventory concurrency controls.
+
+
+PHOTO AND ORDER REQUEST UPDATE
+- product-photos.js adds photographs via Wikimedia Commons where a matching image is found.
+- The image lookup requires an internet connection and may not find every model. Check image accuracy and reuse rights before publishing.
+- In Store Manager, each phone now has a Photo URL field. Use your own authorized product photo URLs for reliable exact-model imagery.
+- Cart no longer displays the demo checkout notice. The checkout button now prepares an order request that customers can copy or open in their email app. It does NOT send orders to the store automatically or process payment.
+- For actual checkout, integrate a secure backend and payment processor.

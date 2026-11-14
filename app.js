@@ -148,5 +148,20 @@ function detail(id){
  document.getElementById('detailOverlay').classList.add('open');
 }
 function openCheckout(){if(!Object.keys(cart).length){alert('Add a product to your cart first.');return}closeOverlay();document.getElementById('checkoutOverlay').classList.add('open');document.getElementById('checkoutForm').style.display='block';document.getElementById('orderConfirmation').innerHTML=''}
-document.getElementById('checkoutForm').addEventListener('submit',e=>{e.preventDefault();let data=new FormData(e.target);let name=String(data.get('name')).replace(/[<>]/g,'');let summary=Object.keys(cart).map(key=>{const e=cartEntry(key);return e?`${cart[key]} × ${e.p.brand} ${e.p.name} (${e.storage||'storage TBD'})`:''}).filter(Boolean).join(', ');document.getElementById('checkoutForm').style.display='none';document.getElementById('orderConfirmation').innerHTML=`<div class="notice" style="margin-top:20px"><strong>Demo order summary created</strong><p>Thank you, ${name}. This is NOT an actual order. No payment has been taken and no merchant has received your information.</p><p><strong>Items:</strong> ${summary}</p><p>To accept real orders, connect a secure backend, merchant notifications, verified prices, stock management, and a payment provider.</p></div>`});
+document.getElementById('checkoutForm').addEventListener('submit',e=>{
+ e.preventDefault();const d=new FormData(e.target);
+ const lines=['DONE DEAL — ORDER REQUEST','Name: '+d.get('name'),'Email: '+d.get('email'),'Phone: '+d.get('phone'),'Delivery address: '+d.get('address'),'','Requested items:'];
+ for(const key of Object.keys(cart)){const item=cartEntry(key);if(item)lines.push(cart[key]+' x '+item.p.brand+' '+item.p.name+' ('+(item.storage||'storage to confirm')+') — '+money(item.price));}
+ lines.push('','Final price, stock and delivery fees are subject to seller confirmation.');
+ const request=lines.join('\n');window.doneDealOrderRequest=request;
+ document.getElementById('checkoutForm').style.display='none';
+ const area=document.getElementById('orderConfirmation');area.replaceChildren();
+ const heading=document.createElement('h3');heading.textContent='Your order request is ready';area.append(heading);
+ const explanation=document.createElement('p');explanation.textContent='Copy these details and send them to Done Deal through your preferred contact channel. This does not automatically submit an order or take payment.';area.append(explanation);
+ const output=document.createElement('textarea');output.readOnly=true;output.value=request;output.style.cssText='width:100%;min-height:220px;padding:12px;background:#32323b;color:white;border:1px solid #555;border-radius:10px';area.append(output);
+ const actions=document.createElement('div');actions.className='orderRequestActions';
+ const copy=document.createElement('button');copy.textContent='Copy Order Request';copy.onclick=async()=>{try{await navigator.clipboard.writeText(request);copy.textContent='Copied!'}catch{output.select();document.execCommand('copy');copy.textContent='Copied!'}};
+ const email=document.createElement('button');email.textContent='Open Email App';email.onclick=()=>{location.href='mailto:?subject='+encodeURIComponent('Done Deal Order Request')+'&body='+encodeURIComponent(request)};
+ actions.append(copy,email);area.append(actions);
+});
 document.getElementById('search').addEventListener('input',render);document.getElementById('sort').addEventListener('change',render);renderBrands();render();save();
