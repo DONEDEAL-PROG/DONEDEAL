@@ -75,6 +75,7 @@ $('pay').addEventListener('click',async()=>{
   const d=await r.json();if(!r.ok)throw Error(d.error||'Order unavailable');
   for(const item of items())delete cart[item.sku];
   save();
+  $('review').style.display='block';
   $('review').replaceChildren();
   const box=safeNode('section','dd-order-success');
   box.setAttribute('role','status');
@@ -90,7 +91,7 @@ $('pay').addEventListener('click',async()=>{
     celebration.append(bit);
   }
   box.append(celebration);
-  box.append(safeNode('h2',null,'Order request received!'));
+  box.append(safeNode('h2','dd-order-bounce-title','Order Request Received!'));
   box.append(safeNode('p','muted','Thank you! Your order is awaiting confirmation.'));
   box.append(safeNode('p','muted','Order reference: '+(d.order_id||'Pending')));
   if(d.message)box.append(safeNode('p','muted',d.message));
@@ -145,14 +146,16 @@ loadCheckoutCatalog();
  style.textContent=`
  .dd-order-success{position:relative;text-align:center;max-width:560px;margin:18px auto;padding:26px 20px 32px;border:1px solid #ff70b04d;border-radius:22px;background:linear-gradient(155deg,#28242e,#17171d);box-shadow:0 22px 60px #0005;overflow:hidden}
  .dd-order-success h2{margin:8px 0 12px;color:#fff}
+ .dd-order-success .dd-order-bounce-title{font-size:clamp(1.55rem,4.2vw,2.35rem);font-weight:850;letter-spacing:-.035em;line-height:1.15;transform-origin:center bottom;animation:ddHeadlineBounce 1.3s cubic-bezier(.2,.8,.25,1) .12s both}
  .dd-order-success .muted{line-height:1.65;overflow-wrap:anywhere}
  .dd-order-success .btn{display:inline-block;margin-top:20px}
  .dd-order-celebration{height:140px;position:relative;display:grid;place-items:center}
  .dd-order-bag{width:92px;height:92px;border-radius:26px;background:linear-gradient(145deg,#ff66af,#d32175);color:white;display:grid;place-items:center;font-size:58px;font-weight:800;box-shadow:0 15px 35px #d3217566;z-index:2;animation:ddOrderBounce .95s cubic-bezier(.2,.85,.25,1.15) both}
  .dd-order-confetti{position:absolute;left:50%;top:50%;width:8px;height:13px;border-radius:3px;background:hsl(calc(var(--i)*23 + 310) 95% 72%);transform:rotate(var(--angle)) translateY(-10px);opacity:0;animation:ddOrderConfetti 1.25s ease-out .18s both}
+ @keyframes ddHeadlineBounce{0%{opacity:0;transform:translateY(-70px) scale(.65)}30%{opacity:1;transform:translateY(12px) scale(1.12)}48%{transform:translateY(-15px) scale(.94)}66%{transform:translateY(7px) scale(1.05)}82%{transform:translateY(-4px) scale(.99)}100%{opacity:1;transform:translateY(0) scale(1)}}
  @keyframes ddOrderBounce{0%{opacity:0;transform:translateY(-95px) scale(.55) rotate(-15deg)}40%{opacity:1;transform:translateY(15px) scale(1.1) rotate(6deg)}65%{transform:translateY(-14px) scale(.96) rotate(-3deg)}82%{transform:translateY(5px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
  @keyframes ddOrderConfetti{0%{opacity:0;transform:rotate(var(--angle)) translateY(-12px) scale(.4)}20%{opacity:1}100%{opacity:0;transform:rotate(var(--angle)) translateY(-118px) rotate(170deg)}}
- @media(prefers-reduced-motion:reduce){.dd-order-bag,.dd-order-confetti{animation:none!important}.dd-order-confetti{display:none}}
+ @media(prefers-reduced-motion:reduce){.dd-order-bag,.dd-order-confetti,.dd-order-bounce-title{animation:none!important}.dd-order-confetti{display:none}}
  `;
  document.head.append(style);
 })();
