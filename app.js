@@ -78,7 +78,9 @@ const phVariants = {"Samsung-0": [["12GB / 256GB", 83190], ["12GB / 512GB", 9779
 const verifiedSpecs = {"Huawei-0": {"Display":"6.8-inch LTPO OLED, 1–120Hz, 2848 × 1276","Processor":"Kirin 9020 octa-core","RAM":"16GB","Storage":"512GB","Rear cameras":"50MP 1-inch main + 40MP ultrawide + 50MP telephoto + 12.5MP telephoto","Front camera":"13MP","Battery":"5,170mAh rated","Charging":"100W wired / 80W wireless","Connectivity":"4G LTE, Wi-Fi, Bluetooth, NFC; SIM support depends on variant","Operating system":"EMUI 15.0","Other features":"IP68/IP69, dual telephoto optical zoom"},"Huawei-1":{"Display":"6.8-inch LTPO OLED","Processor":"Kirin 9020","RAM":"12GB","Storage":"512GB","Battery":"5,170mAh rated","Charging":"100W wired"},"Samsung-0": {"Display": "6.9-inch Dynamic AMOLED 2X, 120Hz", "Processor": "Snapdragon 8 Elite for Galaxy", "RAM": "12GB", "Rear cameras": "200MP main + 50MP ultrawide + 50MP telephoto + 10MP telephoto", "Front camera": "12MP", "Battery": "5,000mAh", "Charging": "45W wired", "Connectivity": "5G, Wi-Fi 7, Bluetooth", "Operating system": "Android / One UI", "Other features": "Integrated S Pen, IP68"}, "Samsung-1": {"Display": "6.7-inch Dynamic AMOLED 2X", "Rear camera": "50MP main", "Battery": "4,900mAh", "Operating system": "Android / One UI"}, "Samsung-2": {"Display": "6.2-inch Dynamic AMOLED 2X", "Rear camera": "50MP main", "Battery": "4,000mAh", "Operating system": "Android / One UI"}, "Samsung-3": {"Display": "8.0-inch foldable AMOLED inner display", "Rear camera": "200MP main", "Form factor": "Book-style foldable"}, "Samsung-4": {"Display": "6.9-inch inner AMOLED + 4.1-inch cover", "Rear camera": "50MP main", "Form factor": "Flip foldable"}};
 const phSources = {'Samsung':'https://hptotosamsung.com/ph/trade-in/','Apple':'https://www.apple.com/ph/shop/buy-iphone','Huawei':'https://consumer.huawei.com/ph/phones/'};
 
+
 const liveVariants = {};
+const productImages = {};
 
 async function loadLiveVariants() {
   try {
@@ -106,6 +108,15 @@ async function loadLiveVariants() {
 
       liveVariants[productId].push([variant, price]);
     }
+
+      if (
+        typeof product.image_key === "string" &&
+        /^products\/[0-9a-f-]{36}\.(jpg|png|webp)$/
+          .test(product.image_key)
+      ) {
+        productImages[productId] =
+          "/api/images/" + product.image_key;
+      }
 
     Object.assign(phVariants, liveVariants);
 
