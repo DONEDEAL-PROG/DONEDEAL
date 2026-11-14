@@ -278,7 +278,13 @@ document.getElementById('checkoutForm')?.addEventListener('submit',e=>{
  const email=document.createElement('button');email.textContent='Open Email App';email.onclick=()=>{location.href='mailto:?subject='+encodeURIComponent('Done Deal Order Request')+'&body='+encodeURIComponent(request)};
  actions.append(copy,email);area.append(actions);
 });
-document.getElementById('search').addEventListener('input',render);document.getElementById('sort').addEventListener('change',render);renderBrands();render();save();
+document.getElementById('search').addEventListener('input',render);document.getElementById('sort').addEventListener('change',render);
+loadLiveVariants().finally(() => {
+  renderBrands();
+  render();
+  save();
+});
+
 
 // Online checkout uses server-authoritative prices; browser SRP and demo prices never set payment amounts.
 document.querySelectorAll('button[onclick="openCheckout()"]').forEach(b=>b.textContent='Secure Checkout');
