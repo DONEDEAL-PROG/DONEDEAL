@@ -5,8 +5,8 @@ export async function onRequestGet({request,env}){
  if(!env.DB)return reply({error:'Database missing'},503);
  try{
   const r=await env.DB.prepare(`SELECT o.id,o.status,o.total_centavos,o.customer_json,o.items_json,o.created_at,o.paid_at,
-   m.source,m.fulfillment,m.payment_method,m.payment_status,m.shipping_note,m.notes
-   FROM store_orders o LEFT JOIN store_order_meta m ON m.order_id=o.id ORDER BY o.created_at DESC LIMIT 300`).all();
+   m.source,m.fulfillment,m.payment_method,m.payment_status,m.shipping_note,m.notes,\n   p.pickup_code,p.pickup_status,p.claimant_name,p.verified_at,p.released_by,p.claimed_at
+   FROM store_orders o LEFT JOIN store_order_meta m ON m.order_id=o.id LEFT JOIN store_pickup_tracking p ON p.order_id=o.id ORDER BY o.created_at DESC LIMIT 300`).all();
   return reply({orders:r.results||[]});
  }catch(e){return reply({error:'Run migration-v2.sql before using orders'},503)}
 }
@@ -16,11 +16,53 @@ export async function onRequestPost({request,env}){
  if(!env.DB)return reply({error:'Database missing'},503);
  try{
   const b=await request.json();
+  if(b.action==='pickup_init'){
+   if(!validText(b.id,100))return reply({error:'Invalid order'},400);
+   const row=await env.DB.prepare(`SELECT o.status,m.fulfillment FROM store_orders o JOIN store_order_meta m ON m.order_id=o.id WHERE o.id=?`).bind(b.id).first();
+   if(!row||row.fulfillment!=='pickup')return reply({error:'Not a pickup order'},404);
+   const code='PK-'+crypto.randomUUID().slice(0,8).toUpperCase();
+   await env.DB.prepare('INSERT OR IGNORE INTO store_pickup_tracking(order_id,pickup_code) VALUES(?,?)').bind(b.id,code).run();
+   return reply({ok:true});
+  }
+  if(b.action==='pickup'){
+   if(!validText(b.id,100)||!['confirmed','preparing','ready','claimed','cancelled'].includes(b.pickup_status))return reply({error:'Invalid pickup request'},400);
+   const order=await env.DB.prepare(`SELECT o.status,m.fulfillment,m.payment_status,p.pickup_status,p.pickup_code
+     FROM store_orders o JOIN store_order_meta m ON m.order_id=o.id
+     LEFT JOIN store_pickup_tracking p ON p.order_id=o.id WHERE o.id=?`).bind(b.id).first();
+   if(!order||order.fulfillment!=='pickup')return reply({error:'Pickup order not found'},404);
+   if(['delivered','cancelled'].includes(order.status)||['claimed','cancelled'].includes(order.pickup_status))return reply({error:'Finalized orders are locked'},409);
+   const steps=['pending','confirmed','preparing','ready','claimed'];
+   const current=order.pickup_status||'pending';
+   if(b.pickup_status!=='cancelled'&&steps.indexOf(b.pickup_status)!==steps.indexOf(current)+1)return reply({error:'Complete pickup stages in order'},409);
+   const claimant=String(b.claimant_name||'').trim(),releasedBy=String(b.released_by||'').trim(),code=String(b.pickup_code||'').trim();
+   if(b.pickup_status==='claimed'){
+    if(order.payment_status!=='paid')return reply({error:'Mark payment as paid before release'},409);
+    if(!validText(claimant,120)||!validText(releasedBy,120)||code!==order.pickup_code)return reply({error:'Valid pickup code, claimant and releasing staff are required'},400);
+    if(!b.release_confirmed)return reply({error:'Confirm physical gadget release'},400);
+   }
+   if(!order.pickup_code){
+    const newCode='PK-'+crypto.randomUUID().slice(0,8).toUpperCase();
+    await env.DB.prepare(`INSERT OR IGNORE INTO store_pickup_tracking(order_id,pickup_code) VALUES(?,?)`).bind(b.id,newCode).run();
+   }
+   const nextOrderStatus=b.pickup_status==='claimed'?'delivered':b.pickup_status==='cancelled'?'cancelled':b.pickup_status==='confirmed'?'confirmed':'processing';
+   await env.DB.batch([
+    env.DB.prepare(`UPDATE store_pickup_tracking SET pickup_status=?,claimant_name=CASE WHEN ?='claimed' THEN ? ELSE claimant_name END,
+    released_by=CASE WHEN ?='claimed' THEN ? ELSE released_by END,
+    verified_at=CASE WHEN ?='claimed' THEN CURRENT_TIMESTAMP ELSE verified_at END,
+    claimed_at=CASE WHEN ?='claimed' THEN CURRENT_TIMESTAMP ELSE claimed_at END,updated_at=CURRENT_TIMESTAMP WHERE order_id=?`)
+    .bind(b.pickup_status,b.pickup_status,claimant,b.pickup_status,releasedBy,b.pickup_status,b.pickup_status,b.id),
+    env.DB.prepare('UPDATE store_orders SET status=? WHERE id=?').bind(nextOrderStatus,b.id)
+   ]);
+   return reply({ok:true});
+  }
   if(b.action==='status'){
    if(!validText(b.id,100)||!['pending','confirmed','processing','shipped','delivered','cancelled'].includes(b.status)||!['unpaid','pending_verification','paid','refunded'].includes(b.payment_status))return reply({error:'Invalid status'},400);
    const existing=await env.DB.prepare('SELECT o.id,o.status,m.order_id FROM store_orders o LEFT JOIN store_order_meta m ON m.order_id=o.id WHERE o.id=?').bind(b.id).first();
    if(!existing)return reply({error:'Order not found'},404);
    if(!existing.order_id)return reply({error:'Legacy order: manage payment through its original gateway. New dashboard statuses apply to V2 orders only.'},409);
+   const pickup=await env.DB.prepare('SELECT fulfillment FROM store_order_meta WHERE order_id=?').bind(b.id).first();
+   if(pickup?.fulfillment==='pickup'&&b.status!==existing.status)return reply({error:'Use the Pickup Workflow controls to update pickup status'},409);
+   if(existing.status==='delivered'&&b.status!=='delivered')return reply({error:'Delivered orders are final and cannot be reopened.'},409);
    if(existing.status==='cancelled'&&b.status!=='cancelled')return reply({error:'Cancelled orders cannot be reopened; create a new order instead.'},409);
    await env.DB.batch([
     env.DB.prepare('UPDATE store_orders SET status=?,paid_at=CASE WHEN ? = ? THEN COALESCE(paid_at,CURRENT_TIMESTAMP) ELSE paid_at END WHERE id=?').bind(b.status,b.payment_status,'paid',b.id),
