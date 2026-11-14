@@ -41,3 +41,54 @@ html[data-dd-store-theme=light] .navlinks a{color:#342331!important}
 html[data-dd-store-theme=light] .navlinks a:hover{color:#c12870!important}
 html[data-dd-store-theme=light] .dd-extra-info small{color:#6c5d69!important}
 @media(max-width:650px){.nav .dd-wishlist-link{height:38px;min-width:40px;padding:0 9px!important}.nav [data-dd-theme-toggle]{height:38px;padding:0 9px!important}}
+
+
+/* Contrast repair for the actual DONEDEAL premium-store.css selectors */
+html[data-dd-store-theme=light] .logoLink .logo,
+html[data-dd-store-theme=light] .logoLink .logo:not(span){color:#26202a!important}
+html[data-dd-store-theme=light] .logoLink .logo span{color:#e83b82!important}
+html[data-dd-store-theme=light] .nav{background:#fff!important;border-bottom-color:#eadce5!important}
+html[data-dd-store-theme=light] .navlinks a{color:#352a37!important}
+html[data-dd-store-theme=light] .storePerks,html[data-dd-store-theme=light] .storePerks .perk,html[data-dd-store-theme=light] .storePerks .perk *{color:#645a67!important}
+html[data-dd-store-theme=light] .featuredHeading,html[data-dd-store-theme=light] .featuredHeading *,
+html[data-dd-store-theme=light] .sectionhead,html[data-dd-store-theme=light] .sectionhead *{color:#2d2430!important}
+html[data-dd-store-theme=light] .featuredHeading em,html[data-dd-store-theme=light] .featuredHeading span{color:#d9367c!important}
+html[data-dd-store-theme=light] .container,html[data-dd-store-theme=light] #shop{color:#2b2330!important}
+html[data-dd-store-theme=light] #catalog .product{background:#fff!important;border-color:#e9dfe6!important;box-shadow:0 9px 25px #39213714!important}
+html[data-dd-store-theme=light] #catalog .product .visual{background:linear-gradient(145deg,#faf7fa,#f2eaf1)!important}
+html[data-dd-store-theme=light] #catalog .product .visual .premiumFallback{color:#403541!important}
+html[data-dd-store-theme=light] #catalog .product .pbody,html[data-dd-store-theme=light] #catalog .product .pbody *{color:#312733!important}
+html[data-dd-store-theme=light] #catalog .product .pbody button{color:#fff!important}
+html[data-dd-store-theme=light] .controls input,html[data-dd-store-theme=light] .controls select,
+html[data-dd-store-theme=light] input#search,html[data-dd-store-theme=light] select#sort{background:#fff!important;color:#302532!important;border:1px solid #d8c9d4!important}
+html[data-dd-store-theme=light] .brands button{background:#fff!important;color:#423541!important;border:1px solid #d8c9d4!important}
+html[data-dd-store-theme=light] .brands button.active{background:#e83b82!important;color:#fff!important}
+html[data-dd-store-theme=light] .brandBar,html[data-dd-store-theme=light] .brandBar *{color:#392c3b!important}
+html[data-dd-store-theme=light] .hero,html[data-dd-store-theme=light] .hero *{color:inherit}
+html[data-dd-store-theme=light] .hero{color:#fff!important}
+html[data-dd-store-theme=light] .hero *{color:#fff!important}
+html[data-dd-store-theme=light] .hero .eyebrow{color:#ff8ab8!important}
+/* Sidebar */
+.dd-menu-trigger{display:inline-flex!important;align-items:center;gap:8px;justify-content:center;border:1px solid #e77bab!important;background:#2b1c2a!important;color:#fff!important;border-radius:12px!important;padding:10px 13px!important;font-size:14px!important;font-weight:700!important}
+.dd-menu-trigger svg{width:20px;height:20px}
+html[data-dd-store-theme=light] .dd-menu-trigger{background:#fff!important;color:#6d2a4a!important;border-color:#ecc1d5!important}
+.dd-menu-scrim{position:fixed;inset:0;background:#100b14aa;z-index:9990;opacity:0;pointer-events:none;transition:opacity .25s}
+.dd-menu-panel{position:fixed;left:0;top:0;bottom:0;width:min(350px,90vw);z-index:9991;transform:translateX(-105%);transition:transform .25s;background:#19171e;color:#fff;box-shadow:16px 0 45px #0005;display:flex;flex-direction:column;padding:25px 18px;overflow-y:auto}
+body.dd-menu-open .dd-menu-scrim{opacity:1;pointer-events:auto}
+body.dd-menu-open .dd-menu-panel{transform:translateX(0)}
+body.dd-menu-open{overflow:hidden}
+.dd-menu-top{display:flex;justify-content:space-between;align-items:center;padding:0 8px 18px;border-bottom:1px solid #44323e}
+.dd-menu-brand{font-size:20px;font-weight:900;letter-spacing:-.5px}.dd-menu-brand span{color:#f34d91}
+.dd-menu-close{background:#382c39!important;color:#fff!important;border:0!important;border-radius:10px!important;padding:8px 12px!important;font-size:22px!important}
+.dd-menu-links{display:flex;flex-direction:column;gap:5px;margin:18px 0}
+.dd-menu-links a{display:flex;align-items:center;gap:14px;color:#eee5ee!important;text-decoration:none;padding:14px 13px;border-radius:12px;font-weight:650;font-size:14px}
+.dd-menu-links a:hover,.dd-menu-links a:focus-visible{background:#432638;color:#ffb1d0!important}
+.dd-menu-links a span{font-size:19px;width:24px;text-align:center}
+.dd-menu-foot{margin-top:auto;padding:16px 10px;border-top:1px solid #44323e;font-size:12px;color:#bdb0bb}
+html[data-dd-store-theme=light] .dd-menu-panel{background:#fff;color:#29202b}
+html[data-dd-store-theme=light] .dd-menu-top{border-color:#f0dce7}
+html[data-dd-store-theme=light] .dd-menu-links a{color:#392a39!important}
+html[data-dd-store-theme=light] .dd-menu-links a:hover{background:#fff0f6;color:#bd2d70!important}
+html[data-dd-store-theme=light] .dd-menu-close{background:#f7e7f0!important;color:#713452!important}
+html[data-dd-store-theme=light] .dd-menu-foot{border-color:#eedce6;color:#6f6170}
+@media(max-width:650px){.dd-menu-trigger{padding:9px!important;font-size:0!important}.dd-menu-trigger svg{width:20px}.nav{gap:6px!important}}
