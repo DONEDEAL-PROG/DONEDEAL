@@ -118,6 +118,7 @@ button:not(:disabled):hover{filter:brightness(1.08)}
 <div id="emptyState">No matching gadgets. Try another search or brand.</div>
 </section>
 </main>
+<datalist id="ddStorageSuggestions"><option value="128GB"><option value="256GB"><option value="512GB"><option value="1TB"><option value="8GB / 128GB"><option value="8GB / 256GB"><option value="12GB / 256GB"><option value="12GB / 512GB"><option value="16GB / 1TB"></datalist>
 <script>
 const $ = id => document.getElementById(id);
 const money = cents => (cents / 100).toFixed(2);
@@ -191,6 +192,7 @@ function updateList() {
   $("products").replaceChildren();
   $("emptyState").style.display = visible.length ? "none" : "block";
   let lastBrand = null;
+  let lastGadget = null;
   const sorted = [...visible].sort((a,b) =>
     knownBrands.concat("Other").indexOf(brandOf(a)) -
     knownBrands.concat("Other").indexOf(brandOf(b)) ||
@@ -205,8 +207,67 @@ function updateList() {
       $("products").append(h);
       lastBrand = brand;
     }
+    const gadgetId=item.sku.split('::')[0];
+    if(gadgetId!==lastGadget){
+      renderGadgetControls(item);
+      lastGadget=gadgetId;
+    }
     renderProduct(item);
   }
+}
+async function adminVariantPost(payload){
+ const response=await fetch('/api/admin/variants',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+ const data=await response.json();
+ if(!response.ok)throw Error(data.error||'Unable to update gadget');
+ return data;
+}
+function renderGadgetControls(item){
+ const id=item.sku.split('::')[0];
+ const panel=document.createElement('section');panel.className='panel gadgetControls';
+ const heading=document.createElement('div');heading.className='productHead';
+ const title=document.createElement('strong');title.textContent=item.name+' — Storage & Pricing';
+ const toggle=document.createElement('button');toggle.type='button';toggle.className='secondary';
+ const active=Number(item.gadget_enabled)!==0;
+ toggle.textContent=active?'Deactivate Gadget':'Activate Gadget';
+ heading.append(title,toggle);panel.append(heading);
+ const info=document.createElement('small');info.textContent='Each storage below has its own price, stock and Active toggle. New storage starts Deactivated.';
+ panel.append(info);
+ const add=document.createElement('button');add.type='button';add.className='secondary';
+ add.textContent='+ Add Storage Variant';add.style.marginTop='12px';panel.append(add);
+ const form=document.createElement('div');form.className='editor';form.style.marginTop='12px';
+ const row=document.createElement('div');row.className='fields';
+ function field(label,type,placeholder){
+  const box=document.createElement('label');box.textContent=label;
+  const input=document.createElement('input');input.type=type;input.placeholder=placeholder;
+  if(type==='number'){input.min='0';input.step=label==='Price (PHP)'?'0.01':'1';}
+  box.append(input);row.append(box);return input;
+ }
+ const storage=field('Storage / RAM','text','128GB, 256GB, 12GB / 512GB');
+ storage.setAttribute('list','ddStorageSuggestions');
+ const price=field('Price (PHP)','number','0.00');
+ const stock=field('Stock','number','0');stock.value='0';
+ const save=document.createElement('button');save.type='button';save.textContent='Save New Variant (Deactivated)';
+ const message=document.createElement('small');message.setAttribute('role','status');
+ form.append(row,save,message);panel.append(form);
+ add.onclick=()=>{form.classList.toggle('open');};
+ toggle.onclick=async()=>{
+  const next=active?0:1;
+  if(!confirm((next?'Activate':'Deactivate')+' all storage variants for '+item.name+'?'))return;
+  toggle.disabled=true;
+  try{await adminVariantPost({action:'gadget',product_id:id,enabled:next});await loadProducts();}
+  catch(e){info.textContent=e.message;toggle.disabled=false;}
+ };
+ save.onclick=async()=>{
+  const raw=price.value.trim(),rawStock=stock.value.trim();
+  const cents=Math.round(Number(raw)*100);
+  if(!storage.value.trim()||!/^[0-9]+(\.[0-9]{1,2})?$/.test(raw)||cents<1||!/^[0-9]+$/.test(rawStock)){message.textContent='Enter storage, valid price and stock.';return;}
+  save.disabled=true;message.textContent='Saving...';
+  try{
+   await adminVariantPost({action:'create',product_id:id,storage:storage.value.trim(),price_centavos:cents,stock:Number(rawStock)});
+   await loadProducts();
+  }catch(e){message.textContent=e.message;save.disabled=false;}
+ };
+ $('products').append(panel);
 }
 function renderProduct(item) {
   const card = document.createElement("article");
@@ -270,6 +331,23 @@ function renderProduct(item) {
   stock.type = "number";stock.min = "0";stock.step = "1";stock.value = item.stock;
   stockBox.append(stockLabel,stock);
   fields.append(priceBox,stockBox);
+  const renameBox=document.createElement('div');
+  const renameLabel=document.createElement('label');renameLabel.textContent='Storage / RAM';
+  const renameInput=document.createElement('input');renameInput.type='text';renameInput.maxLength=120;
+  renameInput.value=item.variant;renameInput.setAttribute('list','ddStorageSuggestions');
+  renameBox.append(renameLabel,renameInput);fields.prepend(renameBox);
+  const rename=document.createElement('button');rename.type='button';rename.className='secondary';
+  rename.textContent='Save Storage Name (Deactivates New Variant)';
+  const renameMsg=document.createElement('small');renameMsg.setAttribute('role','status');
+  rename.onclick=async()=>{
+   if(renameInput.value.trim()===item.variant){renameMsg.textContent='Storage name is unchanged.';return;}
+   if(!confirm('Rename storage? The original variant will be deactivated and the new name starts Deactivated. Price and stock are copied.'))return;
+   rename.disabled=true;renameMsg.textContent='Renaming...';
+   try{await adminVariantPost({action:'rename',product_id:item.sku.split('::')[0],sku:item.sku,storage:renameInput.value.trim()});await loadProducts();}
+   catch(e){renameMsg.textContent=e.message;rename.disabled=false;}
+  };
+  fields.append(renameBox); 
+
   const actions = document.createElement("div");
   actions.className = "actions";
   const available = document.createElement("input");
@@ -316,7 +394,7 @@ function renderProduct(item) {
       message.className = "notice";
     } finally { save.disabled = false; }
   });
-  actions.append(availableLabel,save,message);
+  actions.append(availableLabel,save,message,rename,renameMsg);
   const photoArea = document.createElement("div");
   photoArea.className = "photoArea";
   const photoLabel = document.createElement("label");

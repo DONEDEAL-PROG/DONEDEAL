@@ -58,7 +58,7 @@ function renderCustomGadgets(){
   const id=String(p.sku||'').split('::')[0];
   if(!id.startsWith('custom-'))continue;
   if(!groups.has(id))groups.set(id,{id,name:p.name,variants:[],visible:false});
-  const g=groups.get(id);g.variants.push(p);if(Number(p.enabled)===1)g.visible=true;
+  const g=groups.get(id);g.variants.push(p);if(Number(p.enabled)===1&&Number(p.gadget_enabled)!==0)g.visible=true;
  }
  const list=$('customGadgetList');list.replaceChildren();
  if(!groups.size){list.append(el('p','No custom gadgets added yet.'));return}
