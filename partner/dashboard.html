@@ -1,1 +1,30 @@
-<script>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Partner Dashboard | DONEDEAL</title>
+<link rel="stylesheet" href="/partner-dashboard.css"></head>
+<body><div class="shell">
+<aside class="sidebar" id="sidebar">
+<a class="logo" href="/index.html">DONE<span>DEAL</span><small>PARTNER PORTAL</small></a>
+<div class="navlabel">WORKSPACE</div>
+<nav aria-label="Partner dashboard">
+<button class="nav active" data-view="overview"><span>▦</span> Overview</button>
+<button class="nav" data-view="referral"><span>↗</span> My Referral Link</button>
+<button class="nav" data-view="referrals"><span>♧</span> My Referrals</button>
+<button class="nav" data-view="commissions"><span>◈</span> Commissions & Payouts</button>
+<button class="nav" data-view="messages"><span>✉</span> Message Admin <b id="unread" hidden></b></button>
+<button class="nav" data-view="account"><span>◉</span> My Account</button>
+</nav>
+<div class="sidebottom"><a href="/shop.html">Visit DONEDEAL Store ↗</a><button id="logout">Sign out</button></div>
+</aside>
+<div class="content"><header class="topbar"><button id="menu" aria-label="Toggle menu" aria-expanded="false">☰</button><div><span class="top-eyebrow">DONEDEAL / PARTNER PORTAL</span><h1 id="page-title">Overview</h1></div><div class="profile"><span class="avatar" id="avatar">P</span><span id="topname">Partner</span></div></header>
+<main><div id="notice" role="status" aria-live="polite"></div>
+<section class="view" id="view-overview"><div class="greeting"><div><div class="eyebrow">YOUR PARTNER OVERVIEW</div><h2 id="welcome">Welcome back.</h2><p>Your referrals, earnings and activity in one place.</p></div><span class="status">● Active partner</span></div>
+<div class="metrics"><article><small>Referral visits</small><strong id="visits">—</strong></article><article><small>Pending earnings</small><strong id="pending">—</strong></article><article><small>Available to withdraw</small><strong id="available">—</strong></article><article><small>Paid earnings</small><strong id="paid">—</strong></article></div>
+<div class="two"><div class="panel"><div class="panelhead"><h3>Recent referrals</h3><button class="textbtn" data-go="referrals">View all →</button></div><p class="muted">Only customer names and purchased gadgets are shown.</p><div id="recent-referrals" class="entries"></div></div>
+<div class="panel"><div class="panelhead"><h3>Recent activity</h3></div><div id="activity" class="entries"></div></div></div></section>
+<section class="view" id="view-referral" hidden><div class="sectionhead"><h2>My Referral Link</h2><p>Share your unique link to track visits and eligible purchases.</p></div><div class="panel"><h3>Your unique link</h3><div class="linkrow"><input id="referral" readonly aria-label="Referral link"><button id="copy">Copy link</button></div><p class="muted">Orders placed within 30 days of a referral visit may be attributed to your account on the same browser.</p><p id="rate" class="muted"></p></div></section>
+<section class="view" id="view-referrals" hidden><div class="sectionhead"><h2>My Referrals</h2><p>Confirmed attribution to your partner account. Private customer details are never shared.</p></div><div class="panel"><div class="tablewrap"><table><thead><tr><th>Customer name</th><th>Gadget purchased</th><th>Date</th><th>Order status</th></tr></thead><tbody id="referral-rows"></tbody></table></div></div></section>
+<section class="view" id="view-commissions" hidden><div class="sectionhead"><h2>Commissions & Payouts</h2><p>Review commission status and request withdrawals of approved earnings.</p></div><div class="metrics three"><article><small>Pending</small><strong id="cpending">—</strong></article><article><small>Available</small><strong id="cavailable">—</strong></article><article><small>Paid</small><strong id="cpaid">—</strong></article></div><div class="two"><div class="panel"><h3>Request payout</h3><p class="muted">Requests cover approved commissions. Payouts are reviewed manually.</p><form id="payout"><label>Method<select name="method"><option>GCash</option><option>Bank transfer</option></select></label><label>Account name and number<input name="account" required minlength="5" autocomplete="off"></label><button>Request withdrawal</button></form></div><div class="panel"><h3>Payout history</h3><div id="payouts" class="entries"></div></div></div><div class="panel"><h3>Commission history</h3><div id="orders" class="entries"></div></div></section>
+<section class="view" id="view-messages" hidden><div class="sectionhead"><h2>Message Admin</h2><p>Private messages between you and the DONEDEAL team.</p></div><div class="panel"><h3>Conversation</h3><div id="thread" class="thread" aria-live="polite"></div><form id="message-form"><label for="message-text">Your message</label><textarea id="message-text" name="message" maxlength="2000" rows="4" required placeholder="Write your message to the DONEDEAL team..."></textarea><div class="formfoot"><small>Up to 2,000 characters</small><button>Send message</button></div></form></div></section>
+<section class="view" id="view-account" hidden><div class="sectionhead"><h2>My Account</h2><p>Your partner profile and account status.</p></div><div class="panel account"><div><small>Partner name</small><strong id="account-name"></strong></div><div><small>Email address</small><strong id="account-email"></strong></div><div><small>Account status</small><strong>Approved</strong></div></div></section>
+</main></div></div><div id="overlay" hidden></div><script src="/partner-dashboard.js" defer></script></body></html>
