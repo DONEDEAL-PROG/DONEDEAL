@@ -83,4 +83,43 @@ function navigate(){
  document.body.classList.remove('dd-open');
 }
 window.addEventListener('hashchange',navigate);navigate();
+
+
+/* Hide admin navigation until authenticated */
+
+function ddSyncAdminSidebarAuth() {
+  const loginPanel = document.getElementById('loginPanel');
+  const dashboard = document.getElementById('dashboard');
+
+  // Only applies to pages that contain the admin login panel.
+  if (!loginPanel || !dashboard) return;
+
+  const dashboardVisible =
+    getComputedStyle(dashboard).display !== 'none';
+
+  document.body.classList.toggle(
+    'dd-admin-signin',
+    !dashboardVisible
+  );
+
+  if (!dashboardVisible) {
+    document.body.classList.remove('dd-open');
+  }
+}
+
+ddSyncAdminSidebarAuth();
+
+const ddAuthObserver = new MutationObserver(
+  ddSyncAdminSidebarAuth
+);
+
+const ddDashboard = document.getElementById('dashboard');
+
+if (ddDashboard) {
+  ddAuthObserver.observe(ddDashboard, {
+    attributes: true,
+    attributeFilter: ['style', 'class', 'hidden']
+  });
+}
+
 })();
