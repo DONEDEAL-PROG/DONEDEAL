@@ -1,0 +1,19 @@
+DONEDEAL PARTNER DASHBOARD UPDATE
+
+1. Upload the files from this ZIP into the same relative paths in your GitHub DONEDEAL repository.
+   These are modified/new files only; do not delete your other files.
+2. In Cloudflare > Storage & databases > D1 SQLite Database > donedeal-db > Console,
+   run the contents of database/migration-partner-messages.sql once.
+   This adds a separate messaging table; existing affiliates/orders are untouched.
+3. Wait for a successful Cloudflare Pages production deployment.
+4. Partner login: /partner (existing registration/login page).
+   After login, partner is sent to /partner/dashboard (new separate dashboard).
+   Overview does not show the referral URL; it is only in sidebar > My Referral Link.
+5. Admin inbox: /admin/partners, under Partner messages.
+6. Test: send a message as partner, reply as admin, refresh the partner Message Admin page.
+7. Referrals display only name, gadget names, order date/status.
+   The server reads customer_json and items_json internally and never returns those JSON blobs
+   or customer contact information in the partner dashboard API.
+
+NOTE: Existing admin session login and partner login remain unchanged.
+NOTE: For security, do not send passwords or D1 secrets in screenshots.
