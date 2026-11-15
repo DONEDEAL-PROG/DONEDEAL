@@ -162,6 +162,40 @@ async function loadLiveVariants() {
 
     const data = await response.json();
 
+    // D1 is the storefront source of truth. Keep the existing product metadata
+    // for known IDs, but build the visible product list from enabled D1 rows.
+    const catalogProducts = new Map();
+    const originalProducts = new Map(products.map(p => [p.id, p]));
+    const clean = value => String(value ?? '').replace(/[<>"'`]/g, '').trim();
+    const knownBrands = Object.keys(entries);
+
+    for (const product of data.products || []) {
+      if (typeof product.sku !== 'string') continue;
+      const split = product.sku.lastIndexOf('::');
+      if (split <= 0) continue;
+      const id = product.sku.slice(0, split);
+      if (!/^[A-Za-z0-9_-]+$/.test(id)) continue;
+      const fullName = clean(product.name || product.model || '');
+      const brand = knownBrands.find(b => fullName.toLowerCase().startsWith(b.toLowerCase() + ' '))
+        || knownBrands.find(b => b.toLowerCase() === clean(product.brand).toLowerCase())
+        || clean(product.brand) || 'Other';
+      const model = clean(product.model) || (
+        fullName.toLowerCase().startsWith(brand.toLowerCase() + ' ')
+          ? fullName.slice(brand.length).trim() : fullName
+      );
+      if (!model) continue;
+      if (!catalogProducts.has(id)) {
+        const existing = originalProducts.get(id);
+        catalogProducts.set(id, {
+          id, brand, name: model,
+          desc: clean(product.description) || existing?.desc || '',
+          spec: existing?.spec || '',
+          tag: existing?.tag || 'Available',
+          price: null
+        });
+      }
+    }
+
     for (const product of data.products || []) {
       liveStock[product.sku] = Math.max(0,Number(product.stock)||0);
       const separator = product.sku.lastIndexOf("::");
@@ -184,6 +218,9 @@ async function loadLiveVariants() {
       }
     }
 
+    // Only show products present in the live catalog. Preserve IDs so
+    // existing cart, wishlist and checkout behavior continues to use D1 SKUs.
+    products = Array.from(catalogProducts.values());
     Object.assign(phVariants, liveVariants);
     catalogStockLoaded = true;
     render();
@@ -212,7 +249,7 @@ function specsFor(p){
 function setDetailVariant(id,value){chosenStorage[id]=value;detail(id);}
 
 const shades={Huawei:'#d1a1a0',Samsung:'#829cdb',OPPO:'#a4c5b3',vivo:'#8aacee',Xiaomi:'#f0b381',Apple:'#c2c8d3'};
-const products=Object.entries(entries).flatMap(([brand,items])=>items.map((x,i)=>({id:brand+'-'+i,brand,name:x[0],desc:x[1],spec:x[2],tag:x[3],price:null})));
+let products=Object.entries(entries).flatMap(([brand,items])=>items.map((x,i)=>({id:brand+'-'+i,brand,name:x[0],desc:x[1],spec:x[2],tag:x[3],price:null})));
 let filter='All',cart=JSON.parse(localStorage.getItem('doneDealCart')||'{}');
 const money=p=>p==null?'PH SRP pending verification':'₱'+p.toLocaleString('en-PH');
 function render() {
@@ -249,7 +286,7 @@ function render() {
   `).join('') || '<div class="empty">No phones found. Try another search.</div>';
   window.DDExtras?.refresh();
 }
-function renderBrands(){document.getElementById('brands').innerHTML=['All',...Object.keys(entries)].map(b=>`<button class="chip ${filter===b?'active':''}" onclick="filter='${b}';renderBrands();render()">${b==='All'?'All Brands':b}</button>`).join('')}
+function renderBrands(){document.getElementById('brands').innerHTML=['All',...new Set(products.map(p=>p.brand))].map(b=>`<button class="chip ${filter===b?'active':''}" onclick="filter='${b}';renderBrands();render()">${b==='All'?'All Brands':b}</button>`).join('')}
 function save(){localStorage.setItem('doneDealCart',JSON.stringify(cart));document.getElementById('cartCount').textContent='('+Object.values(cart).reduce((a,b)=>a+Number(b||0),0)+')'}
 function cartKey(id,storage){return storage?id+'::'+storage:id;}
 function cartEntry(key){const [id,storage]=key.split('::');const p=products.find(x=>x.id===id);if(!p)return null;const v=variantList(p).find(x=>x[0]===storage);return {p,storage:storage||null,price:v?v[1]:null};}
