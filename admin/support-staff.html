@@ -1,5 +1,375 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>DONEDEAL | Support Staff Management</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#111116;color:#f7f7fc;font:16px system-ui,sans-serif}header{background:#1d1d26;padding:18px 5%}header a{color:#ff8cbd}main{max-width:1000px;margin:28px auto;padding:0 18px}.panel{background:#1d1d26;border:1px solid #37303a;border-radius:14px;padding:20px;margin-bottom:18px}input,button{font:inherit;padding:10px;border-radius:8px}input:not([type=checkbox]){width:100%;background:#292936;color:white;border:1px solid #5b5665}button{background:#e72d81;color:white;border:0;cursor:pointer}button:disabled{opacity:.5}label{display:block;margin:12px 0 5px}.permissions{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin:14px 0}.permissions label{margin:0}.staff{border-top:1px solid #454550;padding:16px 0}#notice{color:#ff9ec7}small{color:#b8b7c4}h1{margin-top:0}</style></head><body>
-<header><a href="/admin/">← Admin Dashboard</a></header><main><h1>Customer Service Staff Management</h1><p>Create individual staff accounts and set permissions. Only Admin can access this page.</p>
-<section class="panel"><h2>Create staff account</h2><form id="create"><label for="username">Username (3–40 characters)</label><input id="username" required minlength="3" maxlength="40" autocomplete="off"><label for="displayName">Display name</label><input id="displayName" required maxlength="100"><label for="password">Temporary password (minimum 8 characters)</label><input id="password" type="password" minlength="8" required autocomplete="new-password"><h3>Permissions</h3><div id="newPermissions" class="permissions"></div><button>Create staff account</button></form></section>
-<section class="panel"><h2>Existing staff</h2><button id="refresh" type="button">Refresh staff</button><div id="staffList"></div></section><p id="notice" role="status"></p><p><small>Order-related permissions are saved but actual order changes are NOT enabled in Phase 2. Refund payouts always require admin approval.</small></p></main><script src="/admin/support-staff.js" defer></script></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>DONEDEAL | Support Staff Management</title>
+
+<script>
+(function(){
+  try {
+    document.documentElement.dataset.ddTheme =
+      localStorage.getItem('dd-admin-theme') === 'dark'
+        ? 'dark'
+        : 'light';
+  } catch(e) {
+    document.documentElement.dataset.ddTheme = 'light';
+  }
+})();
+</script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+
+  --page: #f5f3f2;
+  --surface: #ffffff;
+  --surface-alt: #fbfafb;
+  --text: #29252b;
+  --muted: #736d75;
+  --border: #e6dfe3;
+  --input-border: #d9d1d8;
+  --accent: #a63871;
+  --accent-hover: #922f63;
+  --notice: #a63871;
+}
+
+html[data-dd-theme="dark"] {
+  color-scheme: dark;
+
+  --page: #111116;
+  --surface: #1d1d26;
+  --surface-alt: #292936;
+  --text: #f7f7fc;
+  --muted: #b8b7c4;
+  --border: #37303a;
+  --input-border: #5b5665;
+  --accent: #e72d81;
+  --accent-hover: #f04494;
+  --notice: #ff9ec7;
+}
+
+html {
+  background: var(--page);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--page);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 20px max(4%, 18px);
+}
+
+header strong {
+  display: block;
+  font-size: 23px;
+  letter-spacing: .04em;
+}
+
+header small {
+  display: block;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: .08em;
+}
+
+main {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 0 18px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 650;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: clamp(25px, 4vw, 34px);
+  letter-spacing: -.035em;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 22px;
+}
+
+h3 {
+  margin-bottom: 12px;
+  font-size: 17px;
+}
+
+.description {
+  margin: 0 0 24px;
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 18px #3620320b;
+}
+
+input,
+button {
+  font: inherit;
+  padding: 11px 12px;
+  border-radius: 9px;
+}
+
+input:not([type="checkbox"]) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  background: var(--surface-alt);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+}
+
+input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: auto;
+  padding: 0;
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+button {
+  background: var(--accent);
+  color: white;
+  border: 1px solid var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+label {
+  display: block;
+  margin: 13px 0 6px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.permissions {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+  margin: 16px 0 20px;
+}
+
+.permissions label {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.permissions input[type="checkbox"] {
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.staff {
+  border-top: 1px solid var(--border);
+  padding: 18px 0;
+}
+
+.staff:first-child {
+  margin-top: 16px;
+}
+
+#staffList {
+  margin-top: 18px;
+}
+
+#notice {
+  color: var(--notice);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+small {
+  color: var(--muted);
+}
+
+.phaseNote {
+  margin-top: 20px;
+  padding: 15px 17px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+@media(max-width: 600px) {
+  main {
+    padding: 0 14px;
+    margin-top: 22px;
+  }
+
+  .panel {
+    padding: 17px;
+  }
+
+  .permissions {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<link rel="stylesheet" href="/admin/dd-shell.css">
+
+</head>
+
+<body>
+
+<header>
+  <strong>DONEDEAL</strong>
+  <small>PRIVATE ADMIN DASHBOARD</small>
+</header>
+
+<main>
+
+<a class="back" href="/admin/">
+  ← Admin Dashboard
+</a>
+
+<h1>Customer Service Staff Management</h1>
+
+<p class="description">
+  Create individual staff accounts, manage permissions,
+  and control customer service access.
+  Only Admin can access this page.
+</p>
+
+<section class="panel">
+
+  <h2>Create staff account</h2>
+
+  <form id="create">
+
+    <label for="username">
+      Username (3–40 characters)
+    </label>
+
+    <input
+      id="username"
+      required
+      minlength="3"
+      maxlength="40"
+      autocomplete="off"
+    >
+
+    <label for="displayName">
+      Display name
+    </label>
+
+    <input
+      id="displayName"
+      required
+      maxlength="100"
+    >
+
+    <label for="password">
+      Temporary password (minimum 8 characters)
+    </label>
+
+    <input
+      id="password"
+      type="password"
+      minlength="8"
+      required
+      autocomplete="new-password"
+    >
+
+    <h3>Permissions</h3>
+
+    <div
+      id="newPermissions"
+      class="permissions"
+    ></div>
+
+    <button type="submit">
+      Create staff account
+    </button>
+
+  </form>
+
+</section>
+
+<section class="panel">
+
+  <h2>Existing staff</h2>
+
+  <button
+    id="refresh"
+    type="button"
+  >
+    Refresh staff
+  </button>
+
+  <div id="staffList"></div>
+
+</section>
+
+<p id="notice" role="status"></p>
+
+<div class="phaseNote">
+  <small>
+    Staff permissions control access to customer messages,
+    order management, payment method changes, cancellations,
+    and refund requests. Refund requests require Admin review.
+    Approval does not automatically process a payment refund.
+  </small>
+</div>
+
+</main>
+
+<script src="/admin/support-staff.js" defer></script>
+<script src="/admin/dd-shell.js" defer></script>
+
+</body>
+</html>
