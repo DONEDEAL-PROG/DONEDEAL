@@ -234,7 +234,7 @@ body>main>div:first-child a{border-radius:9px!important;padding:11px 17px!import
 </head>
 <body>
 <header><h1>DONE DEAL</h1><div class="subtitle">PRIVATE ADMIN DASHBOARD</div></header>
-<main><div style="margin:0 0 18px"><a href="/admin/operations.html" style="display:inline-block;background:#e83291;color:#fff;padding:13px 17px;border-radius:12px;text-decoration:none;font-weight:800">＋ Add Gadget &amp; Manage Orders →</a></div>
+<main><div style="margin:0 0 18px"><a href="/admin/master-ledger.html" style="display:inline-block;background:#fff;color:#96396c;padding:12px 16px;border:1px solid #e4c5d6;border-radius:12px;text-decoration:none;font-weight:800">Master Price Ledger ↗</a></div><div style="margin:0 0 18px"><a href="/admin/operations.html" style="display:inline-block;background:#e83291;color:#fff;padding:13px 17px;border-radius:12px;text-decoration:none;font-weight:800">＋ Add Gadget &amp; Manage Orders →</a></div>
 <section id="loginPanel" class="panel">
 <h2>Admin Sign In</h2>
 <form id="loginForm">
@@ -262,6 +262,7 @@ const money = cents => (cents / 100).toFixed(2);
 const knownBrands = ["Apple","Samsung","Huawei","OPPO","vivo","Xiaomi"];
 let allProducts = [];
 let selectedBrand = null;
+let ddMasterPrices = [];
 function showDashboard() {
   $("loginPanel").style.display = "none";
   $("dashboard").style.display = "block";
@@ -294,6 +295,10 @@ async function loadProducts() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Unable to load products.");
     allProducts = Array.isArray(data.products) ? data.products : [];
+    try {
+      const ledgerResponse=await fetch('/api/admin/master-prices',{credentials:'same-origin',cache:'no-store'});
+      if(ledgerResponse.ok){const ledgerData=await ledgerResponse.json();ddMasterPrices=ledgerData.prices||[];}
+    } catch(e) {}
     showDashboard();
     updateList();
   } catch (error) {
@@ -393,6 +398,16 @@ function renderGadgetControls(item){
  const storage=field('Storage / RAM','text','128GB, 256GB, 12GB / 512GB');
  storage.setAttribute('list','ddStorageSuggestions');
  const price=field('Price (PHP)','number','0.00');
+ const lockNote=document.createElement('small');lockNote.style.display='block';lockNote.style.margin='6px 0 10px';
+ price.after(lockNote);
+ function syncVariantLedgerPrice(){
+  const variant=storage.value.trim().toLowerCase();
+  const official=ddMasterPrices.find(p=>p.device_name.trim().toLowerCase()===item.name.trim().toLowerCase()&&p.variant.trim().toLowerCase()===variant);
+  if(official){price.value=(official.price_centavos/100).toFixed(2);price.readOnly=true;lockNote.textContent='🔒 Price set by Master Price Ledger';}
+  else{price.readOnly=false;lockNote.textContent='Manual price allowed — not in ledger';}
+ }
+ storage.addEventListener('input',syncVariantLedgerPrice);
+ syncVariantLedgerPrice();
  const stock=field('Stock','number','0');stock.value='0';
  const save=document.createElement('button');save.type='button';save.textContent='Save New Variant (Deactivated)';
  const message=document.createElement('small');message.setAttribute('role','status');
@@ -496,6 +511,16 @@ function renderProduct(item) {
   const price = document.createElement("input");
   price.type = "number";price.min = "0.01";price.step = "0.01";
   price.value = money(item.price_centavos);
+  const priceLocked=item.master_price_centavos!==null && item.master_price_centavos!==undefined;
+  if(priceLocked){
+    price.value=money(item.master_price_centavos);
+    price.readOnly=true;
+    price.title='Price controlled by Master Price Ledger';
+    const hint=document.createElement('small');
+    hint.textContent='🔒 Official price — edit only in Master Price Ledger';
+    hint.style.display='block';hint.style.marginTop='6px';
+    priceBox.append(hint);
+  }
   priceBox.append(priceLabel,price);
   const stockBox = document.createElement("div");
   const stockLabel = document.createElement("label");

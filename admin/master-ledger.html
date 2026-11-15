@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>DONEDEAL | Master Price Ledger</title>
+<link rel="stylesheet" href="/admin/dd-shell.css">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f6f5f7;color:#29242d;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#fff;border-bottom:1px solid #e8e1e9;padding:20px 32px}h1{margin:0;font-size:24px}header small{color:#a33573;font-weight:700}
+main{max-width:1450px;margin:28px auto;padding:0 24px}.panel{background:#fff;border:1px solid #e7e0e7;border-radius:16px;padding:24px;margin-bottom:16px;box-shadow:0 4px 18px #29212b0a}
+h2{font-size:19px;margin:0 0 8px}.muted{color:#776e79}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+input,select,button{font:inherit;border-radius:9px;padding:11px 12px}input,select{border:1px solid #dcd4dd;background:#fff;color:#2b2630}
+button{border:1px solid #a63871;background:#a63871;color:#fff;font-weight:750;cursor:pointer}button.secondary{background:#fff;color:#85345f;border-color:#dec4d3}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.controls input{flex:1;min-width:210px}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:680px}th{text-align:left;color:#79717d;font-size:11px;letter-spacing:.08em;padding:13px 10px;border-bottom:1px solid #e7e0e7}
+td{padding:12px 10px;border-bottom:1px solid #f0ebf0;vertical-align:middle}td small{display:block;color:#8d8390;margin-top:3px}
+.price{font-weight:800;color:#8e3265;white-space:nowrap}.lock{font-size:11px;background:#f7eaf1;color:#973b6c;padding:5px 9px;border-radius:20px}
+#editor{display:none;margin-top:20px;border-top:1px solid #e9e2e8;padding-top:20px}#editor.open{display:block}
+.fields{display:grid;grid-template-columns:2fr 1.4fr 1fr;gap:12px}.fields label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.fields input{width:100%}
+#message{min-height:20px;color:#a33573}#loginPanel{max-width:440px;margin:60px auto}
+html[data-dd-theme=dark] body{background:#17141b;color:#f7f0f6}html[data-dd-theme=dark] header,html[data-dd-theme=dark] .panel{background:#24202a;color:#f7f0f6;border-color:#443846}
+html[data-dd-theme=dark] input,html[data-dd-theme=dark] select{background:#302a35;color:#fff;border-color:#55475a}
+html[data-dd-theme=dark] th,html[data-dd-theme=dark] td{border-color:#483a4b}
+@media(max-width:700px){main{padding:0 14px}.panel{padding:17px}.fields{grid-template-columns:1fr}header{padding:17px}}
+</style></head><body>
+<header><h1>Master Price Ledger</h1><small>DONEDEAL · HQ-controlled official gadget prices</small></header>
+<main>
+<section id="loginPanel" class="panel" hidden><h2>Admin Sign In</h2><form id="loginForm"><label>Admin password <input id="password" type="password" required autocomplete="current-password"></label><button type="submit">Sign In</button></form><p id="loginMessage"></p></section>
+<section id="ledgerApp" hidden>
+<div class="panel"><div class="bar"><div><h2>Master Price Ledger</h2><p class="muted">Edit official prices here. Matching gadget prices are locked everywhere else in the admin.</p></div><button id="newEntry">+ Add Ledger Price</button></div>
+<div class="controls"><input id="search" type="search" placeholder="Search brand, model or storage / color..."><select id="brandFilter"><option value="">All Brands</option></select><button class="secondary" id="refresh">Refresh</button></div>
+<div id="editor"><h2 id="editorTitle">Set official selling price</h2><div class="fields">
+<div><label for="device">Device name (Brand + Model)</label><input id="device" maxlength="150" list="devices" placeholder="e.g. Apple iPhone 16"></div>
+<div><label for="variant">Storage / RAM / Color</label><input id="variant" maxlength="120" list="variants" placeholder="e.g. 256GB / Black"></div>
+<div><label for="price">Official selling price (PHP)</label><input id="price" type="number" min="0.01" step="0.01" placeholder="0.00"></div>
+</div><datalist id="devices"></datalist><datalist id="variants"></datalist>
+<p id="message" role="status"></p><div class="bar"><button id="savePrice">Save & Apply Immediately</button><button class="secondary" id="cancelEdit">Cancel</button></div></div></div>
+<div class="panel"><div class="bar"><h2>Official Gadget Prices</h2><small class="muted" id="count"></small></div>
+<div class="tablewrap"><table><thead><tr><th>Device / Model</th><th>Storage / Color</th><th>Official Price</th><th>Last Updated</th><th>Action</th></tr></thead><tbody id="rows"><tr><td colspan="5">Loading...</td></tr></tbody></table></div></div>
+</section></main>
+<script>
+const $=id=>document.getElementById(id);
+let prices=[],products=[];
+const php=c=>'₱'+(c/100).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
+async function api(url,opt={}){const r=await fetch(url,{credentials:'same-origin',cache:'no-store',...opt});const d=await r.json();if(!r.ok)throw Error(d.error||'Request failed');return d}
+function showLogin(){ $('ledgerApp').hidden=true;$('loginPanel').hidden=false }
+function showApp(){ $('ledgerApp').hidden=false;$('loginPanel').hidden=true }
+async function load(){
+ try{
+  const d=await api('/api/admin/master-prices');
+  prices=d.prices||[];products=d.products||[];showApp();render();
+  $('devices').replaceChildren();$('variants').replaceChildren();
+  for(const name of [...new Set(products.map(p=>p.device_name))]){const o=document.createElement('option');o.value=name;$('devices').append(o)}
+  for(const name of [...new Set(products.map(p=>p.variant))]){const o=document.createElement('option');o.value=name;$('variants').append(o)}
+ }catch(e){if(e.message==='Unauthorized'){showLogin();return}showApp();$('rows').replaceChildren();const r=$('rows').insertRow();const c=r.insertCell();c.colSpan=5;c.textContent=e.message}
+}
+function render(){
+ const search=$('search').value.toLowerCase(),brand=$('brandFilter').value;
+ const brands=[...new Set(prices.map(p=>p.device_name.split(' ')[0]))].sort();
+ const selected=brand;$('brandFilter').replaceChildren();
+ for(const value of ['',...brands]){const o=document.createElement('option');o.value=value;o.textContent=value||'All Brands';$('brandFilter').append(o)}
+ $('brandFilter').value=selected;
+ const shown=prices.filter(p=>(!brand||p.device_name.split(' ')[0]===brand)&&[p.device_name,p.variant].join(' ').toLowerCase().includes(search));
+ $('count').textContent=shown.length+' ledger entries';$('rows').replaceChildren();
+ if(!shown.length){const r=$('rows').insertRow();const c=r.insertCell();c.colSpan=5;c.textContent='No ledger prices yet. Click Add Ledger Price to start.';return}
+ for(const p of shown){
+  const r=$('rows').insertRow();
+  r.insertCell().textContent=p.device_name;r.insertCell().textContent=p.variant;
+  const amount=r.insertCell();amount.className='price';amount.textContent=php(p.price_centavos);
+  r.insertCell().textContent=p.updated_at||'—';
+  const cell=r.insertCell();const b=document.createElement('button');b.className='secondary';b.textContent='Edit Price';
+  b.onclick=()=>openEditor(p);cell.append(b);
+ }
+}
+function openEditor(p){
+ $('editor').classList.add('open');$('editorTitle').textContent=p?'Edit Official Price':'Add Official Price';
+ $('device').value=p?.device_name||'';$('variant').value=p?.variant||'';
+ $('price').value=p?(p.price_centavos/100).toFixed(2):'';
+ $('device').readOnly=!!p;$('variant').readOnly=!!p;
+ $('message').textContent='';$('editor').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+$('newEntry').onclick=()=>openEditor(null);
+$('cancelEdit').onclick=()=>$('editor').classList.remove('open');
+$('search').oninput=render;$('brandFilter').onchange=render;$('refresh').onclick=load;
+$('savePrice').onclick=async()=>{
+ const raw=$('price').value.trim(),price=Math.round(Number(raw)*100);
+ if(!/^\d+(\.\d{1,2})?$/.test(raw)||!Number.isSafeInteger(price)||price<1){$('message').textContent='Enter a valid positive PHP price.';return}
+ const device_name=$('device').value.trim(),variant=$('variant').value.trim();
+ if(!device_name||!variant){$('message').textContent='Device and variant are required.';return}
+ if(!confirm('Apply '+php(price)+' immediately to all matching '+device_name+' — '+variant+' gadgets?'))return;
+ const b=$('savePrice');b.disabled=true;$('message').textContent='Saving...';
+ try{await api('/api/admin/master-prices',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({device_name,variant,price_centavos:price})});$('editor').classList.remove('open');await load()}
+ catch(e){$('message').textContent=e.message}finally{b.disabled=false}
+};
+$('loginForm').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('password').value})});$('password').value='';await load()}catch(e){$('loginMessage').textContent=e.message}};
+load();
+</script><script src="/admin/dd-shell.js"></script></body></html>

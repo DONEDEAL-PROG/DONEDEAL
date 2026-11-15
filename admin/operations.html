@@ -74,12 +74,34 @@ html[data-dd-theme=dark] .dd-detail-value,html[data-dd-theme=dark] .dd-product-i
 .dd-home-help{margin-top:22px;padding:18px 20px;border:1px solid var(--shell-line,#e8e3ea);border-radius:14px;color:var(--shell-muted,#756d7a);background:var(--shell-card,#fff)}
 @media(max-width:950px){#dashboardHome #stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.dd-home-intro{align-items:flex-start;flex-direction:column}#dashboardHome #stats .tile{padding:16px;min-height:110px}}
-</style></head><body>
+</style>
+<style id="dd-online-performance">
+#dashboardHome #stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.dd-performance-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,1fr);gap:16px;margin-top:20px}
+.dd-performance-grid .panel{min-width:0}
+.dd-performance-grid h2{font-size:18px;margin-bottom:4px}
+.dd-table-wrap{overflow-x:auto}
+.dd-orders-table{width:100%;border-collapse:collapse;min-width:540px}
+.dd-orders-table th{text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#857c87;border-bottom:1px solid #e7e1e7;padding:12px 10px}
+.dd-orders-table td{padding:14px 10px;border-bottom:1px solid #eee9ef;font-size:13px;vertical-align:middle}
+.dd-orders-table td strong,.dd-stock-row strong{display:block;font-size:13px}
+.dd-orders-table td small,.dd-stock-row small{display:block;font-size:11px;margin-top:3px;overflow-wrap:anywhere}
+.dd-order-status{display:inline-block;padding:4px 9px;background:#f8edf4;border-radius:20px;color:#98366d;font-weight:700;text-transform:capitalize}
+.dd-stock-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #eee9ef}
+.dd-stock-count{flex:none;background:#fff0e9;color:#a34824;border-radius:20px;padding:5px 9px;font-size:12px;font-weight:750}
+html[data-dd-theme=dark] .dd-orders-table th,html[data-dd-theme=dark] .dd-orders-table td,html[data-dd-theme=dark] .dd-stock-row{border-color:#483b4a}
+@media(max-width:1100px){.dd-performance-grid{grid-template-columns:1fr}}
+@media(max-width:720px){#dashboardHome #stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head><body>
 <header><div class="row space"><div><h1>DONE DEAL <span class="pink">/ CONTROL CENTER</span></h1><small>Add gadgets • manage orders • Warm Light admin</small></div><a href="/admin/">← Product Manager</a></div></header>
 <main>
 <section id="login" class="panel" style="max-width:420px;margin:50px auto"><h2>Admin sign in</h2><form id="loginForm"><div class="field"><label>Password</label><input type="password" id="password" autocomplete="current-password" required></div><button>Sign In</button></form><p id="loginMsg"></p></section>
 <div id="app" class="hide"><section class="panel dd-inventory-shortcut" style="display:none" aria-label="Inventory shortcut"><div><h2>📱 Manage Gadgets</h2><p>View gadgets, update prices, manage stock, and edit storage variants.</p></div><a href="/admin/" class="dd-inventory-link">Open Product Management →</a></section>
-<section id="dashboardHome"><div class="dd-home-intro"><div><span class="dd-eyebrow">OVERVIEW</span><h2>Dashboard overview</h2><p>Track orders and store activity at a glance.</p></div><span class="dd-home-status">Store overview</span></div><div class="grid" id="stats"></div><div class="dd-home-help">Use the sidebar to manage products, add gadgets, and view orders.</div></section>
+<section id="dashboardHome"><div class="dd-home-intro"><div><span class="dd-eyebrow">OVERVIEW</span><h2>Online Store Performance</h2><p>Main DONEDEAL online store · Live order and inventory overview</p></div><span class="dd-home-status">Store overview</span></div><div class="grid" id="stats"></div><div class="dd-performance-grid">
+<section class="panel"><h2>Latest Customer Orders</h2><p class="muted">5 newest orders · All statuses · Prices in PHP</p><div class="dd-table-wrap"><table class="dd-orders-table"><thead><tr><th>Customer / Order</th><th>Gadget</th><th>Status</th><th>Price</th><th></th></tr></thead><tbody id="ddLatestOrders"><tr><td colspan="5">Loading orders...</td></tr></tbody></table></div></section>
+<section class="panel"><h2>Low Stock Alerts</h2><p class="muted">Variants with 5 or fewer units available</p><div id="ddLowStock">Loading inventory...</div></section>
+</div></section>
 <nav class="dd-legacy-tabs" hidden><button class="tab active" data-tab="gadgets">＋ Add Gadget</button><button class="tab secondary" data-tab="orders">▤ Orders</button></nav>
 <section id="gadgets" class="panel"><h2>New gadget</h2><p>Create a new model with independent storage, color, prices and stock. New models appear on the storefront after saving.</p>
 <div class="row"><div class="field"><label>Brand</label><input id="brand" maxlength="40" placeholder="e.g. Apple or new brand"></div><div class="field"><label>Model</label><input id="model" maxlength="100" placeholder="e.g. Phone Model"></div></div>
@@ -105,9 +127,30 @@ const post=(url,data)=>api(url,{method:'POST',headers:{'content-type':'applicati
 function addVariant(){
  const div=el('div',null,'variant');
  div.innerHTML='<div class="row"><div class="field"><label>Storage / RAM</label><input class="storage" maxlength="60" placeholder="8GB / 256GB"></div><div class="field"><label>Color (optional)</label><input class="color" maxlength="60" placeholder="Black"></div></div><div class="row"><div class="field"><label>Price in PHP</label><input class="price" type="number" min="0.01" step="0.01" placeholder="0.00"></div><div class="field"><label>Stock</label><input class="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label>Published</label><select class="enabled"><option value="0">Not yet</option><option value="1">Yes</option></select></div></div>';
- const b=el('button','Remove variant','secondary');b.type='button';b.onclick=()=>div.remove();div.append(b);$('variants').append(div);
+ const b=el('button','Remove variant','secondary');b.type='button';b.onclick=()=>div.remove();div.append(b);$('variants').append(div);if(typeof syncGadgetPrices==='function')syncGadgetPrices();
 }
+let masterLedger=[];
 $('addVariant').onclick=addVariant;addVariant();
+async function loadMasterLedger(){
+ try{const d=await api('/api/admin/master-prices');masterLedger=d.prices||[]}catch(e){masterLedger=[]}
+ syncGadgetPrices();
+}
+function syncGadgetPrices(){
+ const name=[$('brand').value.trim(),$('model').value.trim()].filter(Boolean).join(' ').replace(/\s+/g,' ').toLowerCase();
+ for(const row of document.querySelectorAll('#variants .variant')){
+  const variant=[row.querySelector('.storage').value.trim(),row.querySelector('.color').value.trim()].filter(Boolean).join(' / ').replace(/\s+/g,' ').toLowerCase();
+  const entry=masterLedger.find(p=>p.device_name.trim().toLowerCase()===name&&p.variant.trim().toLowerCase()===variant);
+  const price=row.querySelector('.price');
+  let note=row.querySelector('.dd-ledger-lock');
+  if(!note){note=el('small','','dd-ledger-lock');price.after(note)}
+  if(entry){price.value=(entry.price_centavos/100).toFixed(2);price.readOnly=true;note.textContent='🔒 Master Ledger price — edit in Price Ledger'}
+  else{price.readOnly=false;note.textContent='Manual price allowed — no matching ledger entry'}
+ }
+}
+$('brand').addEventListener('input',syncGadgetPrices);
+$('model').addEventListener('input',syncGadgetPrices);
+$('variants').addEventListener('input',e=>{if(e.target.matches('.storage,.color'))syncGadgetPrices()});
+
 $('saveGadget').onclick=async()=>{
  const btn=$('saveGadget');btn.disabled=true;$('gadgetMsg').textContent='Saving...';
  try{
@@ -274,9 +317,37 @@ function renderOrders(){
  $('orderList').replaceChildren(...filtered.map(orderCard));
  if(!filtered.length)$('orderList').append(el('p','No matching orders.'));
  $('stats').replaceChildren();
- for(const [label,n] of [['Total orders',orders.length],['Pending',orders.filter(o=>o.status==='pending').length],['Processing',orders.filter(o=>o.status==='processing').length],['Delivered',orders.filter(o=>o.status==='delivered').length]]){
+ const revenue=orders.filter(o=>o.status==='delivered').reduce((sum,o)=>sum+Number(o.total_centavos||0),0);
+ const low=catalog.filter(p=>p.enabled===1&&Number(p.gadget_enabled)!==0&&Number(p.stock)<=5);
+ for(const [label,n] of [['Delivered Revenue',money(revenue)],['Total Orders',orders.length],['Pending',orders.filter(o=>o.status==='pending').length],['Processing',orders.filter(o=>o.status==='processing').length],['Delivered',orders.filter(o=>o.status==='delivered').length],['Low Stock',low.length]]){
  const t=el('div',null,'tile');t.append(el('small',label),el('h2',String(n)));$('stats').append(t);
  }
+ renderHomeOrders();renderLowStock();
+}
+
+function renderHomeOrders(){
+ const tbody=$('ddLatestOrders');if(!tbody)return;
+ tbody.replaceChildren();
+ const latest=[...orders].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).slice(0,5);
+ if(!latest.length){const tr=el('tr');const td=el('td','No customer orders yet.');td.colSpan=5;tr.append(td);tbody.append(tr);return;}
+ for(const o of latest){
+  let customer={},items=[];
+  try{customer=JSON.parse(o.customer_json||'{}')}catch{}
+  try{items=JSON.parse(o.items_json||'[]')}catch{}
+  const name=customer.name||customer.full_name||'Customer';
+  const gadget=Array.isArray(items)?items.map(i=>i.name||i.sku||'Gadget').slice(0,2).join(', '):'Gadget';
+  const tr=el('tr');
+  const person=el('td');person.append(el('strong',name),el('small',String(o.id||'').slice(0,24)));
+  const status=el('td');status.append(el('span',o.status||'pending','dd-order-status'));
+  const action=el('td');const link=el('a','View Order →');link.href='/admin/operations.html#orders';action.append(link);
+  tr.append(person,el('td',gadget),status,el('td',money(o.total_centavos)),action);tbody.append(tr);
+ }
+}
+function renderLowStock(){
+ const target=$('ddLowStock');if(!target)return;target.replaceChildren();
+ const low=catalog.filter(p=>p.enabled===1&&Number(p.gadget_enabled)!==0&&Number(p.stock)<=5).sort((a,b)=>a.stock-b.stock).slice(0,8);
+ if(!low.length){target.append(el('p','No low-stock gadgets right now.','muted'));return}
+ for(const p of low){const row=el('div',null,'dd-stock-row');const name=el('div');name.append(el('strong',p.name),el('small',p.variant));row.append(name,el('span',p.stock+' left','dd-stock-count'));target.append(row)}
 }
 async function loadOrders(){try{const d=await api('/api/admin/orders');orders=d.orders||[];$('ordersMsg').textContent='Showing latest '+orders.length+' orders. No card payment is active.';renderOrders()}catch(e){$('ordersMsg').textContent=e.message}}
 $('fulfillmentFilter').onchange=renderOrders;$('orderSearch').oninput=renderOrders;$('orderFilter').onchange=renderOrders;$('refreshOrders').onclick=loadOrders;
@@ -288,7 +359,7 @@ $('saveManual').onclick=async()=>{
  }catch(e){$('manualMsg').textContent=e.message}finally{b.disabled=false}
 };
 for(const btn of document.querySelectorAll('.tab'))btn.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>{x.classList.toggle('active',x===btn);x.classList.toggle('secondary',x!==btn)});$('gadgets').classList.toggle('hide',btn.dataset.tab!=='gadgets');$('orders').classList.toggle('hide',btn.dataset.tab!=='orders')};
-async function start(){try{await loadCatalog();$('login').classList.add('hide');$('app').classList.remove('hide');await loadOrders()}catch(e){$('loginMsg').textContent='Sign in to continue. '+e.message}}
+async function start(){try{await loadCatalog();await loadMasterLedger();$('login').classList.add('hide');$('app').classList.remove('hide');await loadOrders()}catch(e){$('loginMsg').textContent='Sign in to continue. '+e.message}}
 $('loginForm').onsubmit=async e=>{e.preventDefault();try{await post('/api/admin/login',{password:$('password').value});$('password').value='';await start()}catch(e){$('loginMsg').textContent=e.message}};
 start();
 </script><script>
