@@ -204,14 +204,12 @@
       .dd-item-name {
         font-size: 14px;
         font-weight: 700;
-        overflow-wrap: anywhere;
       }
 
       .dd-item-meta {
         margin-top: 5px;
         color: #aaa5b6;
         font-size: 12px;
-        overflow-wrap: anywhere;
       }
 
       .dd-item-price {
@@ -247,6 +245,21 @@
       .dd-locked {
         opacity: 0.75;
         cursor: not-allowed;
+      }
+
+      .dd-inline-message {
+        margin: 8px 0;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #91465f;
+        background: #38212e;
+        color: #ffb8d0;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .dd-inline-message[hidden] {
+        display: none !important;
       }
 
       @media (max-width: 600px) {
@@ -324,38 +337,18 @@
     if (order.created_at) {
       const parsed = new Date(order.created_at);
 
-      if (!Number.isNaN(parsed.getTime())) {
-        date = parsed.toLocaleString('en-PH');
-      } else {
-        date = order.created_at;
-      }
+      date = Number.isNaN(parsed.getTime())
+        ? order.created_at
+        : parsed.toLocaleString('en-PH');
     }
 
     orderGrid.append(
-      detail(
-        'Payment Method',
-        readable(order.payment_method)
-      ),
-      detail(
-        'Fulfillment',
-        readable(order.fulfillment)
-      ),
-      detail(
-        'Order Status',
-        readable(order.status)
-      ),
-      detail(
-        'Payment Status',
-        readable(order.payment_status)
-      ),
-      detail(
-        'Order Total',
-        money(order.total_centavos)
-      ),
-      detail(
-        'Date Ordered',
-        date
-      )
+      detail('Payment Method', readable(order.payment_method)),
+      detail('Fulfillment', readable(order.fulfillment)),
+      detail('Order Status', readable(order.status)),
+      detail('Payment Status', readable(order.payment_status)),
+      detail('Order Total', money(order.total_centavos)),
+      detail('Date Ordered', date)
     );
 
     root.append(orderGrid);
@@ -393,8 +386,7 @@
           )
         );
 
-        const amount =
-          item.subtotal ?? item.amount;
+        const amount = item.subtotal ?? item.amount;
 
         row.append(
           left,
@@ -409,11 +401,7 @@
       }
     } else {
       itemsBox.append(
-        element(
-          'p',
-          '',
-          'No product details available.'
-        )
+        element('p', '', 'No product details available.')
       );
     }
 
@@ -423,11 +411,7 @@
 
     total.append(
       element('strong', '', 'Order Total'),
-      element(
-        'strong',
-        '',
-        money(order.total_centavos)
-      )
+      element('strong', '', money(order.total_centavos))
     );
 
     root.append(total);
@@ -450,6 +434,26 @@
   }
 
   const editControls = {};
+
+  function showInlineMessage(type, message) {
+    const config = editControls[type];
+
+    if (!config) {
+      notice(message);
+      return;
+    }
+
+    config.message.textContent = message;
+    setVisible(config.message, true);
+    notice(message);
+  }
+
+  function clearInlineMessages() {
+    for (const config of Object.values(editControls)) {
+      config.message.textContent = '';
+      setVisible(config.message, false);
+    }
+  }
 
   function restoreFields(type) {
     if (!current) return;
@@ -498,6 +502,8 @@
       restoreFields(type);
       setEditMode(type, false);
     }
+
+    clearInlineMessages();
   }
 
   function setupEditControls() {
@@ -522,27 +528,26 @@
 
       if (!area || !save) continue;
 
-      // Important: prevent accidental form submission.
       save.type = 'button';
       save.textContent = 'Save Changes';
 
       const edit = makeButton('Edit');
       const cancel = makeButton('Cancel');
+      const message = element('p', 'dd-inline-message');
 
-      const actions = element(
-        'div',
-        'dd-edit-actions'
-      );
+      message.setAttribute('role', 'alert');
 
-      // Move the existing Save button into our action bar.
+      const actions = element('div', 'dd-edit-actions');
       actions.append(edit, save, cancel);
-      area.append(actions);
+
+      area.append(actions, message);
 
       editControls[config.type] = {
         fields: config.fields,
         edit,
         save,
-        cancel
+        cancel,
+        message
       };
 
       edit.addEventListener('click', event => {
@@ -551,18 +556,17 @@
         if (saving) return;
 
         if (editing && editing !== config.type) {
-          notice(
+          showInlineMessage(
+            config.type,
             'Finish or cancel your current edit first.'
           );
           return;
         }
 
         editing = config.type;
+        clearInlineMessages();
         setEditMode(config.type, true);
-
-        notice(
-          'Editing ' + config.type + ' information.'
-        );
+        notice('');
       });
 
       cancel.addEventListener('click', event => {
@@ -574,10 +578,12 @@
         editing = null;
 
         setEditMode(config.type, false);
+        clearInlineMessages();
         notice('Changes cancelled.');
       });
 
       setEditMode(config.type, false);
+      setVisible(message, false);
     }
   }
 
@@ -692,45 +698,64 @@
   ) {
     if (!current || saving) return;
 
-    if (
-      action === 'edit' &&
-      editing !== 'customer'
-    ) {
-      notice('Click Edit first.');
+    const type =
+      action === 'edit'
+        ? 'customer'
+        : action === 'payment'
+          ? 'payment'
+          : null;
+
+    if (type && editing !== type) {
+      showInlineMessage(type, 'Click Edit first.');
       return;
     }
 
-    if (
-      action === 'payment' &&
-      editing !== 'payment'
-    ) {
-      notice('Click Edit first.');
-      return;
-    }
+    clearInlineMessages();
 
     const reason = $('reason').value.trim();
 
     if (reason.length < 5) {
-      notice(
-        'Enter a reason and customer authorization ' +
-        'reference (minimum 5 characters).'
-      );
+      const message =
+        'Please enter a reason and customer authorization ' +
+        'reference (minimum 5 characters) before saving.';
+
+      if (type) {
+        showInlineMessage(type, message);
+      } else {
+        notice(message);
+      }
+
+      $('reason').focus();
+      $('reason').scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+      return;
+    }
+
+    if (reason.length > 500) {
+      const message =
+        'Reason must not exceed 500 characters.';
+
+      if (type) {
+        showInlineMessage(type, message);
+      } else {
+        notice(message);
+      }
+
       return;
     }
 
     const messages = {
       edit:
-        'Are you sure you want to save ' +
-        'these customer details?',
+        'Are you sure you want to save these customer details?',
       payment:
-        'Are you sure you want to change ' +
-        'the payment method?',
+        'Are you sure you want to change the payment method?',
       cancel:
-        'Are you sure you want to CANCEL ' +
-        'this order? This action cannot be undone.',
+        'Are you sure you want to CANCEL this order? This cannot be undone.',
       refund:
-        'Are you sure you want to submit ' +
-        'this refund request for Admin review?'
+        'Are you sure you want to submit this refund request for Admin review?'
     };
 
     if (!window.confirm(
@@ -782,7 +807,11 @@
       );
 
     } catch (error) {
-      notice(error.message);
+      if (type) {
+        showInlineMessage(type, error.message);
+      } else {
+        notice(error.message);
+      }
     } finally {
       saving = false;
 
@@ -799,7 +828,6 @@
     }
   }
 
-  // Search
   $('search').addEventListener('click', list);
 
   $('query').addEventListener('keydown', event => {
@@ -809,7 +837,6 @@
     }
   });
 
-  // Save customer details
   $('saveEdit').addEventListener('click', event => {
     event.preventDefault();
 
@@ -822,7 +849,6 @@
     });
   });
 
-  // Save payment method
   $('savePayment').addEventListener('click', event => {
     event.preventDefault();
 
@@ -833,7 +859,6 @@
     });
   });
 
-  // Cancel order
   $('cancelOrder').addEventListener('click', event => {
     event.preventDefault();
 
@@ -842,7 +867,6 @@
     change('cancel');
   });
 
-  // Request refund
   $('requestRefund').addEventListener('click', event => {
     event.preventDefault();
 
