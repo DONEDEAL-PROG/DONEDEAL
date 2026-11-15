@@ -1,1 +1,180 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>DONEDEAL | Partner Hub</title><link rel="stylesheet" href="/partner.css"></head><body><header><a href="/index.html" class="brand">DONE<span>DEAL</span></a><span>PARTNER HUB</span><a href="/shop.html">Visit store ↗</a></header><main><section class="intro"><div class="eyebrow">DONEDEAL AFFILIATE PROGRAM</div><h1>Grow together.<br><em>Earn with every deal.</em></h1><p>Your private space for referrals, commissions, and payouts.</p></section><div id="notice" role="status"></div><section id="auth" class="authgrid"><div class="panel"><h2>Partner sign in</h2><form id="login"><label>Email<input name="email" type="email" required autocomplete="email"></label><label>Password<input name="password" type="password" required autocomplete="current-password"></label><button>Sign in</button></form></div><div class="panel"><h2>Become a partner</h2><p>Apply to join. Every application is reviewed by the DONEDEAL team.</p><form id="register"><label>Full name<input name="name" required minlength="2"></label><label>Email<input name="email" type="email" required></label><label>Social profile (optional)<input name="social_url" type="url" placeholder="https://"></label><label>Password (8+ characters)<input name="password" type="password" minlength="8" required autocomplete="new-password"></label><button>Submit application</button></form></div></section></main><footer>© DONEDEAL Gadgets & Supplies · Partner Hub</footer><script src="/partner.js" defer></script></body></html>
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+
+  <title>DONEDEAL | Partner Hub</title>
+
+  <link rel="stylesheet" href="/partner.css">
+
+  <style>
+    /* Staff Login and Visit Store header links */
+    .partner-header-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 24px;
+    }
+
+    .partner-header-links a {
+      color: #f5f5f5;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: color .2s ease;
+    }
+
+    .partner-header-links a:hover {
+      color: #ed4899;
+    }
+
+    .partner-header-links a:focus-visible {
+      outline: 2px solid #ed4899;
+      outline-offset: 4px;
+      border-radius: 3px;
+    }
+
+    @media (max-width: 480px) {
+      .partner-header-links {
+        gap: 12px;
+      }
+
+      .partner-header-links a {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="/" class="brand">
+      DONE<span>DEAL</span>
+    </a>
+
+    <span>PARTNER HUB</span>
+
+    <nav class="partner-header-links" aria-label="Header navigation">
+      <a href="/staff">Staff Login</a>
+      <a href="/shop">Visit store ↗</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="intro">
+      <div class="eyebrow">
+        DONEDEAL AFFILIATE PROGRAM
+      </div>
+
+      <h1>
+        Grow together.<br>
+        <em>Earn with every deal.</em>
+      </h1>
+
+      <p>
+        Your private space for referrals, commissions, and payouts.
+      </p>
+    </section>
+
+    <div id="notice" role="status"></div>
+
+    <section id="auth" class="authgrid">
+
+      <div class="panel">
+        <h2>Partner sign in</h2>
+
+        <form id="login">
+          <label>
+            Email
+            <input
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+            >
+          </label>
+
+          <label>
+            Password
+            <input
+              name="password"
+              type="password"
+              required
+              autocomplete="current-password"
+            >
+          </label>
+
+          <button>Sign in</button>
+        </form>
+      </div>
+
+      <div class="panel">
+        <h2>Become a partner</h2>
+
+        <p>
+          Apply to join. Every application is reviewed by
+          the DONEDEAL team.
+        </p>
+
+        <form id="register">
+
+          <label>
+            Full name
+            <input
+              name="name"
+              required
+              minlength="2"
+            >
+          </label>
+
+          <label>
+            Email
+            <input
+              name="email"
+              type="email"
+              required
+            >
+          </label>
+
+          <label>
+            Social profile (optional)
+            <input
+              name="social_url"
+              type="url"
+              placeholder="https://"
+            >
+          </label>
+
+          <label>
+            Password (8+ characters)
+            <input
+              name="password"
+              type="password"
+              minlength="8"
+              required
+              autocomplete="new-password"
+            >
+          </label>
+
+          <button>Submit application</button>
+        </form>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    © DONEDEAL Gadgets &amp; Supplies · Partner Hub
+  </footer>
+
+  <script src="/partner.js" defer></script>
+
+</body>
+</html>
