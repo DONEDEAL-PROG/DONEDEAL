@@ -1,4 +1,4 @@
-import { respond, originOK, hashPassword, rand, clean } from '../_auth.js';
+import { respond, originOK, hashPassword, rand, clean } from './_auth.js';
 export async function onRequestPost({request,env}){
  if(!originOK(request))return respond({error:'Invalid origin'},403);
  if(!env.DB)return respond({error:'D1 not configured'},503);
