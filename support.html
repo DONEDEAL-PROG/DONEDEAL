@@ -6,6 +6,61 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <title>Customer Support | DONEDEAL</title>
+
+/* My Conversations */
+#myConversationsPanel{
+  margin-top:20px;
+}
+
+#conversationHistory{
+  display:grid;
+  gap:12px;
+}
+
+.history-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:15px;
+  border:1px solid #e2e5ee;
+  border-radius:12px;
+  background:#f8f9fc;
+}
+
+.history-details{
+  min-width:0;
+  flex:1;
+}
+
+.history-details strong{
+  display:block;
+  margin-bottom:5px;
+  color:#192039;
+}
+
+.history-details small{
+  display:block;
+  overflow-wrap:anywhere;
+  line-height:1.5;
+}
+
+.history-open{
+  flex-shrink:0;
+  padding:10px 14px;
+}
+
+@media(max-width:480px){
+  .history-item{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .history-open{
+    width:100%;
+  }
+}
+
 <style>
 :root{
   font-family:system-ui,-apple-system,sans-serif;
@@ -212,6 +267,36 @@ small{color:#606a7d}
       </button>
     </div>
   </section>
+
+<!-- My Conversations: saved browser history -->
+<section class="panel" id="myConversationsPanel">
+  <div class="section-top">
+    <h2>📂 My Conversations</h2>
+    <span class="status ended" id="conversationCount">
+      0 Saved
+    </span>
+  </div>
+
+  <p>
+    Reopen your previous support tickets and Live Agent
+    conversations saved in this browser.
+  </p>
+
+  <div id="conversationHistory" aria-live="polite">
+    <div class="info-box" id="emptyConversationHistory">
+      <strong>No saved conversations yet</strong>
+      <p>
+        Your support conversations will appear here
+        after you create one.
+      </p>
+    </div>
+  </div>
+
+  <p class="helper">
+    Conversations are saved on this device and browser only.
+    Clearing browser storage may remove access to them.
+  </p>
+</section>
 
   <!-- Existing ticket form: original IDs preserved -->
   <section class="panel" id="start">
