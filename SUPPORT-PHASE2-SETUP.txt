@@ -1,0 +1,29 @@
+DONEDEAL Customer Support - Phase 2 (staff accounts and custom permissions)
+
+Source reviewed: DONEDEAL-main (22).zip
+
+FILES: Copy this patch ZIP into the ROOT of your GitHub repository, keeping directory paths.
+All patch files are NEW paths. No existing storefront, checkout, admin support, or catalog file is replaced.
+
+1. BACK UP the current GitHub repository.
+2. Upload the patch files with their exact folder paths.
+3. Run database/support-phase2.sql ONCE in the SAME production Cloudflare D1 database used by DONEDEAL.
+4. Wait for a SUCCESSFUL Cloudflare Pages production deployment. Check Functions build log.
+5. Sign in to your existing /admin/ dashboard first, then open:
+   /admin/support-staff.html
+   Admin session is required; staff cannot access this admin API.
+6. Create a staff account, set a strong temporary password (12+ characters), and choose permissions.
+7. Have staff open /staff/ and log in. Test chat reply, ticket assignment, and permissions.
+8. Test disabled account, password reset, and permission revocation. These revoke staff sessions.
+
+SECURITY / SCOPE:
+- Phase 1 guest support and existing admin support are untouched.
+- Staff credentials use salted PBKDF2 password hashes in D1, HttpOnly Secure SameSite cookies,
+  HMAC-signed one-hour sessions, backend permission checks, and audit records.
+- Permission options for order view/edit, payment change, cancel, and refund request are SAVED
+  but their actions are NOT enabled until Phase 3 integrates with verified order workflows.
+- No actual refunds or payment changes are implemented here.
+- Staff assignment requires an active agent with reply permission.
+- For public launch, add login rate limiting and anti-brute-force protection at Cloudflare WAF.
+- Do not paste passwords or production secrets into this chat.
+- No link to the new admin page was added to the existing admin dashboard to avoid altering it.
