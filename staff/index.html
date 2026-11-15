@@ -1,5 +1,551 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>DONEDEAL | Staff Support</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#111116;color:#f7f7fc;font:16px system-ui,sans-serif}header{padding:18px 5%;background:#1d1d26}header a{color:#ff8cbd}main{max-width:1100px;margin:25px auto;padding:0 18px}.panel{background:#1d1d26;border:1px solid #37303a;border-radius:14px;padding:18px;margin-bottom:15px}input,textarea,select,button{font:inherit;border-radius:8px;padding:10px}input,textarea,select{width:100%;background:#292936;color:white;border:1px solid #5b5665}button{border:0;background:#e72d81;color:white;cursor:pointer}button:disabled{opacity:.5}.layout{display:grid;grid-template-columns:310px 1fr;gap:16px}.ticket{width:100%;text-align:left;margin:5px 0;background:#30303d}.bubble{padding:12px;background:#343441;border-radius:9px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere}.bubble.agent{background:#562b46;margin-left:12%}#messages{height:380px;overflow:auto;background:#15151d;border-radius:8px;padding:12px}label{display:block;margin:10px 0 5px}small{color:#bbb}#notice{color:#ff9ec7}textarea{min-height:85px}#login{max-width:440px;margin:65px auto}@media(max-width:720px){.layout{grid-template-columns:1fr}}</style></head><body>
-<header><a href="/">← DONEDEAL</a> <span style="float:right">Customer Service Staff</span></header>
-<main><section id="login" class="panel" hidden><h1>Staff sign in</h1><form id="loginForm"><label for="username">Username</label><input id="username" autocomplete="username" required><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required><p><button>Sign in</button></p></form></section>
-<section id="app" hidden><h1>Customer Support Inbox</h1><p><a href="/staff/orders.html">📦 Open Order Management (Phase 3)</a></p><p><span id="staffName"></span> · <button id="logout" type="button">Sign out</button></p><div class="layout"><section class="panel"><h2>Tickets</h2><button id="reload" type="button">Refresh</button><div id="tickets"></div></section><section class="panel"><h2 id="heading">Select a ticket</h2><p id="details"></p><div id="messages"></div><form id="reply" hidden><label for="message">Reply</label><textarea id="message" maxlength="2000" required></textarea><p><button>Send reply</button></p></form><div id="statusArea" hidden><label for="state">Ticket status</label><select id="state"><option value="open">Open</option><option value="pending">Pending</option><option value="closed">Closed</option></select><p><button id="saveState" type="button">Save status</button></p></div><div id="assignArea" hidden><label for="assignee">Assign to agent</label><select id="assignee"></select><p><button id="saveAssign" type="button">Assign ticket</button></p></div></section></div></section><p id="notice" role="status"></p></main><script src="/staff/staff.js" defer></script></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>DONEDEAL | Staff Support Center</title>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+  color-scheme:dark;
+  --bg:#111116;
+  --panel:#1d1d26;
+  --field:#292936;
+  --border:#37303a;
+  --text:#f7f7fc;
+  --muted:#b8b7c4;
+  --pink:#e72d81;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:16px system-ui,sans-serif;
+}
+
+header{
+  padding:18px 5%;
+  background:var(--panel);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+a{color:#ff8cbd}
+
+main{
+  max-width:1200px;
+  margin:25px auto;
+  padding:0 18px;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:15px;
+}
+
+input,textarea,select,button{
+  font:inherit;
+  border-radius:8px;
+  padding:10px;
+}
+
+input,textarea,select{
+  width:100%;
+  background:var(--field);
+  color:var(--text);
+  border:1px solid #5b5665;
+}
+
+button{
+  border:0;
+  background:var(--pink);
+  color:white;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:310px minmax(0,1fr);
+  gap:16px;
+}
+
+.ticket{
+  width:100%;
+  text-align:left;
+  margin:5px 0;
+  background:#30303d;
+}
+
+.bubble{
+  padding:12px;
+  background:#343441;
+  border-radius:9px;
+  margin:8px 0;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.bubble.agent{
+  background:#562b46;
+  margin-left:12%;
+}
+
+#messages{
+  height:380px;
+  overflow:auto;
+  background:#15151d;
+  border-radius:8px;
+  padding:12px;
+}
+
+label{
+  display:block;
+  margin:10px 0 5px;
+}
+
+small,.muted{color:var(--muted)}
+
+#notice{color:#ff9ec7}
+
+textarea{min-height:85px}
+
+#login{
+  max-width:440px;
+  margin:65px auto;
+}
+
+[hidden]{display:none!important}
+
+/* Phase 4 */
+.support-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.support-header h1{margin-bottom:5px}
+
+.support-header p{
+  margin-top:0;
+  color:var(--muted);
+}
+
+.agent-toolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.availability{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.availability select{
+  width:auto;
+  min-width:160px;
+}
+
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 12px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:#292936;
+  font-size:13px;
+}
+
+.status-dot{
+  width:9px;
+  height:9px;
+  background:#858594;
+  border-radius:50%;
+}
+
+.status-pill[data-state="available"] .status-dot{
+  background:#33d68b;
+}
+
+.status-pill[data-state="busy"] .status-dot{
+  background:#ffc857;
+}
+
+.status-pill[data-state="offline"] .status-dot{
+  background:#858594;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:15px;
+}
+
+.stat{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:17px;
+}
+
+.stat-number{
+  font-size:29px;
+  font-weight:750;
+  line-height:1.2;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:5px;
+}
+
+.queue-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.queue-heading h2{margin:0}
+
+.queue-count{
+  background:#543146;
+  color:#ffd4e8;
+  padding:5px 11px;
+  border-radius:999px;
+  font-size:13px;
+}
+
+.queue-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:14px 0;
+  border-top:1px solid var(--border);
+}
+
+.queue-item:first-child{border-top:0}
+
+.queue-info{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.queue-info strong{display:block}
+
+.queue-info small{
+  display:block;
+  margin-top:5px;
+}
+
+.queue-item button{flex-shrink:0}
+
+.empty-state{
+  color:var(--muted);
+  padding:16px 0;
+}
+
+.live-note{
+  font-size:13px;
+  color:var(--muted);
+  margin:10px 0 0;
+}
+
+.notification-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.notification-badge{
+  background:#e72d81;
+  color:white;
+  padding:4px 9px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.secondary-button{
+  background:#383845;
+}
+
+@media(max-width:720px){
+  .layout{grid-template-columns:1fr}
+  .stats{gap:8px}
+  .stat{padding:12px}
+  .stat-number{font-size:23px}
+  .queue-item{align-items:flex-start}
+}
+
+@media(max-width:420px){
+  .stats{grid-template-columns:1fr 1fr}
+  .queue-item{flex-direction:column}
+  .queue-item button{width:100%}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <a href="/">← DONEDEAL</a>
+  <span>Customer Service Staff</span>
+</header>
+
+<main>
+
+<section id="login" class="panel" hidden>
+  <h1>Staff sign in</h1>
+
+  <form id="loginForm">
+    <label for="username">Username</label>
+    <input
+      id="username"
+      autocomplete="username"
+      required
+    >
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      type="password"
+      autocomplete="current-password"
+      required
+    >
+
+    <p><button>Sign in</button></p>
+  </form>
+</section>
+
+<section id="app" hidden>
+
+  <div class="support-header">
+    <div>
+      <h1>Customer Support Center</h1>
+      <p>Live Agent & Ticket Management</p>
+    </div>
+
+    <div class="notification-row">
+      <span class="status-pill" id="agentStatus"
+            data-state="offline">
+        <span class="status-dot"></span>
+        <span id="agentStatusText">Offline</span>
+      </span>
+
+      <span class="notification-badge"
+            id="unreadBadge" hidden>0 unread</span>
+    </div>
+  </div>
+
+  <p>
+    <a href="/staff/orders.html">
+      📦 Open Order Management (Phase 3)
+    </a>
+  </p>
+
+  <p>
+    <span id="staffName"></span>
+    ·
+    <button id="logout" type="button">
+      Sign out
+    </button>
+  </p>
+
+  <!-- PHASE 4: AGENT AVAILABILITY -->
+  <section class="panel" id="liveAgentPanel" hidden>
+    <h2>🎧 Live Agent Availability</h2>
+
+    <div class="agent-toolbar">
+      <div class="availability">
+        <label for="availability">
+          My Status
+        </label>
+
+        <select id="availability">
+          <option value="offline">⚫ Offline</option>
+          <option value="available">🟢 Available</option>
+          <option value="busy">🟡 Busy</option>
+        </select>
+
+        <button id="saveAvailability" type="button">
+          Update Status
+        </button>
+      </div>
+    </div>
+
+    <p id="availabilityNotice"
+       class="live-note"
+       role="status">
+      Availability controls are loading.
+    </p>
+  </section>
+
+  <!-- PHASE 4: LIVE COUNTS -->
+  <section class="stats" id="liveStats" hidden>
+    <div class="stat">
+      <div class="stat-number" id="waitingCount">0</div>
+      <div class="stat-label">Waiting Chats</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-number" id="myChatsCount">0</div>
+      <div class="stat-label">My Active Chats</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-number" id="unreadCount">0</div>
+      <div class="stat-label">Unread Updates</div>
+    </div>
+  </section>
+
+  <!-- PHASE 4: WAITING QUEUE -->
+  <section class="panel" id="liveQueuePanel" hidden>
+    <div class="queue-heading">
+      <h2>📥 Live Waiting Queue</h2>
+
+      <span class="queue-count" id="queueBadge">
+        0 waiting
+      </span>
+    </div>
+
+    <p class="muted">
+      First to Accept: the first available agent
+      who accepts a chat becomes its owner.
+    </p>
+
+    <div id="liveQueue">
+      <p class="empty-state">
+        No customers waiting.
+      </p>
+    </div>
+
+    <div class="notification-row">
+      <button
+        id="refreshLiveQueue"
+        class="secondary-button"
+        type="button">
+        Refresh Live Queue
+      </button>
+
+      <label>
+        <input
+          type="checkbox"
+          id="notificationSound"
+          style="width:auto"
+        >
+        Enable notification sound
+      </label>
+    </div>
+
+    <p class="live-note">
+      Incoming chats will appear here when the
+      Live Agent system is connected.
+    </p>
+  </section>
+
+  <!-- EXISTING SUPPORT INBOX -->
+  <div class="layout">
+
+    <section class="panel">
+      <h2>Support Tickets</h2>
+
+      <button id="reload" type="button">
+        Refresh
+      </button>
+
+      <div id="tickets"></div>
+    </section>
+
+    <section class="panel">
+      <h2 id="heading">Select a ticket</h2>
+
+      <p id="details"></p>
+
+      <div id="messages"></div>
+
+      <form id="reply" hidden>
+        <label for="message">Reply</label>
+
+        <textarea
+          id="message"
+          maxlength="2000"
+          required
+        ></textarea>
+
+        <p>
+          <button>Send reply</button>
+        </p>
+      </form>
+
+      <div id="statusArea" hidden>
+        <label for="state">Ticket status</label>
+
+        <select id="state">
+          <option value="open">Open</option>
+          <option value="pending">Pending</option>
+          <option value="closed">Closed</option>
+        </select>
+
+        <p>
+          <button id="saveState" type="button">
+            Save status
+          </button>
+        </p>
+      </div>
+
+      <div id="assignArea" hidden>
+        <label for="assignee">Assign to agent</label>
+
+        <select id="assignee"></select>
+
+        <p>
+          <button id="saveAssign" type="button">
+            Assign ticket
+          </button>
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+</section>
+
+<p id="notice" role="status"></p>
+
+</main>
+
+<!-- Existing working support system -->
+<script src="/staff/staff.js" defer></script>
+
+<!-- Phase 4 script will be added next -->
+
+</body>
+</html>
