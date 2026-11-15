@@ -10,9 +10,11 @@
   let saving = false;
   let openSequence = 0;
 
-  const notice = message => {
+  const editControls = {};
+
+  function notice(message) {
     $('notice').textContent = message;
-  };
+  }
 
   async function api(url, options = {}) {
     const response = await fetch(url, {
@@ -83,9 +85,7 @@
   function element(tag, className = '', text) {
     const node = document.createElement(tag);
 
-    if (className) {
-      node.className = className;
-    }
+    if (className) node.className = className;
 
     if (text !== undefined && text !== null) {
       node.textContent = String(text);
@@ -118,7 +118,6 @@
         display: grid;
         gap: 15px;
         margin: 14px 0 20px;
-        color: inherit;
       }
 
       .dd-badges {
@@ -129,6 +128,7 @@
 
       .dd-badge {
         display: inline-flex;
+        align-items: center;
         border-radius: 999px;
         padding: 6px 12px;
         font-size: 12px;
@@ -204,12 +204,14 @@
       .dd-item-name {
         font-size: 14px;
         font-weight: 700;
+        overflow-wrap: anywhere;
       }
 
       .dd-item-meta {
         margin-top: 5px;
         color: #aaa5b6;
         font-size: 12px;
+        overflow-wrap: anywhere;
       }
 
       .dd-item-price {
@@ -234,16 +236,12 @@
         margin: 12px 0;
       }
 
-      .dd-edit-actions button {
-        cursor: pointer;
-      }
-
       .dd-edit-actions [hidden] {
         display: none !important;
       }
 
       .dd-locked {
-        opacity: 0.75;
+        opacity: .75;
         cursor: not-allowed;
       }
 
@@ -262,6 +260,94 @@
         display: none !important;
       }
 
+      .dd-refund-tracker {
+        padding: 17px;
+        border-radius: 12px;
+        border: 1px solid #80516a;
+        background: #302331;
+        animation: ddRefundAppear .45s ease-out;
+      }
+
+      .dd-refund-heading {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .dd-refund-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: #e72d81;
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .dd-refund-tracker p {
+        margin: 10px 0;
+        font-size: 14px;
+      }
+
+      .dd-refund-tracker small {
+        color: #bcb3c0;
+        display: block;
+        margin-top: 7px;
+      }
+
+      .dd-refund-pending .dd-refund-badge {
+        animation: ddRefundPulse 2s ease-in-out infinite;
+      }
+
+      .dd-refund-approved {
+        border-color: #287c61;
+        background: #1b302a;
+      }
+
+      .dd-refund-approved .dd-refund-badge {
+        background: #287c61;
+      }
+
+      .dd-refund-rejected {
+        border-color: #8e4a4a;
+        background: #332222;
+      }
+
+      .dd-refund-rejected .dd-refund-badge {
+        background: #a33e49;
+      }
+
+      @keyframes ddRefundAppear {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes ddRefundPulse {
+        0%, 100% {
+          box-shadow: 0 0 0 0 rgba(231,45,129,.35);
+        }
+
+        50% {
+          box-shadow: 0 0 0 8px rgba(231,45,129,0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .dd-refund-tracker,
+        .dd-refund-pending .dd-refund-badge {
+          animation: none;
+        }
+      }
+
       @media (max-width: 600px) {
         .dd-detail-grid {
           grid-template-columns: 1fr;
@@ -278,6 +364,86 @@
     `;
 
     document.head.append(style);
+  }
+
+  function renderRefundStatus(order) {
+    const refund = order.refund_request;
+
+    if (!refund) return null;
+
+    const status = refund.status;
+
+    const labels = {
+      pending: 'Refund Requested',
+      approved: 'Refund Approved',
+      rejected: 'Refund Rejected'
+    };
+
+    const descriptions = {
+      pending: 'Awaiting Admin Review',
+      approved:
+        'Approved by Admin. The actual payment refund must still be processed separately.',
+      rejected:
+        'Refund request rejected by Admin.'
+    };
+
+    const box = element(
+      'section',
+      'dd-refund-tracker dd-refund-' + status
+    );
+
+    const heading = element('div', 'dd-refund-heading');
+
+    const badge = element(
+      'strong',
+      'dd-refund-badge',
+      labels[status] || 'Refund Status'
+    );
+
+    heading.append(badge);
+
+    const description = element(
+      'p',
+      '',
+      descriptions[status] || readable(status)
+    );
+
+    box.append(heading, description);
+
+    if (refund.created_at) {
+      box.append(
+        element(
+          'small',
+          '',
+          'Requested: ' + refund.created_at
+        )
+      );
+    }
+
+    if (
+      refund.status !== 'pending' &&
+      refund.admin_note
+    ) {
+      box.append(
+        element(
+          'small',
+          '',
+          'Admin note: ' + refund.admin_note
+        )
+      );
+    }
+
+    if (refund.reviewed_at) {
+      box.append(
+        element(
+          'small',
+          '',
+          'Reviewed: ' + refund.reviewed_at
+        )
+      );
+    }
+
+    return box;
   }
 
   function renderOrder(order) {
@@ -303,6 +469,12 @@
     );
 
     root.append(badges);
+
+    const refundTracker = renderRefundStatus(order);
+
+    if (refundTracker) {
+      root.append(refundTracker);
+    }
 
     root.append(
       element(
@@ -343,12 +515,30 @@
     }
 
     orderGrid.append(
-      detail('Payment Method', readable(order.payment_method)),
-      detail('Fulfillment', readable(order.fulfillment)),
-      detail('Order Status', readable(order.status)),
-      detail('Payment Status', readable(order.payment_status)),
-      detail('Order Total', money(order.total_centavos)),
-      detail('Date Ordered', date)
+      detail(
+        'Payment Method',
+        readable(order.payment_method)
+      ),
+      detail(
+        'Fulfillment',
+        readable(order.fulfillment)
+      ),
+      detail(
+        'Order Status',
+        readable(order.status)
+      ),
+      detail(
+        'Payment Status',
+        readable(order.payment_status)
+      ),
+      detail(
+        'Order Total',
+        money(order.total_centavos)
+      ),
+      detail(
+        'Date Ordered',
+        date
+      )
     );
 
     root.append(orderGrid);
@@ -386,7 +576,8 @@
           )
         );
 
-        const amount = item.subtotal ?? item.amount;
+        const amount =
+          item.subtotal ?? item.amount;
 
         row.append(
           left,
@@ -401,7 +592,11 @@
       }
     } else {
       itemsBox.append(
-        element('p', '', 'No product details available.')
+        element(
+          'p',
+          '',
+          'No product details available.'
+        )
       );
     }
 
@@ -411,7 +606,11 @@
 
     total.append(
       element('strong', '', 'Order Total'),
-      element('strong', '', money(order.total_centavos))
+      element(
+        'strong',
+        '',
+        money(order.total_centavos)
+      )
     );
 
     root.append(total);
@@ -421,10 +620,8 @@
 
   function makeButton(text) {
     const button = document.createElement('button');
-
     button.type = 'button';
     button.textContent = text;
-
     return button;
   }
 
@@ -432,8 +629,6 @@
     node.hidden = !visible;
     node.style.display = visible ? '' : 'none';
   }
-
-  const editControls = {};
 
   function showInlineMessage(type, message) {
     const config = editControls[type];
@@ -533,8 +728,8 @@
 
       const edit = makeButton('Edit');
       const cancel = makeButton('Cancel');
-      const message = element('p', 'dd-inline-message');
 
+      const message = element('p', 'dd-inline-message');
       message.setAttribute('role', 'alert');
 
       const actions = element('div', 'dd-edit-actions');
@@ -679,7 +874,8 @@
 
       $('refundArea').hidden = !(
         has('refund_request') &&
-        order.payment_status === 'paid'
+        order.payment_status === 'paid' &&
+        order.refund_request?.status !== 'pending'
       );
 
       resetEdits();
