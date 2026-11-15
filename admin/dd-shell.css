@@ -206,3 +206,21 @@ body.dd-collapsed .dd-sidebar .dd-icon {
   flex-basis: 19px !important;
 }
 
+
+/* Admin sign-in: no sidebar */
+body.dd-admin-signin .dd-sidebar,
+body.dd-admin-signin .dd-backdrop,
+body.dd-admin-signin .dd-menu-toggle {
+  display: none !important;
+}
+
+body.dd-admin-signin {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+body.dd-admin-signin > header,
+body.dd-admin-signin > main {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
