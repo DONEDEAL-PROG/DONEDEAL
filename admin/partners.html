@@ -9,64 +9,7 @@
 
 <link rel="stylesheet" href="/partner.css">
 <link rel="stylesheet" href="/admin/dd-shell.css">
-<style>
-/* Fill the available admin workspace */
-body > main {
-  min-width: 0 !important;
-  max-width: none !important;
-  margin-right: 0 !important;
-  margin-left: 0 !important;
-}
 
-#content,
-.pm-view {
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.pm-stats {
-  width: 100%;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.pm-stat {
-  min-width: 0;
-}
-
-.pm-chat {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
-}
-
-.pm-thread,
-.pm-messages,
-.pm-reply {
-  min-width: 0;
-  max-width: 100%;
-}
-
-@media (max-width: 800px) {
-  body > main {
-    padding: 20px 16px 50px;
-  }
-
-  .pm-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .pm-chat {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .pm-stats {
-    grid-template-columns: 1fr;
-  }
-}
 <style>
 :root {
   color-scheme: dark;
@@ -92,11 +35,14 @@ html[data-dd-theme="light"] {
   --pm-selected: #fbe7f2;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   max-width: 100%;
 }
 
@@ -105,12 +51,14 @@ body {
   color: var(--pm-text);
 }
 
+/*
+  Keep the sidebar layout controlled by dd-shell.css.
+  Do not reset the main element's left margin.
+*/
 body > main {
-  width: 100%;
   min-width: 0;
   max-width: none;
-  margin: 0;
-  padding: 26px 30px 70px;
+  padding: 26px 30px 60px;
   box-sizing: border-box;
 }
 
@@ -119,17 +67,21 @@ body > main > #notice,
 body > main > #signin,
 body > main > #content {
   width: 100%;
-  max-width: none;
+  max-width: 100%;
   min-width: 0;
-  margin-left: 0;
-  margin-right: 0;
+}
+
+#content,
+.pm-view {
+  min-width: 0;
+  max-width: 100%;
 }
 
 [hidden] {
   display: none !important;
 }
 
-/* Page header */
+/* Page heading */
 
 .pm-intro {
   margin-bottom: 22px;
@@ -201,7 +153,7 @@ body > main > #content {
 /* Overview */
 
 .pm-view {
-  min-width: 0;
+  width: 100%;
 }
 
 .pm-view h2 {
@@ -213,6 +165,8 @@ body > main > #content {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
+  width: 100%;
+  min-width: 0;
 }
 
 .pm-stat,
@@ -245,6 +199,7 @@ body > main > #content {
   display: grid;
   gap: 12px;
   min-width: 0;
+  max-width: 100%;
 }
 
 .pm-entries .entry {
@@ -254,6 +209,7 @@ body > main > #content {
   justify-content: space-between;
   gap: 16px;
   min-width: 0;
+  max-width: 100%;
   padding: 17px;
   border: 1px solid var(--pm-line);
   border-radius: 14px;
@@ -294,15 +250,15 @@ body > main > #content {
   font-size: 13px;
 }
 
-/* Messenger-style chat */
+/* Compact messaging panel */
 
 .pm-chat {
   display: grid;
-  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+  grid-template-columns: 260px minmax(0, 1fr);
   width: 100%;
-  min-width: 0;
   max-width: 100%;
-  height: 540px;
+  min-width: 0;
+  height: 430px;
   border: 1px solid var(--pm-line);
   border-radius: 16px;
   overflow: hidden;
@@ -340,6 +296,7 @@ body > main > #content {
 .pm-conversations {
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .pm-conversation {
@@ -411,7 +368,7 @@ body > main > #content {
 .pm-thread-header {
   flex: none;
   min-width: 0;
-  padding: 15px 18px;
+  padding: 13px 16px;
   border-bottom: 1px solid var(--pm-line);
 }
 
@@ -427,13 +384,14 @@ body > main > #content {
 
 .pm-messages {
   display: flex;
-  flex: 1 1 0;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 12px;
   min-width: 0;
   min-height: 0;
-  padding: 16px;
-  overflow: auto;
+  padding: 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .pm-bubble {
@@ -467,15 +425,15 @@ body > main > #content {
   opacity: .75;
 }
 
-/* Compact reply composer with reserved Send button space */
+/* Reply composer */
 
 #admin-reply.pm-reply {
   display: block;
-  flex: none;
+  flex: 0 0 auto;
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  padding: 12px;
+  padding: 10px 12px;
   margin: 0;
   border-top: 1px solid var(--pm-line);
   overflow: hidden;
@@ -483,7 +441,7 @@ body > main > #content {
 
 #admin-reply .pm-reply-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 86px;
+  grid-template-columns: minmax(0, 1fr) 82px;
   align-items: center;
   gap: 10px;
   width: 100%;
@@ -496,11 +454,11 @@ body > main > #content {
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  height: 44px;
-  min-height: 44px;
-  max-height: 100px;
+  height: 42px;
+  min-height: 42px;
+  max-height: 42px;
   margin: 0;
-  padding: 11px 12px;
+  padding: 10px 12px;
   border: 1px solid var(--pm-line);
   border-radius: 10px;
   background: var(--pm-card);
@@ -508,17 +466,17 @@ body > main > #content {
   font: inherit;
   font-size: 13px;
   line-height: 20px;
-  resize: vertical;
+  resize: none;
 }
 
 #admin-reply .pm-reply-inner button {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 86px;
+  width: 82px;
   min-width: 0;
-  max-width: 86px;
-  height: 44px;
+  max-width: 82px;
+  height: 42px;
   padding: 0 8px;
   margin: 0;
   border: 0;
@@ -540,8 +498,9 @@ body > main > #content {
 /* Notifications and login */
 
 #notice:not(:empty) {
-  max-width: 1100px;
-  margin: 12px auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 12px 0;
   padding: 12px 14px;
   border: 1px solid var(--pm-line);
   border-radius: 10px;
@@ -560,17 +519,27 @@ body > main > #content {
   margin: 8px 0 12px;
 }
 
-/* Responsive layout */
+/* Responsive */
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .pm-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .pm-chat {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  body > main {
+    padding: 20px 16px 45px;
+  }
+
+  .pm-chat {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 190px minmax(0, 1fr);
-    height: 620px;
+    grid-template-rows: 155px minmax(0, 1fr);
+    height: 500px;
   }
 
   .pm-chat-list {
@@ -579,21 +548,18 @@ body > main > #content {
   }
 
   .pm-conversations {
-    overflow: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  body > main {
-    padding: 18px 12px 45px;
+    overflow-y: auto;
   }
 
   .pm-tab {
     padding: 9px 10px;
     font-size: 12px;
   }
+}
 
+@media (max-width: 480px) {
   .pm-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -613,105 +579,9 @@ body > main > #content {
   #admin-reply .pm-reply-inner button {
     width: 72px;
     max-width: 72px;
+    font-size: 12px;
   }
 }
-  
-/* Compact Partner Messages layout */
-
-body > main {
-  box-sizing: border-box;
-  min-width: 0 !important;
-  width: auto !important;
-  max-width: none !important;
-  overflow-x: hidden;
-}
-
-#content,
-.pm-view {
-  min-width: 0;
-  max-width: 100%;
-}
-
-.pm-chat {
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr) !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  height: 480px !important;
-  max-height: 65vh !important;
-  overflow: hidden !important;
-}
-
-.pm-conversations,
-.pm-thread {
-  min-width: 0 !important;
-  max-width: 100% !important;
-  overflow: hidden;
-}
-
-.pm-thread {
-  display: flex;
-  flex-direction: column;
-}
-
-.pm-messages {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-#admin-reply {
-  display: flex !important;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-#admin-reply[hidden] {
-  display: none !important;
-}
-
-#admin-reply textarea {
-  flex: 1 1 auto;
-  width: auto !important;
-  min-width: 0 !important;
-  height: 42px !important;
-  min-height: 42px !important;
-  max-height: 42px !important;
-  resize: none;
-  box-sizing: border-box;
-}
-
-#admin-reply button {
-  flex: 0 0 76px;
-  width: 76px !important;
-  max-width: 76px !important;
-  height: 42px;
-}
-
-@media (max-width: 700px) {
-  .pm-chat {
-    grid-template-columns: minmax(0, 1fr) !important;
-    height: auto !important;
-    max-height: none !important;
-  }
-
-  .pm-conversations {
-    max-height: 170px;
-    overflow-y: auto;
-  }
-
-  .pm-thread {
-    height: 350px;
-  }
-}
-
 </style>
 </head>
 
