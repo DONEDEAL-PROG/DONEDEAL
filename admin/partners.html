@@ -6,306 +6,426 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>DONEDEAL | Partner Management</title>
+
 <link rel="stylesheet" href="/partner.css">
 <link rel="stylesheet" href="/admin/dd-shell.css">
+
 <style>
-:root{--pink:#ff5baf;--line:#ffffff1b;--muted:#aaa4b3}
-body>main{max-width:1380px;width:100%;margin:auto;padding:24px}
-[hidden]{display:none!important}
-.pm-intro{margin:0 0 24px}
-.pm-intro h1{margin:6px 0}
-.pm-muted{color:var(--muted);font-size:13px}
-.pm-tabs{display:flex;gap:9px;flex-wrap:wrap;margin:22px 0}
-.pm-tab{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:13px;padding:12px 16px;background:#211b27;color:#eee;cursor:pointer}
-.pm-tab.active{background:#51203d;border-color:var(--pink);color:#fff}
-.pm-icon{font-size:19px;line-height:1}
-.pm-count{background:var(--pink);color:#1a0e18;border-radius:999px;min-width:22px;padding:2px 6px;font-size:11px;font-weight:800;text-align:center}
-.pm-view{min-height:280px}
-.pm-view h2{margin:12px 0 18px}
-.pm-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.pm-stat,.pm-box{background:#211b27;border:1px solid var(--line);border-radius:16px;padding:18px}
-.pm-stat strong{display:block;font-size:30px;margin:10px 0 4px}
-.pm-stat span{color:var(--muted);font-size:13px}
-.pm-stat .pm-icon{color:var(--pink)}
-.pm-entries{display:grid;gap:12px}
-.pm-entries .entry{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:#211b27;border:1px solid var(--line);border-radius:14px;padding:16px}
-.pm-entries .entry>div{min-width:160px}
-.pm-entries small{display:block;color:var(--muted);margin-top:6px;overflow-wrap:anywhere}
-.pm-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.pm-controls input,.pm-controls select{max-width:155px}
-.pm-empty{padding:22px;color:var(--muted)}
-.pm-chat{display:grid;grid-template-columns:minmax(230px,320px) minmax(0,1fr);min-height:520px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#1c1721}
-.pm-chat-list{border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
-.pm-chat-search{padding:14px;border-bottom:1px solid var(--line)}
-.pm-chat-search input{width:100%;max-width:none;box-sizing:border-box;background:#100d15;color:white;border:1px solid var(--line);border-radius:12px;padding:12px}
-.pm-conversations{overflow-y:auto;max-height:570px}
-.pm-conversation{display:flex;width:100%;text-align:left;align-items:center;gap:11px;padding:14px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:#fff;cursor:pointer}
-.pm-conversation:hover,.pm-conversation.active{background:#3b2537}
-.pm-avatar{width:40px;height:40px;flex:none;display:grid;place-items:center;background:#62314f;border-radius:50%;font-weight:800;color:#fff}
-.pm-conversation-info{flex:1;min-width:0}
-.pm-conversation-info strong,.pm-conversation-info small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pm-conversation-info small{color:var(--muted);font-size:12px;margin-top:5px}
-.pm-thread{display:flex;flex-direction:column;min-width:0;min-height:520px}
-.pm-thread-header{padding:18px;border-bottom:1px solid var(--line)}
-.pm-thread-header strong{display:block}
-.pm-messages{flex:1;display:flex;flex-direction:column;gap:13px;padding:18px;overflow-y:auto;max-height:450px}
-.pm-bubble{max-width:78%;width:fit-content;padding:12px 15px;border-radius:15px;background:#352b3d;overflow-wrap:anywhere;white-space:pre-wrap}
-.pm-bubble.admin{align-self:flex-end;background:#743456}
-.pm-bubble.partner{align-self:flex-start}
-.pm-bubble p{margin:0 0 6px}
-.pm-bubble small{font-size:11px;color:#e2cedd}
-.pm-reply{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line);align-items:end}
-.pm-reply textarea{flex:1;min-width:0;max-width:none;resize:vertical;background:#100d15;color:white;border:1px solid var(--line);border-radius:12px;padding:12px;box-sizing:border-box}
-.pm-reply button{flex:none}
-#notice:not(:empty){padding:12px;margin:12px 0;border:1px solid var(--line);border-radius:10px}
-@media(max-width:850px){
-.pm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-.pm-chat{grid-template-columns:1fr}
-.pm-chat-list{border-right:0;border-bottom:1px solid var(--line)}
-.pm-conversations{max-height:220px}
-.pm-thread{min-height:400px}
-.pm-messages{max-height:360px}
+:root {
+  color-scheme: dark;
+  --pm-bg: #151119;
+  --pm-card: #211b27;
+  --pm-card2: #1b1621;
+  --pm-text: #f8f3fa;
+  --pm-muted: #b9aebf;
+  --pm-line: #413547;
+  --pm-pink: #ed4295;
+  --pm-selected: #43253a;
 }
-@media(max-width:480px){
-body>main{padding:14px}
-.pm-tab{padding:10px;font-size:12px}
-.pm-stats{gap:8px}
-.pm-stat{padding:12px}
-.pm-stat strong{font-size:23px}
-.pm-reply{flex-wrap:wrap}
-.pm-reply button{width:100%}
+
+html[data-dd-theme="light"] {
+  color-scheme: light;
+  --pm-bg: #faf8fb;
+  --pm-card: #ffffff;
+  --pm-card2: #f7f3f8;
+  --pm-text: #292230;
+  --pm-muted: #746b7c;
+  --pm-line: #e4dbe7;
+  --pm-pink: #bb2870;
+  --pm-selected: #fbe7f2;
 }
-  
-/* Partner Management — layout and theme fixes */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
 html, body {
   max-width: 100%;
-  overflow-x: clip;
+}
+
+body {
+  background: var(--pm-bg);
+  color: var(--pm-text);
 }
 
 body > main {
-  box-sizing: border-box;
-  min-width: 0;
-  max-width: 1380px;
-}
-
-.pm-view,
-.pm-chat,
-.pm-thread,
-.pm-chat-list,
-.pm-entries,
-.pm-entries .entry {
-  min-width: 0;
-}
-
-.pm-chat {
-  width: 100%;
-  box-sizing: border-box;
-  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
-}
-
-.pm-reply {
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.pm-reply textarea {
   width: 100%;
   min-width: 0;
-  flex: 1 1 0;
+  max-width: none;
+  margin: 0;
+  padding: 26px clamp(16px, 3vw, 38px) 70px;
 }
 
-.pm-reply button {
-  flex: 0 0 auto;
+body > main > .pm-intro,
+body > main > #notice,
+body > main > #signin,
+body > main > #content {
+  width: 100%;
+  max-width: 1100px;
+  min-width: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Page header */
+
+.pm-intro {
+  margin-bottom: 22px;
+}
+
+.pm-intro h1 {
+  font-size: clamp(25px, 3vw, 36px);
+  margin: 6px 0 8px;
+  letter-spacing: -.035em;
+}
+
+.pm-muted {
+  color: var(--pm-muted);
+  font-size: 13px;
+}
+
+/* Navigation tabs */
+
+.pm-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 22px 0 26px;
+}
+
+.pm-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--pm-line);
+  border-radius: 11px;
+  background: var(--pm-card);
+  color: var(--pm-text);
+  padding: 11px 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
   white-space: nowrap;
 }
 
+.pm-tab:hover {
+  border-color: var(--pm-pink);
+}
+
+.pm-tab.active {
+  background: var(--pm-selected);
+  border-color: var(--pm-pink);
+}
+
+.pm-icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.pm-count {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 999px;
+  min-width: 21px;
+  padding: 3px 6px;
+  background: var(--pm-pink);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Overview */
+
+.pm-view {
+  min-width: 0;
+}
+
+.pm-view h2 {
+  margin: 0 0 16px;
+  font-size: 22px;
+}
+
+.pm-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pm-stat,
+.pm-box {
+  min-width: 0;
+  background: var(--pm-card);
+  border: 1px solid var(--pm-line);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.pm-stat strong {
+  display: block;
+  font-size: 30px;
+  margin: 8px 0 4px;
+}
+
+.pm-stat span {
+  color: var(--pm-muted);
+  font-size: 13px;
+}
+
+.pm-stat .pm-icon {
+  color: var(--pm-pink);
+}
+
+/* Applications, commissions and payouts */
+
+.pm-entries {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
 .pm-entries .entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid var(--pm-line);
+  border-radius: 14px;
+  background: var(--pm-card);
+  overflow-wrap: anywhere;
+}
+
+.pm-entries .entry > div {
+  min-width: 0;
+}
+
+.pm-entries small {
+  display: block;
+  margin-top: 5px;
+  color: var(--pm-muted);
   overflow-wrap: anywhere;
 }
 
 .pm-controls {
-  max-width: 100%;
-  min-width: 0;
+  display: flex;
   flex-wrap: wrap;
-}
-
-/* Light mode */
-html[data-dd-theme="light"] {
-  --pm-surface: #ffffff;
-  --pm-surface-soft: #f7f4f8;
-  --pm-text: #28212e;
-  --pm-muted: #716a79;
-  --pm-border: #e8dfe9;
-}
-
-html[data-dd-theme="light"] .pm-box,
-html[data-dd-theme="light"] .pm-stat,
-html[data-dd-theme="light"] .pm-entries .entry,
-html[data-dd-theme="light"] .pm-chat {
-  background: var(--pm-surface);
-  border-color: var(--pm-border);
-  color: var(--pm-text);
-}
-
-html[data-dd-theme="light"] .pm-tab {
-  background: var(--pm-surface);
-  color: var(--pm-text);
-  border-color: var(--pm-border);
-}
-
-html[data-dd-theme="light"] .pm-tab.active {
-  background: #fce8f2;
-  color: #98285e;
-  border-color: #ec72ac;
-}
-
-html[data-dd-theme="light"] .pm-chat-list,
-html[data-dd-theme="light"] .pm-thread-header,
-html[data-dd-theme="light"] .pm-reply,
-html[data-dd-theme="light"] .pm-chat-search {
-  border-color: var(--pm-border);
-}
-
-html[data-dd-theme="light"] .pm-conversation {
-  color: var(--pm-text);
-  border-color: var(--pm-border);
-}
-
-html[data-dd-theme="light"] .pm-conversation:hover,
-html[data-dd-theme="light"] .pm-conversation.active {
-  background: #fce8f2;
-}
-
-html[data-dd-theme="light"] .pm-conversation-info small,
-html[data-dd-theme="light"] .pm-muted,
-html[data-dd-theme="light"] .pm-stat span {
-  color: var(--pm-muted);
-}
-
-html[data-dd-theme="light"] .pm-chat-search input,
-html[data-dd-theme="light"] .pm-reply textarea {
-  background: #ffffff;
-  color: var(--pm-text);
-  border-color: #d8cfdd;
-}
-
-html[data-dd-theme="light"] .pm-bubble.partner {
-  background: #f1edf3;
-  color: var(--pm-text);
-}
-
-html[data-dd-theme="light"] .pm-bubble.partner small {
-  color: #716a79;
-}
-
-html[data-dd-theme="light"] .pm-bubble.admin {
-  background: #b6387b;
-  color: #ffffff;
-}
-
-html[data-dd-theme="light"] .pm-bubble.admin small {
-  color: #ffe2f0;
-}
-
-html[data-dd-theme="light"] .pm-thread-header strong,
-html[data-dd-theme="light"] .pm-entries strong {
-  color: var(--pm-text);
-}
-
-html[data-dd-theme="light"] .pm-conversation.active strong {
-  color: #98285e;
-}
-
-@media (max-width: 850px) {
-  .pm-chat {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .pm-reply {
-    flex-wrap: wrap;
-  }
-
-  .pm-reply button {
-    max-width: 100%;
-  }
-}
-
-/* FIX: Compact message composer and visible Send button */
-
-.pm-chat,
-.pm-thread,
-.pm-reply {
+  align-items: center;
+  gap: 9px;
   min-width: 0;
   max-width: 100%;
-  box-sizing: border-box;
 }
 
-.pm-reply {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) auto !important;
-  align-items: end;
-  gap: 10px;
-  padding: 12px 14px;
+.pm-controls input,
+.pm-controls select {
+  width: auto;
+  max-width: 150px;
+  min-width: 90px;
+}
+
+.pm-empty {
+  padding: 18px;
+  color: var(--pm-muted);
+  font-size: 13px;
+}
+
+/* Messenger-style chat */
+
+.pm-chat {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 540px;
+  border: 1px solid var(--pm-line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--pm-card2);
 }
 
-.pm-reply textarea {
+.pm-chat-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid var(--pm-line);
+}
+
+.pm-chat-search {
+  padding: 12px;
+  border-bottom: 1px solid var(--pm-line);
+}
+
+.pm-chat-search input {
   display: block;
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  height: 44px;
-  min-height: 44px;
-  max-height: 110px;
-  padding: 11px 12px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--pm-line);
+  border-radius: 10px;
+  background: var(--pm-card);
+  color: var(--pm-text);
+  font: inherit;
+  font-size: 13px;
+}
+
+.pm-conversations {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.pm-conversation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 13px 12px;
   margin: 0;
-  resize: vertical;
-  box-sizing: border-box;
+  border: 0;
+  border-bottom: 1px solid var(--pm-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--pm-text);
+  text-align: left;
+  cursor: pointer;
   font: inherit;
 }
 
-.pm-reply button {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  width: auto !important;
-  min-width: 82px;
-  height: 44px;
-  margin: 0;
-  padding: 0 16px;
-  white-space: nowrap;
+.pm-conversation:hover,
+.pm-conversation.active {
+  background: var(--pm-selected);
+}
+
+.pm-avatar {
+  display: grid;
   flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #713554;
+  color: #ffffff;
+  font-weight: 800;
 }
 
-@media (max-width: 850px) {
-  .pm-reply {
-    grid-template-columns: minmax(0, 1fr) auto !important;
-    flex-wrap: nowrap !important;
-  }
-
-  .pm-reply button {
-    width: auto !important;
-  }
+.pm-conversation-info {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
 }
-/* Final fix: Partner Messages composer */
 
-#admin-reply.pm-reply {
-  display: block !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  padding: 12px !important;
-  box-sizing: border-box !important;
+.pm-conversation-info strong,
+.pm-conversation-info small {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pm-conversation-info small {
+  color: var(--pm-muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+/* Conversation thread */
+
+.pm-thread {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
   overflow: hidden;
 }
 
-#admin-reply.pm-reply[hidden] {
-  display: none !important;
+.pm-thread-header {
+  flex: none;
+  min-width: 0;
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--pm-line);
+}
+
+.pm-thread-header strong {
+  display: block;
+  color: var(--pm-text);
+}
+
+.pm-thread-header small {
+  display: block;
+  margin-top: 4px;
+}
+
+.pm-messages {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  min-height: 0;
+  padding: 16px;
+  overflow: auto;
+}
+
+.pm-bubble {
+  width: fit-content;
+  max-width: min(78%, 450px);
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: var(--pm-card);
+  color: var(--pm-text);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.pm-bubble.partner {
+  align-self: flex-start;
+}
+
+.pm-bubble.admin {
+  align-self: flex-end;
+  background: #8e3567;
+  color: #ffffff;
+}
+
+.pm-bubble p {
+  margin: 0 0 6px;
+}
+
+.pm-bubble small {
+  font-size: 11px;
+  color: inherit;
+  opacity: .75;
+}
+
+/* Compact reply composer with reserved Send button space */
+
+#admin-reply.pm-reply {
+  display: block;
+  flex: none;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 12px;
+  margin: 0;
+  border-top: 1px solid var(--pm-line);
+  overflow: hidden;
 }
 
 #admin-reply .pm-reply-inner {
-  display: flex !important;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 86px;
   align-items: center;
   gap: 10px;
   width: 100%;
@@ -315,137 +435,345 @@ html[data-dd-theme="light"] .pm-conversation.active strong {
 
 #admin-reply .pm-reply-inner textarea {
   display: block;
-  flex: 1 1 0 !important;
-  width: 0 !important;
-  min-width: 0 !important;
-  max-width: none !important;
-  height: 44px !important;
-  min-height: 44px !important;
-  margin: 0 !important;
-  padding: 10px 12px !important;
-  box-sizing: border-box !important;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 44px;
+  min-height: 44px;
+  max-height: 100px;
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--pm-line);
+  border-radius: 10px;
+  background: var(--pm-card);
+  color: var(--pm-text);
+  font: inherit;
+  font-size: 13px;
+  line-height: 20px;
   resize: vertical;
 }
 
 #admin-reply .pm-reply-inner button {
-  display: inline-flex !important;
-  flex: 0 0 90px !important;
-  width: 90px !important;
-  min-width: 90px !important;
-  max-width: 90px !important;
-  height: 44px !important;
-  margin: 0 !important;
-  padding: 0 10px !important;
-  align-items: center;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  width: 86px;
+  min-width: 0;
+  max-width: 86px;
+  height: 44px;
+  padding: 0 8px;
+  margin: 0;
+  border: 0;
+  border-radius: 10px;
+  background: var(--pm-pink);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
   white-space: nowrap;
+}
+
+#admin-reply .pm-reply-inner button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+/* Notifications and login */
+
+#notice:not(:empty) {
+  max-width: 1100px;
+  margin: 12px auto;
+  padding: 12px 14px;
+  border: 1px solid var(--pm-line);
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+
+#signin {
+  background: var(--pm-card);
+  border: 1px solid var(--pm-line);
+  border-radius: 14px;
+  padding: 22px;
+}
+
+#signin input {
+  display: block;
+  margin: 8px 0 12px;
+}
+
+/* Responsive layout */
+
+@media (max-width: 800px) {
+  .pm-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pm-chat {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 190px minmax(0, 1fr);
+    height: 620px;
+  }
+
+  .pm-chat-list {
+    border-right: 0;
+    border-bottom: 1px solid var(--pm-line);
+  }
+
+  .pm-conversations {
+    overflow: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  body > main {
+    padding: 18px 12px 45px;
+  }
+
+  .pm-tab {
+    padding: 9px 10px;
+    font-size: 12px;
+  }
+
+  .pm-stats {
+    gap: 8px;
+  }
+
+  .pm-stat {
+    padding: 12px;
+  }
+
+  .pm-stat strong {
+    font-size: 24px;
+  }
+
+  #admin-reply .pm-reply-inner {
+    grid-template-columns: minmax(0, 1fr) 72px;
+    gap: 7px;
+  }
+
+  #admin-reply .pm-reply-inner button {
+    width: 72px;
+    max-width: 72px;
+  }
 }
 </style>
 </head>
+
 <body>
+
 <header>
-<a class="brand" href="/admin/index.html">DONE<span>DEAL</span></a>
-<span>PARTNER MANAGEMENT</span>
-<a href="/admin/index.html">← Admin</a>
+  <a class="brand" href="/admin/index.html">
+    DONE<span>DEAL</span>
+  </a>
+  <span>PARTNER MANAGEMENT</span>
+  <a href="/admin/index.html">← Admin</a>
 </header>
 
 <main>
-<div class="pm-intro">
-<div class="eyebrow">AFFILIATE OPERATIONS</div>
-<h1>Partner Management</h1>
-<p class="pm-muted">Manage your partners, commissions, payouts and conversations.</p>
-</div>
 
-<div id="notice" role="status" aria-live="polite"></div>
-
-<section id="signin" class="panel">
-<h2>Admin sign in</h2>
-<form id="login">
-<label>Admin password
-<input type="password" name="password" autocomplete="current-password" required>
-</label>
-<button type="submit">Sign in</button>
-</form>
-</section>
-
-<section id="content" hidden>
-<nav class="pm-tabs" aria-label="Partner management sections">
-<button type="button" class="pm-tab active" data-tab="overview"><span class="pm-icon">▦</span>Overview</button>
-<button type="button" class="pm-tab" data-tab="applications"><span class="pm-icon">♙</span>Applications</button>
-<button type="button" class="pm-tab" data-tab="messages"><span class="pm-icon">✉</span>Messages <span id="message-badge" class="pm-count" hidden>0</span></button>
-<button type="button" class="pm-tab" data-tab="commissions"><span class="pm-icon">%</span>Commissions</button>
-<button type="button" class="pm-tab" data-tab="payouts"><span class="pm-icon">₱</span>Payouts</button>
-</nav>
-
-<section class="pm-view" data-view="overview">
-<h2>Overview</h2>
-<div class="pm-stats">
-<div class="pm-stat"><span class="pm-icon">♙</span><strong id="stat-pending">0</strong><span>Pending applications</span></div>
-<div class="pm-stat"><span class="pm-icon">✓</span><strong id="stat-approved">0</strong><span>Approved partners</span></div>
-<div class="pm-stat"><span class="pm-icon">%</span><strong id="stat-commissions">0</strong><span>Pending commissions</span></div>
-<div class="pm-stat"><span class="pm-icon">₱</span><strong id="stat-payouts">0</strong><span>Payout requests</span></div>
-</div>
-<div class="pm-box" style="margin-top:16px">
-<h3>Messages</h3>
-<p class="pm-muted"><span id="stat-unread">0</span> unread partner messages</p>
-<button type="button" id="go-messages">Open messages</button>
-</div>
-</section>
-
-<section class="pm-view" data-view="applications" hidden>
-<h2>Partner applications & accounts</h2>
-<div id="partners" class="pm-entries"></div>
-</section>
-
-<section class="pm-view" data-view="messages" hidden>
-<h2>Partner Messages</h2>
-<p class="pm-muted">Private conversations with your affiliate partners.</p>
-<div class="pm-chat">
-<div class="pm-chat-list">
-<div class="pm-chat-search">
-<input id="message-search" type="search" placeholder="Search name or email…" aria-label="Search partners">
-</div>
-<div id="conversations" class="pm-conversations"></div>
-</div>
-<div class="pm-thread">
-<div class="pm-thread-header">
-<strong id="admin-thread-title">Select a conversation</strong>
-<small class="pm-muted" id="thread-subtitle">Choose a partner to view messages.</small>
-</div>
-<div id="admin-thread" class="pm-messages">
-<div class="pm-empty">No conversation selected.</div>
-</div>
-<form id="admin-reply" class="pm-reply" hidden>
-  <div class="pm-reply-inner">
-    <textarea
-      name="message"
-      rows="2"
-      maxlength="2000"
-      placeholder="Write your reply..."
-      required
-    ></textarea>
-    <button type="submit">Send ➤</button>
+  <div class="pm-intro">
+    <div class="eyebrow">AFFILIATE OPERATIONS</div>
+    <h1>Partner Management</h1>
+    <p class="pm-muted">
+      Manage your partners, commissions, payouts and conversations.
+    </p>
   </div>
-</form>
-</div>
-</div>
-</section>
 
-<section class="pm-view" data-view="commissions" hidden>
-<h2>Referral Commissions</h2>
-<p class="pm-muted">Approve only after verifying payment.</p>
-<div id="orders" class="pm-entries"></div>
-</section>
+  <div id="notice" role="status" aria-live="polite"></div>
 
-<section class="pm-view" data-view="payouts" hidden>
-<h2>Payout Requests</h2>
-<p class="pm-muted">Complete transfers externally, then record the transaction reference.</p>
-<div id="payouts" class="pm-entries"></div>
-</section>
-</section>
+  <!-- Admin login -->
+
+  <section id="signin" class="panel">
+    <h2>Admin sign in</h2>
+
+    <form id="login">
+      <label>
+        Admin password
+        <input
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+        >
+      </label>
+
+      <button type="submit">Sign in</button>
+    </form>
+  </section>
+
+  <!-- Partner management -->
+
+  <section id="content" hidden>
+
+    <nav class="pm-tabs" aria-label="Partner management sections">
+
+      <button type="button" class="pm-tab active" data-tab="overview">
+        <span class="pm-icon">▦</span>
+        Overview
+      </button>
+
+      <button type="button" class="pm-tab" data-tab="applications">
+        <span class="pm-icon">♙</span>
+        Applications
+      </button>
+
+      <button type="button" class="pm-tab" data-tab="messages">
+        <span class="pm-icon">✉</span>
+        Messages
+        <span id="message-badge" class="pm-count" hidden>0</span>
+      </button>
+
+      <button type="button" class="pm-tab" data-tab="commissions">
+        <span class="pm-icon">%</span>
+        Commissions
+      </button>
+
+      <button type="button" class="pm-tab" data-tab="payouts">
+        <span class="pm-icon">₱</span>
+        Payouts
+      </button>
+
+    </nav>
+
+    <!-- Overview -->
+
+    <section class="pm-view" data-view="overview">
+      <h2>Overview</h2>
+
+      <div class="pm-stats">
+
+        <div class="pm-stat">
+          <span class="pm-icon">♙</span>
+          <strong id="stat-pending">0</strong>
+          <span>Pending applications</span>
+        </div>
+
+        <div class="pm-stat">
+          <span class="pm-icon">✓</span>
+          <strong id="stat-approved">0</strong>
+          <span>Approved partners</span>
+        </div>
+
+        <div class="pm-stat">
+          <span class="pm-icon">%</span>
+          <strong id="stat-commissions">0</strong>
+          <span>Pending commissions</span>
+        </div>
+
+        <div class="pm-stat">
+          <span class="pm-icon">₱</span>
+          <strong id="stat-payouts">0</strong>
+          <span>Payout requests</span>
+        </div>
+
+      </div>
+
+      <div class="pm-box" style="margin-top:16px">
+        <h3>Messages</h3>
+        <p class="pm-muted">
+          <span id="stat-unread">0</span> unread partner messages
+        </p>
+        <button type="button" id="go-messages">
+          Open messages
+        </button>
+      </div>
+    </section>
+
+    <!-- Applications -->
+
+    <section class="pm-view" data-view="applications" hidden>
+      <h2>Partner applications &amp; accounts</h2>
+      <div id="partners" class="pm-entries"></div>
+    </section>
+
+    <!-- Messages -->
+
+    <section class="pm-view" data-view="messages" hidden>
+      <h2>Partner Messages</h2>
+      <p class="pm-muted">
+        Private conversations with your affiliate partners.
+      </p>
+
+      <div class="pm-chat">
+
+        <div class="pm-chat-list">
+
+          <div class="pm-chat-search">
+            <input
+              id="message-search"
+              type="search"
+              placeholder="Search name or email…"
+              aria-label="Search partners"
+            >
+          </div>
+
+          <div id="conversations" class="pm-conversations"></div>
+
+        </div>
+
+        <div class="pm-thread">
+
+          <div class="pm-thread-header">
+            <strong id="admin-thread-title">
+              Select a conversation
+            </strong>
+            <small class="pm-muted" id="thread-subtitle">
+              Choose a partner to view messages.
+            </small>
+          </div>
+
+          <div id="admin-thread" class="pm-messages">
+            <div class="pm-empty">
+              No conversation selected.
+            </div>
+          </div>
+
+          <form id="admin-reply" class="pm-reply" hidden>
+            <div class="pm-reply-inner">
+
+              <textarea
+                name="message"
+                rows="2"
+                maxlength="2000"
+                placeholder="Write your reply..."
+                required
+              ></textarea>
+
+              <button type="submit">Send ➤</button>
+
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Commissions -->
+
+    <section class="pm-view" data-view="commissions" hidden>
+      <h2>Referral Commissions</h2>
+      <p class="pm-muted">
+        Approve only after verifying payment.
+      </p>
+      <div id="orders" class="pm-entries"></div>
+    </section>
+
+    <!-- Payouts -->
+
+    <section class="pm-view" data-view="payouts" hidden>
+      <h2>Payout Requests</h2>
+      <p class="pm-muted">
+        Complete transfers externally, then record the transaction reference.
+      </p>
+      <div id="payouts" class="pm-entries"></div>
+    </section>
+
+  </section>
 </main>
 
 <script src="/admin/dd-shell.js"></script>
 <script src="/admin/partners.js" defer></script>
+
 </body>
 </html>
