@@ -5,7 +5,7 @@ const hex=a=>Array.from(new Uint8Array(a),x=>x.toString(16).padStart(2,'0')).joi
 export const rand=()=>crypto.randomUUID();
 export async function hashPassword(password,salt){
  const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);
- return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:encoder.encode(salt),iterations:160000,hash:'SHA-256'},key,256));
+ return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:encoder.encode(salt),iterations: 100000,hash:'SHA-256'},key,256));
 }
 async function mac(value,secret){
  const k=await crypto.subtle.importKey('raw',encoder.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
