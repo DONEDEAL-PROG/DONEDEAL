@@ -93,6 +93,28 @@ html[data-dd-theme=dark] .dd-orders-table th,html[data-dd-theme=dark] .dd-orders
 @media(max-width:1100px){.dd-performance-grid{grid-template-columns:1fr}}
 @media(max-width:720px){#dashboardHome #stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+
+<style id="dd-orders-table-upgrade">
+/* Premium compact orders table; existing editing and pickup APIs remain unchanged. */
+.dd-orders-scroll{width:100%;overflow-x:auto;border:1px solid #e8dfe6;border-radius:14px;background:#fff}
+.dd-orders-table{width:100%;min-width:1080px;border-collapse:collapse;text-align:left;font-size:13px}
+.dd-orders-table th{padding:14px 12px;background:#faf7f9;color:#726774;font-size:11px;font-weight:800;letter-spacing:.035em;white-space:nowrap;border-bottom:1px solid #e8dfe6}
+.dd-orders-table td{padding:13px 12px;border-bottom:1px solid #f0e9ee;vertical-align:middle;line-height:1.45;color:#332c35}
+.dd-orders-table tbody tr:not(.dd-order-detail-row):hover{background:#fffbfd}
+.dd-orders-table .dd-order-id{font-weight:750;max-width:165px}
+.dd-orders-table .dd-order-id small{display:block;margin-top:5px;font-size:11px;font-weight:400;color:#7e7480}
+.dd-orders-table .dd-price{font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dd-orders-table .dd-order-status{text-transform:capitalize;font-weight:700;color:#a52f70}
+.dd-orders-table .dd-order-edit{padding:9px 15px!important;white-space:nowrap}
+.dd-orders-table .dd-order-detail-row[hidden]{display:none!important}
+.dd-orders-table .dd-order-detail-row>td{padding:12px 14px 20px;background:#faf7f9}
+.dd-orders-table .dd-order-detail-row .order{margin:0!important;box-shadow:none!important;border:1px solid #e8dfe6!important}
+.dd-pickup-collapsible{margin-top:14px!important}
+.dd-pickup-collapsible>summary{cursor:pointer;font-weight:800;color:#9f3470;padding:12px 14px;list-style:revert}
+.dd-pickup-collapsible:not([open]){padding:0!important}
+.dd-pickup-collapsible[open]>summary{margin-bottom:12px}
+@media(max-width:700px){.dd-orders-scroll{border-radius:10px}.dd-orders-table{min-width:1000px}}
+</style>
 </head><body>
 <header><div class="row space"><div><h1>DONE DEAL <span class="pink">/ CONTROL CENTER</span></h1><small>Add gadgets • manage orders • Warm Light admin</small></div><a href="/admin/">← Product Manager</a></div></header>
 <main>
@@ -252,8 +274,9 @@ function orderCard(o){
  if(o.notes){const note=section('📝 Admin notes');note.append(el('p',o.notes))}
  details.append(info);box.append(details);
  if(o.fulfillment==='pickup'&&o.source!=='legacy'){
-  const pickup=el('div',null,'pickupPanel');
-  pickup.append(el('h4','🏬 Store Pickup Workflow'));
+  const pickup=el('details',null,'pickupPanel dd-pickup-collapsible');
+  const pickupTitle=el('summary','Store Pickup Workflow');
+  pickup.append(pickupTitle);
   const stage=o.pickup_status||(o.status==='cancelled'?'cancelled':o.status==='delivered'?'claimed':'pending');
   pickup.append(el('p','Current stage: '+stage.toUpperCase(),'muted'));
   if(o.pickup_code)pickup.append(el('p','Pickup reference: '+o.pickup_code,'pickupCode'));
@@ -314,7 +337,65 @@ function orderCard(o){
 function renderOrders(){
  const term=$('orderSearch').value.toLowerCase(),status=$('orderFilter').value,fulfillment=$('fulfillmentFilter').value;
  const filtered=orders.filter(o=>(!status||o.status===status)&&(!fulfillment||o.fulfillment===fulfillment)&&[o.id,o.customer_json,o.items_json].join(' ').toLowerCase().includes(term));
- $('orderList').replaceChildren(...filtered.map(orderCard));
+ const table=document.createElement('table');
+ table.className='dd-orders-table';
+ table.innerHTML='<thead><tr><th>Order / Date</th><th>Customer</th><th>Gadget</th><th>Price</th><th>Fulfillment</th><th>Status</th><th>Payment</th><th>Action</th></tr></thead>';
+ const tbody=document.createElement('tbody');
+ filtered.forEach((o)=>{
+   let customer={},items=[];
+   try{customer=JSON.parse(o.customer_json||'{}');items=JSON.parse(o.items_json||'[]')}catch(e){}
+   const tr=document.createElement('tr');
+   const cell=(value,cls)=>{
+     const td=document.createElement('td');
+     if(cls)td.className=cls;
+     td.textContent=String(value??'—');
+     tr.append(td);
+     return td;
+   };
+   const shortId=String(o.id||'').slice(0,16);
+   const idCell=cell(shortId,'dd-order-id');
+   idCell.title=String(o.id||'');
+   const date=document.createElement('small');
+   date.textContent=o.created_at?new Date(o.created_at).toLocaleString('en-PH'):'Date unavailable';
+   idCell.append(date);
+   cell(customer.name||'Unknown customer');
+   const names=items.slice(0,2).map(i=>[i.name||i.sku,i.variant].filter(Boolean).join(' · '));
+   cell(names.join(', ')+(items.length>2?' +'+(items.length-2)+' more':'')||'No item details');
+   cell(money(o.total_centavos),'dd-price');
+   cell(o.fulfillment==='pickup'?'Store pickup':o.fulfillment==='delivery'?'Delivery':o.fulfillment||'—');
+   cell((o.status||'pending').replaceAll('_',' '),'dd-order-status');
+   cell((o.payment_status||'unpaid').replaceAll('_',' '));
+   const action=document.createElement('td');
+   const btn=document.createElement('button');
+   btn.type='button';btn.className='secondary dd-order-edit';btn.textContent='Edit';
+   btn.setAttribute('aria-expanded','false');
+   action.append(btn);tr.append(action);tbody.append(tr);
+   const detailRow=document.createElement('tr');
+   detailRow.className='dd-order-detail-row';
+   detailRow.hidden=true;
+   const detailCell=document.createElement('td');
+   detailCell.colSpan=8;
+   detailCell.append(orderCard(o));
+   detailRow.append(detailCell);tbody.append(detailRow);
+   btn.onclick=()=>{
+     const open=detailRow.hidden;
+     for(const other of tbody.querySelectorAll('.dd-order-detail-row'))other.hidden=true;
+     for(const other of tbody.querySelectorAll('.dd-order-edit')){
+       other.textContent='Edit';other.setAttribute('aria-expanded','false');
+     }
+     detailRow.hidden=!open;
+     btn.textContent=open?'Close':'Edit';
+     btn.setAttribute('aria-expanded',String(open));
+   };
+ });
+ table.append(tbody);
+ const list=$('orderList');
+ list.replaceChildren();
+ if(filtered.length){
+   const scroll=document.createElement('div');
+   scroll.className='dd-orders-scroll';
+   scroll.append(table);list.append(scroll);
+ }
  if(!filtered.length)$('orderList').append(el('p','No matching orders.'));
  $('stats').replaceChildren();
  const revenue=orders.filter(o=>o.status==='delivered').reduce((sum,o)=>sum+Number(o.total_centavos||0),0);

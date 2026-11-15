@@ -26,7 +26,7 @@ const groups=[
 ['OVERVIEW',[['dashboard','Dashboard','/admin/operations.html#dashboard']]],
 ['SALES',[['orders','Orders','/admin/operations.html#orders'],['customers','Customers','/admin/customers.html'],['payments','Payments / Transactions','/admin/payments.html'],['analytics','Sales Analytics','/admin/operations.html#analytics']]],
 ['CATALOG',[['products','Products','/admin/'],
-    ['ledger','Master Price Ledger','/admin/master-ledger.html'],['plus','Add Gadget','/admin/operations.html#gadgets'],['categories','Categories','/admin/#categories'],['inventory','Inventory / Stock','/admin/#inventory']]],
+    ['ledger','Master Price Ledger','/admin/master-ledger.html'],['plus','Add Gadget','/admin/operations.html#gadgets'],['inventory','Inventory / Stock','/admin/#inventory']]],
 ['CUSTOMER SERVICE',[['staff','Staff Management','/admin/support-staff.html'],['refunds','Refund Approvals','/admin/staff-refunds.html'],['activity','Staff Activity Logs','/admin/staff-activity.html']]],
 ['PARTNERS',[['partners','Affiliate Partners','/admin/partners.html']]],
 ['OPERATIONS',[['shipping','Track Orders / Shipping','/admin/operations.html#shipping'],['settings','Store Settings','/admin/operations.html#settings']]]
@@ -83,43 +83,4 @@ function navigate(){
  document.body.classList.remove('dd-open');
 }
 window.addEventListener('hashchange',navigate);navigate();
-
-
-/* Hide admin navigation until authenticated */
-
-function ddSyncAdminSidebarAuth() {
-  const loginPanel = document.getElementById('loginPanel');
-  const dashboard = document.getElementById('dashboard');
-
-  // Only applies to pages that contain the admin login panel.
-  if (!loginPanel || !dashboard) return;
-
-  const dashboardVisible =
-    getComputedStyle(dashboard).display !== 'none';
-
-  document.body.classList.toggle(
-    'dd-admin-signin',
-    !dashboardVisible
-  );
-
-  if (!dashboardVisible) {
-    document.body.classList.remove('dd-open');
-  }
-}
-
-ddSyncAdminSidebarAuth();
-
-const ddAuthObserver = new MutationObserver(
-  ddSyncAdminSidebarAuth
-);
-
-const ddDashboard = document.getElementById('dashboard');
-
-if (ddDashboard) {
-  ddAuthObserver.observe(ddDashboard, {
-    attributes: true,
-    attributeFilter: ['style', 'class', 'hidden']
-  });
-}
-
 })();
