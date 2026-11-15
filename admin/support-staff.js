@@ -18,8 +18,8 @@ async function load(){
  const h=document.createElement('h3');h.textContent=s.display_name+' (@'+s.username+')';
  const activeLabel=document.createElement('label'),active=document.createElement('input');active.type='checkbox';active.checked=!!s.active;activeLabel.append(active,document.createTextNode(' Active account'));
  const permBox=document.createElement('div');permBox.className='permissions';checkboxes(permBox,s.permissions);
- const passwordLabel=document.createElement('label');passwordLabel.textContent='New password (optional, min 12 characters)';
- const password=document.createElement('input');password.type='password';password.minLength=12;password.autocomplete='new-password';passwordLabel.append(password);
+ const passwordLabel=document.createElement('label');passwordLabel.textContent='New password (optional, min 8 characters)';
+ const password=document.createElement('input');password.type='password';password.minLength=8;password.autocomplete='new-password';passwordLabel.append(password);
  const save=document.createElement('button');save.textContent='Save permissions / account';save.addEventListener('click',async()=>{
  save.disabled=true;try{const data={id:s.id,active:active.checked,permissions:selected(permBox)};if(password.value)data.password=password.value;await api(json('PATCH',data));password.value='';notice('Saved '+s.username+'. Existing staff sessions revoked.');await load()}catch(e){notice(e.message)}finally{save.disabled=false}
  });
