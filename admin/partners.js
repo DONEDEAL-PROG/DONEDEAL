@@ -33,6 +33,37 @@ async function load(){
   row.append(info,controls);$('payouts').append(row);
  }
  for(const id of ['partners','orders','payouts'])if(!$(id).children.length)$(id).textContent='No records yet.';
+ await loadConversations();
 }
 $('login').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/login',{password:new FormData(e.target).get('password')});await load()}catch(err){msg(err.message)}};
 load();
+
+let activePartnerId=null;
+async function loadConversations(){
+ try{
+ const d=await api('/api/admin/partner-messages');const el=$('conversations');el.replaceChildren();
+ if(!d.conversations.length){el.textContent='No partner messages yet.';return}
+ for(const c of d.conversations){
+ const row=node('div',null,'entry'),info=node('div');
+ info.append(node('strong',c.name),node('small',c.email),node('small',c.message_count+' messages · Last: '+c.last_message));
+ const b=node('button','Open conversation');b.onclick=()=>openConversation(c.id);
+ row.append(info,b);el.append(row);
+ }
+ }catch(e){$('conversations').textContent=e.message}
+}
+async function openConversation(id){
+ try{
+ activePartnerId=id;const d=await api('/api/admin/partner-messages?partner_id='+encodeURIComponent(id));
+ $('admin-thread-wrap').hidden=false;$('admin-thread-title').textContent='Conversation with '+d.partner.name;
+ const el=$('admin-thread');el.replaceChildren();
+ if(!d.messages.length)el.textContent='No messages yet.';
+ for(const m of d.messages){const row=node('div',null,'entry'),info=node('div');info.append(node('strong',m.sender==='admin'?'DONEDEAL Admin':'Partner'),node('small',m.created_at),node('p',m.body));info.style.whiteSpace='pre-wrap';info.style.overflowWrap='anywhere';row.append(info);el.append(row)}
+ $('admin-thread-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
+ }catch(e){msg(e.message)}
+}
+$('admin-reply').onsubmit=async e=>{
+ e.preventDefault();if(!activePartnerId)return;
+ const btn=e.target.querySelector('button');btn.disabled=true;
+ try{await api('/api/admin/partner-messages',{partner_id:activePartnerId,message:new FormData(e.target).get('message')});e.target.reset();await openConversation(activePartnerId);await loadConversations();msg('Reply sent')}
+ catch(err){msg(err.message)}finally{btn.disabled=false}
+};
