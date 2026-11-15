@@ -1,0 +1,20 @@
+DONEDEAL CUSTOMER SUPPORT — PHASE 1
+===================================
+This patch contains ONLY changed/new files. It does not overwrite checkout, catalog, order APIs, or admin dashboard.
+
+1. Back up the current repository.
+2. Upload the files in this patch preserving their paths.
+3. In Cloudflare D1 console, select the SAME production DB bound to the Pages env.DB binding.
+4. Run database/support-phase1.sql ONCE (CREATE TABLE IF NOT EXISTS).
+5. Commit/push and wait for successful Cloudflare Pages deployment.
+6. Open /support.html to create a guest ticket. Open /admin/ and log in using the existing admin login, then visit /admin/support.html to reply.
+7. Test ticket creation, reply, page refresh, closing and reopening, and mobile display.
+
+IMPORTANT:
+- Phase 1 uses existing ADMIN login for the support inbox. Separate staff accounts, custom permissions, order changes, refunds, and verified order access are NOT implemented.
+- Messages update through polling (5 seconds guest, 10 seconds admin); this is near-real-time, not WebSocket push.
+- The guest access token is stored only in that browser's localStorage. Clearing storage loses guest access; no email recovery is implemented yet. Treat this browser as a private device.
+- No payment information or ID documents should be shared in chat.
+- Before public launch, configure Cloudflare WAF/rate limiting for /api/support/tickets and /api/support/conversation to mitigate spam and abusive traffic. Turnstile and notification delivery are recommended next.
+- Ticket status and chat replies are NOT order authorization. Do not change payments, refunds, or orders through this support module.
+- Run this first on a preview/staging environment if available.

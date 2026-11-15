@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer"><title>Customer Support | DONEDEAL</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#192039;background:#f5f6fa}*{box-sizing:border-box}body{margin:0}
+header{background:#121c37;color:#fff;padding:18px max(20px,calc((100vw - 900px)/2));display:flex;align-items:center;justify-content:space-between}
+header a{color:white;text-decoration:none;font-weight:700}main{max-width:750px;margin:35px auto;padding:0 16px}h1{font-size:clamp(25px,5vw,36px);margin-bottom:8px}
+p{line-height:1.55;color:#606a7d}.panel{background:#fff;border:1px solid #e2e5ee;border-radius:18px;padding:24px;box-shadow:0 8px 35px #14223b10;margin-top:20px}
+label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}input,textarea,button{font:inherit}input,textarea{width:100%;padding:13px;border:1px solid #c9cfdb;border-radius:9px}textarea{min-height:110px;resize:vertical}
+button{background:#e72d81;color:#fff;border:0;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}button:disabled{opacity:.5}
+small{color:#606a7d}#messages{height:360px;overflow:auto;background:#f8f9fc;border-radius:12px;padding:15px;border:1px solid #e2e5ee}
+.bubble{max-width:88%;padding:11px 14px;border-radius:12px;background:#e8ecf5;margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble.mine{background:#f9dce9;margin-left:auto}.bubble small{display:block;margin-top:5px}
+.hidden{display:none}.row{display:flex;gap:10px;align-items:center}.row button{flex-shrink:0}#notice{font-weight:600;color:#9d2458}
+</style></head><body><header><a href="/">← DONEDEAL</a><span>Customer Support</span></header>
+<main><h1>Chat with a Live Agent</h1><p>Need help? Leave a message and our team can reply here. When agents are unavailable, your conversation stays open as a support ticket.</p>
+<section class="panel" id="start"><h2>Start a conversation</h2><form id="newTicket">
+<label for="name">Your name</label><input id="name" maxlength="80" autocomplete="name" required>
+<label for="email">Email address</label><input id="email" type="email" maxlength="160" autocomplete="email" required>
+<label for="subject">What can we help with?</label><input id="subject" maxlength="140" required>
+<label for="initial">Message</label><textarea id="initial" maxlength="2000" required></textarea>
+<p><small>Never share passwords, OTPs, full card numbers, or banking credentials. Order changes require separate verification.</small></p>
+<button type="submit">Start support chat</button></form></section>
+<section class="panel hidden" id="conversation"><h2>Your support conversation</h2><p id="ticketInfo"></p><div id="messages" role="log" aria-live="polite"></div>
+<form id="send"><label for="message">Your reply</label><textarea id="message" maxlength="2000" required></textarea><div class="row"><button type="submit">Send message</button><small>Messages refresh about every 5 seconds.</small></div></form>
+<p><small>Keep this browser's ticket access saved to return later. If you clear browser storage, you may lose access to this conversation.</small></p><button type="button" id="newConversation">Start another ticket</button></section>
+<p id="notice" role="status"></p></main><script src="/support.js" defer></script></body></html>
