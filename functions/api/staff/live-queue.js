@@ -23,7 +23,8 @@ export async function onRequestGet({ request, env }) {
       return result({ error: 'Permission denied' }, 403);
     }
 
-    const rows = await env.DB.prepare(`
+    // Existing waiting queue — unchanged.
+    const waitingQuery = env.DB.prepare(`
       SELECT
         q.ticket_id,
         q.state,
@@ -38,18 +39,62 @@ export async function onRequestGet({ request, env }) {
         AND t.status != 'closed'
       ORDER BY q.joined_at ASC
       LIMIT 100
-    `).all();
+    `);
+
+    // Accepted live chats currently assigned to this staff.
+    const activeQuery = env.DB.prepare(`
+      SELECT
+        q.ticket_id,
+        q.state,
+        q.joined_at,
+        q.accepted_at,
+        t.guest_name,
+        t.subject,
+        t.status
+      FROM dd_support_live_queue AS q
+      JOIN dd_support_tickets AS t
+        ON t.id = q.ticket_id
+      JOIN dd_support_assignments AS a
+        ON a.ticket_id = q.ticket_id
+      WHERE q.state = 'accepted'
+        AND a.staff_id = ?
+        AND t.status != 'closed'
+      ORDER BY q.accepted_at DESC
+      LIMIT 100
+    `).bind(staff.id);
+
+    // Count all matching active chats, not just the first 100.
+    const countQuery = env.DB.prepare(`
+      SELECT COUNT(*) AS total
+      FROM dd_support_live_queue AS q
+      JOIN dd_support_tickets AS t
+        ON t.id = q.ticket_id
+      JOIN dd_support_assignments AS a
+        ON a.ticket_id = q.ticket_id
+      WHERE q.state = 'accepted'
+        AND a.staff_id = ?
+        AND t.status != 'closed'
+    `).bind(staff.id);
+
+    const [waitingRows, activeRows, countRow] =
+      await Promise.all([
+        waitingQuery.all(),
+        activeQuery.all(),
+        countQuery.first()
+      ]);
 
     return result({
       ok: true,
-      waiting: rows.results || []
+      waiting: waitingRows.results || [],
+      my_active_count: Number(countRow?.total || 0),
+      my_active_chats: activeRows.results || []
     });
 
   } catch (error) {
     console.error('Live queue GET failed', error);
 
     return result({
-      error: 'Unable to load waiting chats'
+      error: 'Unable to load live chats'
     }, 503);
   }
 }
