@@ -64,42 +64,37 @@
       <nav class="dd-menu-links" aria-label="Main navigation">
 
         <a href="/">
-          <span aria-hidden="true">⌂</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21v-8h6v8"/></svg>
           Home
         </a>
 
         <a href="/shop">
-          <span aria-hidden="true">▣</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h16l-1 13H5L4 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
           Shop All Gadgets
         </a>
 
         <a href="/#brands">
-          <span aria-hidden="true">◇</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>
           Shop by Brand
         </a>
 
         <a href="/wishlist">
-          <span aria-hidden="true">♡</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>
           My Wishlist
         </a>
 
         <a href="/track-order.html">
-          <span aria-hidden="true">📦</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="M3 7v10l9 5 9-5V7M12 12v10"/></svg>
           Track My Order
         </a>
 
-        <button type="button" class="dd-menu-theme-control" aria-label="Switch color theme">
-          <span aria-hidden="true">☀</span>
-          <span class="dd-menu-theme-label">Light Mode</span>
-        </button>
-
         <a href="/#dd-recent-grid">
-          <span aria-hidden="true">◷</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           Recently Viewed
         </a>
 
         <a href="/#about">
-          <span aria-hidden="true">ⓘ</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg>
           About DONEDEAL
         </a>
 
@@ -120,12 +115,12 @@
         </div>
 
         <a href="/support?mode=live">
-          <span aria-hidden="true">🎧</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="2" y="13" width="4" height="7" rx="2"/><rect x="18" y="13" width="4" height="7" rx="2"/></svg>
           Live Agent Support
         </a>
 
         <a href="/support?mode=ticket">
-          <span aria-hidden="true">🎫</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v5a2 2 0 0 0 0 4v5H4v-5a2 2 0 0 0 0-4V5Z"/><path d="M12 5v14" stroke-dasharray="2 3"/></svg>
           Create Support Ticket
         </a>
 
@@ -145,8 +140,16 @@
           Affiliate Program
         </div>
 
+
+        <button type="button" class="dd-menu-theme-control" data-dd-global-theme="1" role="switch" aria-checked="false" aria-label="Light Mode">
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5Z"/></svg>
+          <span class="dd-menu-theme-label">Light Mode</span>
+          <span class="dd-menu-switch-state">OFF</span>
+          <span class="dd-menu-switch-track" aria-hidden="true"><span class="dd-menu-switch-thumb"></span></span>
+        </button>
+
         <a href="/partner">
-          <span aria-hidden="true">🤝</span>
+          <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"/></svg>
           Affiliate Sign In
         </a>
 
@@ -162,15 +165,49 @@
       const style = document.createElement('style');
       style.id = 'dd-menu-actions-style';
       style.textContent = `
+        .dd-menu-panel .dd-menu-links > a,
         .dd-menu-panel .dd-menu-theme-control {
-          display:flex;align-items:center;gap:12px;width:100%;
-          padding:12px 18px;border:0;background:transparent;
-          color:inherit;text-align:left;font:inherit;cursor:pointer;
+          display:flex;align-items:center;gap:14px;box-sizing:border-box;
+          min-height:48px;width:100%;padding:12px 18px;
+          color:inherit;text-decoration:none;
         }
-        .dd-menu-panel .dd-menu-theme-control:hover {background:rgba(150,150,160,.12)}
-        /* The track-order shortcut is now inside the menu on every screen. */
+        .dd-menu-panel .dd-menu-icon {
+          display:block;flex:0 0 21px;width:21px;height:21px;
+          color:inherit;opacity:.9;
+        }
+        .dd-menu-panel .dd-menu-theme-control {
+          border:0;background:transparent;text-align:left;
+          font:inherit;cursor:pointer;
+        }
+        .dd-menu-panel .dd-menu-theme-control:hover,
+        .dd-menu-panel .dd-menu-links > a:hover {
+          background:rgba(150,150,160,.12);
+        }
+        .dd-menu-panel .dd-menu-theme-control:focus-visible {
+          outline:2px solid #e83b86;outline-offset:-3px;
+        }
+        .dd-menu-panel .dd-menu-theme-label {flex:1;min-width:0}
+        .dd-menu-panel .dd-menu-switch-state {
+          font-size:10px;font-weight:800;letter-spacing:.06em;opacity:.8;
+        }
+        .dd-menu-panel .dd-menu-switch-track {
+          width:42px;height:24px;flex:0 0 42px;
+          border-radius:999px;background:#66606e;
+          display:flex;align-items:center;padding:3px;box-sizing:border-box;
+          transition:background .2s ease;
+        }
+        .dd-menu-panel .dd-menu-switch-thumb {
+          width:18px;height:18px;border-radius:50%;
+          background:white;box-shadow:0 1px 4px #0003;
+          transition:transform .2s ease;
+        }
+        .dd-menu-panel .dd-menu-theme-control[aria-checked="true"] .dd-menu-switch-track {
+          background:#e83b86;
+        }
+        .dd-menu-panel .dd-menu-theme-control[aria-checked="true"] .dd-menu-switch-thumb {
+          transform:translateX(18px);
+        }
         .dd-track-float {display:none!important}
-        /* Theme and wishlist live in the menu rather than crowding the header. */
         header.nav [data-dd-theme-toggle],
         header.nav [data-dd-global-theme],
         header.nav #ddCheckoutTheme,
@@ -193,25 +230,13 @@
     const menuTheme = panel.querySelector('.dd-menu-theme-control');
     function syncMenuTheme() {
       const current = document.documentElement.getAttribute('data-dd-store-theme') || 'dark';
-      const next = current === 'dark' ? 'Light' : 'Dark';
-      panel.querySelector('.dd-menu-theme-label').textContent = next + ' Mode';
-      menuTheme.setAttribute('aria-label', 'Switch to ' + next.toLowerCase() + ' mode');
-      menuTheme.querySelector('span[aria-hidden]').textContent = current === 'dark' ? '☀' : '☾';
+      const isLight = current === 'light';
+      menuTheme.setAttribute('aria-checked', String(isLight));
+      menuTheme.setAttribute('aria-label', 'Light Mode ' + (isLight ? 'on' : 'off'));
+      panel.querySelector('.dd-menu-switch-state').textContent = isLight ? 'ON' : 'OFF';
     }
-    menuTheme.addEventListener('click', function() {
-      const current = document.documentElement.getAttribute('data-dd-store-theme') || 'dark';
-      const next = current === 'dark' ? 'light' : 'dark';
-      try { localStorage.setItem('dd_store_theme_v1', next); } catch(e) {}
-      if (window.DDTheme && typeof window.DDTheme.apply === 'function') {
-        window.DDTheme.apply(next);
-      } else {
-        document.documentElement.setAttribute('data-dd-store-theme', next);
-        document.querySelectorAll('[data-dd-theme-toggle]').forEach(function(b) {
-          b.textContent = next === 'dark' ? '☀ Light' : '☾ Dark';
-        });
-      }
-      syncMenuTheme();
-    });
+    // The existing dd-unified-theme.js handles [data-dd-global-theme] clicks,
+    // localStorage persistence, and theme-specific logos. Do not toggle twice.
     syncMenuTheme();
     new MutationObserver(syncMenuTheme).observe(document.documentElement, {
       attributes:true, attributeFilter:['data-dd-store-theme']
