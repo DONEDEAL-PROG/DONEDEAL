@@ -231,6 +231,64 @@ html[data-dd-theme="light"] .pm-conversation.active strong {
   }
 }
 
+/* FIX: Compact message composer and visible Send button */
+
+.pm-chat,
+.pm-thread,
+.pm-reply {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.pm-reply {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: end;
+  gap: 10px;
+  padding: 12px 14px;
+  width: 100%;
+}
+
+.pm-reply textarea {
+  display: block;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: 44px;
+  min-height: 44px;
+  max-height: 110px;
+  padding: 11px 12px;
+  margin: 0;
+  resize: vertical;
+  box-sizing: border-box;
+  font: inherit;
+}
+
+.pm-reply button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: auto !important;
+  min-width: 82px;
+  height: 44px;
+  margin: 0;
+  padding: 0 16px;
+  white-space: nowrap;
+  flex: none;
+}
+
+@media (max-width: 850px) {
+  .pm-reply {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .pm-reply button {
+    width: auto !important;
+  }
+}
+
 </style>
 </head>
 <body>
