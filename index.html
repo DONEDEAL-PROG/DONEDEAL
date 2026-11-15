@@ -371,6 +371,25 @@ html[data-dd-store-theme="light"] .nav img.ddBrandMark{
   content:url("done-deal-mark-light.png")!important;
   filter:drop-shadow(0 2px 3px rgba(71,38,59,.13))!important;
 }
+</style><style id="dd-brand-bar-theme-fix">
+/* Light mode only: preserve the existing brand artwork, layout and dimensions. */
+html[data-dd-store-theme="light"] .brandBar {
+  background: #ffffff !important;
+  border-top-color: #e5e5e8 !important;
+  border-bottom-color: #e5e5e8 !important;
+}
+html[data-dd-store-theme="light"] .brandBar .brandTile {
+  background: transparent !important;
+  color: #29252c !important;
+  border-right-color: #e5e5e8 !important;
+  border-bottom-color: #e5e5e8 !important;
+}
+html[data-dd-store-theme="light"] .brandBar .brandTile:hover {
+  background: #faf7f9 !important;
+}
+html[data-dd-store-theme="light"] .brandBar .brandApple {
+  filter: brightness(0) !important;
+}
 </style></head><body data-dd-recent="yes"><div class="top">PREMIUM SMARTPHONE COLLECTION • 35 CURATED MODELS</div><header class="nav"><a aria-label="Done Deal homepage" class="logoLink" href="index.html"><div class="logo"><img alt="Done Deal emblem" class="ddBrandMark" src="done-deal-mark.png"/> DONE DEAL<span> GADGETS &amp; SUPPLIES.</span></div></a><nav class="navlinks"><a data-nav="home" href="#home">Home</a><a data-nav="shop" href="#shop">Shop Phones</a><a data-nav="about" href="#about">About</a></nav><button onclick="openCart()">Cart <span id="cartCount">(0)</span></button></header><main id="home"><section class="hero"><div class="heroInner"><div aria-label="Promotional model holding a silver smartphone" class="heroPhoto" role="img"></div><div class="heroCopy"><div class="eyebrow">EXPLORE THE APPLE COLLECTION <span class="eyebrowLine"></span></div><h1><img alt="Apple" class="appleLogo heroApple" onerror="this.style.display='none'" src="apple-logo.svg"/> Explore Apple iPhones</h1><h2>Discover more. <em>A new level ahead.</em></h2><p>Explore the next generation of premium smartphones, advanced cameras and powerful performance at Done Deal Phone &amp; Gadgets.</p><div class="heroFeatures"><span><b>◎</b> Pro Camera<br/>System</span><span><b>▣</b> Next-Gen<br/>Performance</span><span><b>▤</b> All-Day<br/>Battery Life</span></div><button class="btn" onclick="selectBrand('Apple')">Shop Apple Phones →</button><p class="heroFine">Concept promotional image · Confirm model specifications and availability before purchase</p></div><div aria-label="Silver concept smartphone product close-up" class="heroProduct" role="img"></div></div></section><div aria-label="Shop by brand" class="brandBar"><button class="brandTile apple" onclick="selectBrand('Apple')"><img alt="" class="appleLogo brandApple" onerror="this.style.display='none'" src="apple-logo.svg"/> Apple</button><button class="brandTile samsung" onclick="selectBrand('Samsung')"><span class="samsungWord">SAMSUNG</span></button><button class="brandTile huawei" onclick="selectBrand('Huawei')"><img alt="" class="brandIcon huaweiIcon" src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/huawei.svg"/> HUAWEI</button><button class="brandTile xiaomi" onclick="selectBrand('Xiaomi')"><span class="miMark">mi</span> Xiaomi</button><button class="brandTile oppo" onclick="selectBrand('OPPO')">oppo</button><button class="brandTile vivo" onclick="selectBrand('vivo')">vivo</button></div>
 <section class="dd-story" id="dd-story" aria-label="The DONEDEAL story">
  <div class="dd-story-intro"><span class="dd-story-kicker">THE DONEDEAL STORY</span><h2>Beyond the Device.</h2><p>Innovation. Connection. Possibility.</p></div>
