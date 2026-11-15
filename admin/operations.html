@@ -60,13 +60,27 @@ html[data-dd-theme=dark] .dd-order-product{background:#342b36;border-color:#4b3c
 html[data-dd-theme=dark] .dd-detail-value,html[data-dd-theme=dark] .dd-product-identity strong,html[data-dd-theme=dark] .dd-order-total{color:#f8edf5}
 @media(max-width:700px){.orderDetails .dd-order-layout{grid-template-columns:1fr}.dd-order-product{flex-wrap:wrap}.dd-product-amount{text-align:left}}
 </style>
-<style>.dd-inventory-shortcut{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-left:4px solid #b03b7b!important}.dd-inventory-shortcut h2{margin:0 0 6px}.dd-inventory-shortcut p{margin:0}.dd-inventory-link{display:inline-block;background:#a63871;color:white!important;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:750}</style></head><body>
+<style>.dd-inventory-shortcut{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-left:4px solid #b03b7b!important}.dd-inventory-shortcut h2{margin:0 0 6px}.dd-inventory-shortcut p{margin:0}.dd-inventory-link{display:inline-block;background:#a63871;color:white!important;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:750}</style><style id="dd-home-polish">
+.dd-legacy-tabs,.dd-inventory-shortcut{display:none!important}
+#dashboardHome[hidden],#manageGadgets[hidden]{display:none!important}
+.dd-home-intro{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:8px 0 22px}
+.dd-home-intro h2{font-size:clamp(24px,3vw,32px);letter-spacing:-.04em;margin:4px 0}
+.dd-home-intro p{margin:0}
+.dd-eyebrow{color:#a83276;font-size:11px;font-weight:800;letter-spacing:.15em}
+.dd-home-status{border:1px solid var(--shell-line,#e8e3ea);padding:9px 14px;border-radius:99px;color:var(--shell-muted,#756d7a);font-size:12px;white-space:nowrap}
+#dashboardHome #stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+#dashboardHome #stats .tile{min-height:132px;padding:22px;border-radius:16px}
+#dashboardHome #stats .tile h2{font-size:32px;margin:8px 0 0}
+.dd-home-help{margin-top:22px;padding:18px 20px;border:1px solid var(--shell-line,#e8e3ea);border-radius:14px;color:var(--shell-muted,#756d7a);background:var(--shell-card,#fff)}
+@media(max-width:950px){#dashboardHome #stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.dd-home-intro{align-items:flex-start;flex-direction:column}#dashboardHome #stats .tile{padding:16px;min-height:110px}}
+</style></head><body>
 <header><div class="row space"><div><h1>DONE DEAL <span class="pink">/ CONTROL CENTER</span></h1><small>Add gadgets • manage orders • Warm Light admin</small></div><a href="/admin/">← Product Manager</a></div></header>
 <main>
 <section id="login" class="panel" style="max-width:420px;margin:50px auto"><h2>Admin sign in</h2><form id="loginForm"><div class="field"><label>Password</label><input type="password" id="password" autocomplete="current-password" required></div><button>Sign In</button></form><p id="loginMsg"></p></section>
-<div id="app" class="hide"><section class="panel dd-inventory-shortcut" aria-label="Inventory shortcut"><div><h2>📱 Manage Gadgets</h2><p>View gadgets, update prices, manage stock, and edit storage variants.</p></div><a href="/admin/" class="dd-inventory-link">Open Product Management →</a></section>
-<div class="grid" id="stats"></div>
-<nav><button class="tab active" data-tab="gadgets">＋ Add Gadget</button><button class="tab secondary" data-tab="orders">▤ Orders</button></nav>
+<div id="app" class="hide"><section class="panel dd-inventory-shortcut" style="display:none" aria-label="Inventory shortcut"><div><h2>📱 Manage Gadgets</h2><p>View gadgets, update prices, manage stock, and edit storage variants.</p></div><a href="/admin/" class="dd-inventory-link">Open Product Management →</a></section>
+<section id="dashboardHome"><div class="dd-home-intro"><div><span class="dd-eyebrow">OVERVIEW</span><h2>Dashboard overview</h2><p>Track orders and store activity at a glance.</p></div><span class="dd-home-status">Store overview</span></div><div class="grid" id="stats"></div><div class="dd-home-help">Use the sidebar to manage products, add gadgets, and view orders.</div></section>
+<nav class="dd-legacy-tabs" hidden><button class="tab active" data-tab="gadgets">＋ Add Gadget</button><button class="tab secondary" data-tab="orders">▤ Orders</button></nav>
 <section id="gadgets" class="panel"><h2>New gadget</h2><p>Create a new model with independent storage, color, prices and stock. New models appear on the storefront after saving.</p>
 <div class="row"><div class="field"><label>Brand</label><input id="brand" maxlength="40" placeholder="e.g. Apple or new brand"></div><div class="field"><label>Model</label><input id="model" maxlength="100" placeholder="e.g. Phone Model"></div></div>
 <div class="field"><label>Description</label><textarea id="description" rows="3" maxlength="1200" placeholder="Describe the gadget"></textarea></div>
@@ -277,5 +291,24 @@ for(const btn of document.querySelectorAll('.tab'))btn.onclick=()=>{document.que
 async function start(){try{await loadCatalog();$('login').classList.add('hide');$('app').classList.remove('hide');await loadOrders()}catch(e){$('loginMsg').textContent='Sign in to continue. '+e.message}}
 $('loginForm').onsubmit=async e=>{e.preventDefault();try{await post('/api/admin/login',{password:$('password').value});$('password').value='';await start()}catch(e){$('loginMsg').textContent=e.message}};
 start();
+</script><script>
+(function(){
+function view(){
+ const hash=location.hash.toLowerCase();
+ const mode=hash==='#orders'||hash==='#shipping'?'orders':hash==='#gadgets'?'gadgets':'dashboard';
+ const home=document.getElementById('dashboardHome');
+ const gadgets=document.getElementById('gadgets');
+ const orders=document.getElementById('orders');
+ const manage=document.getElementById('manageGadgets');
+ if(home)home.hidden=mode!=='dashboard';
+ if(gadgets)gadgets.classList.toggle('hide',mode!=='gadgets');
+ if(manage)manage.hidden=mode!=='gadgets';
+ if(orders)orders.classList.toggle('hide',mode!=='orders');
+ document.body.dataset.ddView=mode;
+}
+window.addEventListener('hashchange',view);
+document.addEventListener('DOMContentLoaded',view);
+view();
+})();
 </script><script src="/admin/dd-shell.js"></script>
 </body></html>

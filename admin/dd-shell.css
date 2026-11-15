@@ -72,3 +72,39 @@ html[data-dd-theme="dark"] body .editor,
 html[data-dd-theme="dark"] body .photoArea{border-color:#4a3e4e!important}
 html[data-dd-theme="dark"] body .brandHeading,
 html[data-dd-theme="dark"] body .dd-selected-brand{color:#ff91c8!important}
+
+/* Premium admin navigation — consistent vector icons, readable hierarchy */
+.dd-sidebar{width:264px;background:#211d27;color:#f8f3f8;border-right:1px solid #382d3d;box-shadow:4px 0 22px #130d180b}
+body>header,body>main{margin-left:264px!important}
+.dd-brand{display:flex;align-items:center;gap:12px;padding:23px 17px 20px;border-bottom:1px solid #39313e;font-size:16px;letter-spacing:-.02em}
+.dd-brand-mark{width:42px;height:42px;flex:none;display:grid;place-items:center;border-radius:12px;background:linear-gradient(140deg,#f07caf,#aa2c70);color:white;font-weight:900;letter-spacing:-.08em;font-size:18px}
+.dd-brand-copy{min-width:0}
+.dd-brand-copy small{display:block;color:#b9a7b9;font-size:9px;letter-spacing:.13em;margin-top:3px}
+.dd-nav{padding:14px 10px;scrollbar-width:thin;scrollbar-color:#5a475e transparent}
+.dd-group{margin:18px 12px 8px;font-size:10px;letter-spacing:.15em;color:#aa9aab}
+.dd-link{min-height:43px;display:flex;gap:12px;padding:10px 12px;margin:3px 0;border-radius:10px;font-size:13px;line-height:1.3;font-weight:600;color:#e6dfe9!important;transition:background .15s,color .15s}
+.dd-link:hover{background:#342a39;color:#fff!important}
+.dd-link.dd-active{background:#4b2a40;color:#ffacd3!important;box-shadow:inset 3px 0 #ed6aa6}
+.dd-icon{display:grid;place-items:center;width:21px;height:21px;flex:none;color:#c6b8cb}
+.dd-icon svg{display:block;width:19px;height:19px}
+.dd-active .dd-icon{color:#ff9ccc}
+.dd-footer{padding:12px 10px 16px;background:#211d27;border-top:1px solid #39313e;display:grid;gap:7px}
+.dd-theme{display:flex;align-items:center;gap:12px;min-height:42px;padding:10px 12px!important;border:1px solid #504052!important;border-radius:10px!important;background:#332a38!important;color:#f7eef7!important;font-size:12px!important;font-weight:650!important;cursor:pointer}
+.dd-theme:hover{background:#443249!important}
+.dd-theme .dd-icon{color:#e5c9df}
+.dd-menu-toggle{align-items:center;gap:7px;padding:9px 12px!important;border-radius:10px!important}
+.dd-menu-toggle svg{width:19px;height:19px}
+@media(min-width:801px){
+body.dd-collapsed .dd-sidebar{width:76px}
+body.dd-collapsed>header,body.dd-collapsed>main{margin-left:76px!important}
+body.dd-collapsed .dd-label,body.dd-collapsed .dd-group,body.dd-collapsed .dd-brand-copy{display:none}
+body.dd-collapsed .dd-brand{justify-content:center;padding:20px 6px}
+body.dd-collapsed .dd-link,body.dd-collapsed .dd-theme{justify-content:center;padding:11px!important}
+body.dd-collapsed .dd-nav{padding:14px 9px}
+}
+@media(max-width:800px){
+.dd-sidebar{width:min(290px,86vw)}
+body>header,body>main{margin-left:0!important}
+.dd-menu-toggle{display:inline-flex}
+}
+@media(prefers-reduced-motion:reduce){.dd-sidebar,.dd-link{transition:none}}
