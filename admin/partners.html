@@ -75,6 +75,162 @@ body>main{padding:14px}
 .pm-reply{flex-wrap:wrap}
 .pm-reply button{width:100%}
 }
+  
+/* Partner Management — layout and theme fixes */
+
+html, body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body > main {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 1380px;
+}
+
+.pm-view,
+.pm-chat,
+.pm-thread,
+.pm-chat-list,
+.pm-entries,
+.pm-entries .entry {
+  min-width: 0;
+}
+
+.pm-chat {
+  width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+}
+
+.pm-reply {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.pm-reply textarea {
+  width: 100%;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.pm-reply button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.pm-entries .entry {
+  overflow-wrap: anywhere;
+}
+
+.pm-controls {
+  max-width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+/* Light mode */
+html[data-dd-theme="light"] {
+  --pm-surface: #ffffff;
+  --pm-surface-soft: #f7f4f8;
+  --pm-text: #28212e;
+  --pm-muted: #716a79;
+  --pm-border: #e8dfe9;
+}
+
+html[data-dd-theme="light"] .pm-box,
+html[data-dd-theme="light"] .pm-stat,
+html[data-dd-theme="light"] .pm-entries .entry,
+html[data-dd-theme="light"] .pm-chat {
+  background: var(--pm-surface);
+  border-color: var(--pm-border);
+  color: var(--pm-text);
+}
+
+html[data-dd-theme="light"] .pm-tab {
+  background: var(--pm-surface);
+  color: var(--pm-text);
+  border-color: var(--pm-border);
+}
+
+html[data-dd-theme="light"] .pm-tab.active {
+  background: #fce8f2;
+  color: #98285e;
+  border-color: #ec72ac;
+}
+
+html[data-dd-theme="light"] .pm-chat-list,
+html[data-dd-theme="light"] .pm-thread-header,
+html[data-dd-theme="light"] .pm-reply,
+html[data-dd-theme="light"] .pm-chat-search {
+  border-color: var(--pm-border);
+}
+
+html[data-dd-theme="light"] .pm-conversation {
+  color: var(--pm-text);
+  border-color: var(--pm-border);
+}
+
+html[data-dd-theme="light"] .pm-conversation:hover,
+html[data-dd-theme="light"] .pm-conversation.active {
+  background: #fce8f2;
+}
+
+html[data-dd-theme="light"] .pm-conversation-info small,
+html[data-dd-theme="light"] .pm-muted,
+html[data-dd-theme="light"] .pm-stat span {
+  color: var(--pm-muted);
+}
+
+html[data-dd-theme="light"] .pm-chat-search input,
+html[data-dd-theme="light"] .pm-reply textarea {
+  background: #ffffff;
+  color: var(--pm-text);
+  border-color: #d8cfdd;
+}
+
+html[data-dd-theme="light"] .pm-bubble.partner {
+  background: #f1edf3;
+  color: var(--pm-text);
+}
+
+html[data-dd-theme="light"] .pm-bubble.partner small {
+  color: #716a79;
+}
+
+html[data-dd-theme="light"] .pm-bubble.admin {
+  background: #b6387b;
+  color: #ffffff;
+}
+
+html[data-dd-theme="light"] .pm-bubble.admin small {
+  color: #ffe2f0;
+}
+
+html[data-dd-theme="light"] .pm-thread-header strong,
+html[data-dd-theme="light"] .pm-entries strong {
+  color: var(--pm-text);
+}
+
+html[data-dd-theme="light"] .pm-conversation.active strong {
+  color: #98285e;
+}
+
+@media (max-width: 850px) {
+  .pm-chat {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pm-reply {
+    flex-wrap: wrap;
+  }
+
+  .pm-reply button {
+    max-width: 100%;
+  }
+}
+
 </style>
 </head>
 <body>
