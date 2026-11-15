@@ -1,69 +1,338 @@
-const $=id=>document.getElementById(id),money=n=>'₱'+(Number(n||0)/100).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
-const msg=s=>{$('notice').textContent=s};
-async function api(url,body){const r=await fetch(url,{method:body?'POST':'GET',credentials:'same-origin',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined});const d=await r.json();if(!r.ok)throw Error(d.error||'Request failed');return d}
-function node(tag,txt,cls){const el=document.createElement(tag);if(txt!=null)el.textContent=txt;if(cls)el.className=cls;return el}
-function button(label,fn){const b=node('button',label);b.onclick=async()=>{b.disabled=true;msg('');try{await fn();await load();msg('Saved')}catch(e){msg(e.message)}finally{b.disabled=false}};return b}
-function select(options,value){const s=document.createElement('select');for(const x of options){const o=new Option(x,x);s.add(o)}s.value=value;return s}
-async function load(){
- let d;try{d=await api('/api/admin/partners')}catch(e){msg(e.message);return}
- $('signin').hidden=true;$('content').hidden=false;
- for(const id of ['partners','orders','payouts'])$(id).replaceChildren();
- for(const p of d.partners){
-  const row=node('div',null,'entry'),info=node('div'),controls=node('div',null,'controls'),rate=document.createElement('input'),status=select(['pending','approved','rejected','suspended'],p.status);
-  info.append(node('strong',p.name),node('small',p.email),node('small',p.social_url||'No social link'),node('small','Referral: '+p.referral_code));
-  rate.type='number';rate.min=0;rate.max=100;rate.step=.01;rate.value=(p.commission_bps/100).toFixed(2);rate.title='Commission %';
-  controls.append(node('small','Commission %'),rate,status,button('Save',async()=>{const bps=Math.round(Number(rate.value)*100);await api('/api/admin/partners',{action:'partner',id:p.id,status:status.value,commission_bps:bps})}));
-  row.append(info,controls);$('partners').append(row);
- }
- for(const o of d.orders){
-  const row=node('div',null,'entry'),info=node('div'),controls=node('div',null,'controls');
-  info.append(node('strong',o.name+' · '+o.order_id),node('small','Order '+money(o.total_centavos)+' · Commission '+money(o.commission_centavos)),node('small','Payment: '+(o.payment_status||'unknown')+' · '+(o.paid_at?'Paid at '+o.paid_at:'Not yet paid')));
-  controls.append(node('span',o.status,'tag'));
-  if(o.status==='pending'){
-   controls.append(button('Approve',()=>api('/api/admin/partners',{action:'commission',id:o.order_id,status:'approved'})),button('Void',()=>api('/api/admin/partners',{action:'commission',id:o.order_id,status:'void'})));
-  }
-  row.append(info,controls);$('orders').append(row);
- }
- for(const p of d.payouts){
-  const row=node('div',null,'entry'),info=node('div'),controls=node('div',null,'controls');
-  info.append(node('strong',p.name+' · '+money(p.amount_centavos)),node('small',p.method+' · '+p.account),node('small','Requested '+p.created_at),node('small',p.note||''));
-  controls.append(node('span',p.status,'tag'));
-  if(p.status==='requested')controls.append(button('Approve',()=>api('/api/admin/partners',{action:'payout',id:p.id,status:'approved'})),button('Reject',()=>api('/api/admin/partners',{action:'payout',id:p.id,status:'rejected'})));
-  if(p.status==='approved')controls.append(button('Mark paid',async()=>{const note=prompt('Enter actual transfer reference (required):');if(!note)return;await api('/api/admin/partners',{action:'payout',id:p.id,status:'paid',note})}));
-  row.append(info,controls);$('payouts').append(row);
- }
- for(const id of ['partners','orders','payouts'])if(!$(id).children.length)$(id).textContent='No records yet.';
- await loadConversations();
-}
-$('login').onsubmit=async e=>{e.preventDefault();try{await api('/api/admin/login',{password:new FormData(e.target).get('password')});await load()}catch(err){msg(err.message)}};
-load();
 
-let activePartnerId=null;
-async function loadConversations(){
- try{
- const d=await api('/api/admin/partner-messages');const el=$('conversations');el.replaceChildren();
- if(!d.conversations.length){el.textContent='No partner messages yet.';return}
- for(const c of d.conversations){
- const row=node('div',null,'entry'),info=node('div');
- info.append(node('strong',c.name),node('small',c.email),node('small',c.message_count+' messages · Last: '+c.last_message));
- const b=node('button','Open conversation');b.onclick=()=>openConversation(c.id);
- row.append(info,b);el.append(row);
- }
- }catch(e){$('conversations').textContent=e.message}
+import { allowed, originOK, reply, validText } from './_auth.js';
+
+const partnerStatuses = [
+  'pending',
+  'approved',
+  'rejected',
+  'suspended'
+];
+
+function serverError(error) {
+  console.error('Partner management API:', error);
+
+  return reply({
+    error: 'Partner management database error. Check Cloudflare Pages Functions logs.'
+  }, 500);
 }
-async function openConversation(id){
- try{
- activePartnerId=id;const d=await api('/api/admin/partner-messages?partner_id='+encodeURIComponent(id));
- $('admin-thread-wrap').hidden=false;$('admin-thread-title').textContent='Conversation with '+d.partner.name;
- const el=$('admin-thread');el.replaceChildren();
- if(!d.messages.length)el.textContent='No messages yet.';
- for(const m of d.messages){const row=node('div',null,'entry'),info=node('div');info.append(node('strong',m.sender==='admin'?'DONEDEAL Admin':'Partner'),node('small',m.created_at),node('p',m.body));info.style.whiteSpace='pre-wrap';info.style.overflowWrap='anywhere';row.append(info);el.append(row)}
- $('admin-thread-wrap').scrollIntoView({behavior:'smooth',block:'nearest'});
- }catch(e){msg(e.message)}
+
+export async function onRequestGet({ request, env }) {
+  if (!(await allowed(request, env))) {
+    return reply({ error: 'Unauthorized' }, 401);
+  }
+
+  if (!env.DB) {
+    return reply({ error: 'D1 database binding missing' }, 503);
+  }
+
+  try {
+    const [partners, orders, payouts] = await Promise.all([
+      env.DB.prepare(`
+        SELECT
+          id,
+          name,
+          email,
+          social_url,
+          status,
+          referral_code,
+          commission_bps,
+          created_at
+        FROM dd_affiliates
+        ORDER BY created_at DESC
+        LIMIT 300
+      `).all(),
+
+      env.DB.prepare(`
+        SELECT
+          ao.order_id,
+          ao.affiliate_id,
+          ao.commission_bps,
+          ao.commission_centavos,
+          ao.status,
+          ao.created_at,
+          a.name,
+          o.total_centavos,
+          o.paid_at,
+          m.payment_status
+        FROM dd_affiliate_orders AS ao
+        JOIN dd_affiliates AS a
+          ON a.id = ao.affiliate_id
+        JOIN store_orders AS o
+          ON o.id = ao.order_id
+        LEFT JOIN store_order_meta AS m
+          ON m.order_id = o.id
+        ORDER BY ao.created_at DESC
+        LIMIT 300
+      `).all(),
+
+      env.DB.prepare(`
+        SELECT
+          p.id,
+          p.affiliate_id,
+          p.amount_centavos,
+          p.status,
+          p.method,
+          p.account,
+          p.created_at,
+          p.note,
+          a.name
+        FROM dd_affiliate_payouts AS p
+        JOIN dd_affiliates AS a
+          ON a.id = p.affiliate_id
+        ORDER BY p.created_at DESC
+        LIMIT 300
+      `).all()
+    ]);
+
+    return reply({
+      partners: partners.results || [],
+      orders: orders.results || [],
+      payouts: payouts.results || []
+    });
+  } catch (error) {
+    return serverError(error);
+  }
 }
-$('admin-reply').onsubmit=async e=>{
- e.preventDefault();if(!activePartnerId)return;
- const btn=e.target.querySelector('button');btn.disabled=true;
- try{await api('/api/admin/partner-messages',{partner_id:activePartnerId,message:new FormData(e.target).get('message')});e.target.reset();await openConversation(activePartnerId);await loadConversations();msg('Reply sent')}
- catch(err){msg(err.message)}finally{btn.disabled=false}
-};
+
+export async function onRequestPost({ request, env }) {
+  if (!(await allowed(request, env))) {
+    return reply({ error: 'Unauthorized' }, 401);
+  }
+
+  if (!originOK(request)) {
+    return reply({ error: 'Invalid request origin' }, 403);
+  }
+
+  if (!env.DB) {
+    return reply({ error: 'D1 database binding missing' }, 503);
+  }
+
+  let body;
+
+  try {
+    body = await request.json();
+  } catch {
+    return reply({ error: 'Invalid JSON request' }, 400);
+  }
+
+  if (
+    !body ||
+    typeof body !== 'object' ||
+    !validText(body.id, 100)
+  ) {
+    return reply({ error: 'Invalid request ID' }, 400);
+  }
+
+  try {
+    // Partner approval and commission rate
+    if (body.action === 'partner') {
+      if (
+        !partnerStatuses.includes(body.status) ||
+        !Number.isInteger(body.commission_bps) ||
+        body.commission_bps < 0 ||
+        body.commission_bps > 10000
+      ) {
+        return reply({
+          error: 'Invalid partner status or commission rate'
+        }, 400);
+      }
+
+      const result = await env.DB.prepare(`
+        UPDATE dd_affiliates
+        SET
+          status = ?,
+          commission_bps = ?,
+          approved_at = CASE
+            WHEN ? = 'approved'
+              THEN COALESCE(approved_at, CURRENT_TIMESTAMP)
+            ELSE approved_at
+          END
+        WHERE id = ?
+      `)
+        .bind(
+          body.status,
+          body.commission_bps,
+          body.status,
+          body.id
+        )
+        .run();
+
+      if (!result.meta.changes) {
+        return reply({ error: 'Partner not found' }, 404);
+      }
+
+      return reply({ ok: true });
+    }
+
+    // Commission approval or void
+    if (body.action === 'commission') {
+      if (!['approved', 'void'].includes(body.status)) {
+        return reply({
+          error: 'Invalid commission status'
+        }, 400);
+      }
+
+      const order = await env.DB.prepare(`
+        SELECT
+          ao.status,
+          o.status AS order_status,
+          o.paid_at,
+          m.payment_status
+        FROM dd_affiliate_orders AS ao
+        JOIN store_orders AS o
+          ON o.id = ao.order_id
+        LEFT JOIN store_order_meta AS m
+          ON m.order_id = o.id
+        WHERE ao.order_id = ?
+      `)
+        .bind(body.id)
+        .first();
+
+      if (!order) {
+        return reply({ error: 'Commission not found' }, 404);
+      }
+
+      if (order.status !== 'pending') {
+        return reply({
+          error: 'Only pending commissions can be changed'
+        }, 409);
+      }
+
+      if (body.status === 'approved') {
+        const cancelled = [
+          'cancelled',
+          'canceled'
+        ].includes(order.order_status);
+
+        const unpaid =
+          (!order.paid_at &&
+            order.payment_status !== 'paid') ||
+          (order.payment_status &&
+            order.payment_status !== 'paid');
+
+        if (cancelled || unpaid) {
+          return reply({
+            error: 'Order must be paid and not cancelled before commission approval'
+          }, 409);
+        }
+      }
+
+      const result = await env.DB.prepare(`
+        UPDATE dd_affiliate_orders
+        SET
+          status = ?,
+          approved_at = CASE
+            WHEN ? = 'approved'
+              THEN CURRENT_TIMESTAMP
+            ELSE approved_at
+          END
+        WHERE order_id = ?
+          AND status = 'pending'
+      `)
+        .bind(body.status, body.status, body.id)
+        .run();
+
+      if (!result.meta.changes) {
+        return reply({
+          error: 'Commission already updated. Refresh the page.'
+        }, 409);
+      }
+
+      return reply({ ok: true });
+    }
+
+    // Payout approval, rejection and payment
+    if (body.action === 'payout') {
+      if (
+        !['approved', 'rejected', 'paid'].includes(body.status)
+      ) {
+        return reply({
+          error: 'Invalid payout status'
+        }, 400);
+      }
+
+      const payout = await env.DB.prepare(`
+        SELECT status
+        FROM dd_affiliate_payouts
+        WHERE id = ?
+      `)
+        .bind(body.id)
+        .first();
+
+      if (!payout) {
+        return reply({ error: 'Payout not found' }, 404);
+      }
+
+      const expectedStatus =
+        body.status === 'paid' ? 'approved' : 'requested';
+
+      if (payout.status !== expectedStatus) {
+        return reply({
+          error: 'Invalid payout status transition'
+        }, 409);
+      }
+
+      if (body.status === 'paid') {
+        if (!validText(body.note, 500)) {
+          return reply({
+            error: 'Transfer reference is required'
+          }, 400);
+        }
+
+        await env.DB.batch([
+          env.DB.prepare(`
+            UPDATE dd_affiliate_payouts
+            SET
+              status = 'paid',
+              note = ?
+            WHERE id = ?
+              AND status = 'approved'
+          `).bind(body.note.trim(), body.id),
+
+          env.DB.prepare(`
+            UPDATE dd_affiliate_orders
+            SET status = 'paid'
+            WHERE status = 'approved'
+              AND order_id IN (
+                SELECT order_id
+                FROM dd_affiliate_payout_orders
+                WHERE payout_id = ?
+              )
+          `).bind(body.id)
+        ]);
+
+        return reply({ ok: true });
+      }
+
+      const result = await env.DB.prepare(`
+        UPDATE dd_affiliate_payouts
+        SET status = ?
+        WHERE id = ?
+          AND status = 'requested'
+      `)
+        .bind(body.status, body.id)
+        .run();
+
+      if (!result.meta.changes) {
+        return reply({
+          error: 'Payout already updated. Refresh the page.'
+        }, 409);
+      }
+
+      if (body.status === 'rejected') {
+        await env.DB.prepare(`
+          DELETE FROM dd_affiliate_payout_orders
+          WHERE payout_id = ?
+        `)
+          .bind(body.id)
+          .run();
+      }
+
+      return reply({ ok: true });
+    }
+
+    return reply({ error: 'Unknown action' }, 400);
+  } catch (error) {
+    return serverError(error);
+  }
+}
