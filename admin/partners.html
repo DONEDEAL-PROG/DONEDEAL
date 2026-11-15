@@ -1,1 +1,178 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>DONEDEAL | Partner Management</title><link rel="stylesheet" href="/partner.css"><link rel="stylesheet" href="/admin/dd-shell.css"><style>body>main{max-width:none}.intro{max-width:1150px}.entries{max-width:1300px}.entry{flex-wrap:wrap}.entry{align-items:center}.entry>div{min-width:170px;flex:1}select,input{max-width:220px}.entry button{padding:10px 13px}.entry small{display:block}.entry .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.panel{overflow:auto}h2{margin:30px 0 18px}</style></head><body><header><a class="brand" href="/admin/index.html">DONE<span>DEAL</span></a><span>PARTNER MANAGEMENT</span><a href="/admin/index.html">← Admin</a></header><main><div class="intro"><div class="eyebrow">AFFILIATE OPERATIONS</div><h1>Partner management.</h1><p>Approve partners, set custom rates, review paid orders and process payouts.</p></div><div id="notice" role="status"></div><section class="panel" id="signin"><h2>Admin sign in</h2><form id="login"><label>Admin password<input name="password" type="password" required></label><button>Sign in</button></form></section><section id="content" hidden><h2>Partner messages</h2><p>Read and reply to private messages from your affiliate partners.</p><div class="panel"><div id="conversations" class="entries"></div><div id="admin-thread-wrap" hidden><h3 id="admin-thread-title">Conversation</h3><div id="admin-thread" class="entries"></div><form id="admin-reply"><label>Reply to partner<textarea name="message" maxlength="2000" required rows="3" style="width:100%;max-width:100%;background:#0f0d13;color:#fff;border:1px solid #ffffff2a;border-radius:10px;padding:12px"></textarea></label><button>Send reply</button></form></div></div><h2>Affiliate applications & accounts</h2><div id="partners" class="entries"></div><h2>Referral commissions</h2><p>Only confirm commissions after the order payment is verified. Pending orders cannot be approved.</p><div id="orders" class="entries"></div><h2>Payout requests</h2><p>Pay approved requests externally, then mark as paid with your transaction reference.</p><div id="payouts" class="entries"></div></section></main><script src="/admin/dd-shell.js"></script><script src="/admin/partners.js" defer></script></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>DONEDEAL | Partner Management</title>
+<link rel="stylesheet" href="/partner.css">
+<link rel="stylesheet" href="/admin/dd-shell.css">
+<style>
+:root{--pink:#ff5baf;--line:#ffffff1b;--muted:#aaa4b3}
+body>main{max-width:1380px;width:100%;margin:auto;padding:24px}
+[hidden]{display:none!important}
+.pm-intro{margin:0 0 24px}
+.pm-intro h1{margin:6px 0}
+.pm-muted{color:var(--muted);font-size:13px}
+.pm-tabs{display:flex;gap:9px;flex-wrap:wrap;margin:22px 0}
+.pm-tab{display:inline-flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:13px;padding:12px 16px;background:#211b27;color:#eee;cursor:pointer}
+.pm-tab.active{background:#51203d;border-color:var(--pink);color:#fff}
+.pm-icon{font-size:19px;line-height:1}
+.pm-count{background:var(--pink);color:#1a0e18;border-radius:999px;min-width:22px;padding:2px 6px;font-size:11px;font-weight:800;text-align:center}
+.pm-view{min-height:280px}
+.pm-view h2{margin:12px 0 18px}
+.pm-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.pm-stat,.pm-box{background:#211b27;border:1px solid var(--line);border-radius:16px;padding:18px}
+.pm-stat strong{display:block;font-size:30px;margin:10px 0 4px}
+.pm-stat span{color:var(--muted);font-size:13px}
+.pm-stat .pm-icon{color:var(--pink)}
+.pm-entries{display:grid;gap:12px}
+.pm-entries .entry{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:#211b27;border:1px solid var(--line);border-radius:14px;padding:16px}
+.pm-entries .entry>div{min-width:160px}
+.pm-entries small{display:block;color:var(--muted);margin-top:6px;overflow-wrap:anywhere}
+.pm-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pm-controls input,.pm-controls select{max-width:155px}
+.pm-empty{padding:22px;color:var(--muted)}
+.pm-chat{display:grid;grid-template-columns:minmax(230px,320px) minmax(0,1fr);min-height:520px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#1c1721}
+.pm-chat-list{border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.pm-chat-search{padding:14px;border-bottom:1px solid var(--line)}
+.pm-chat-search input{width:100%;max-width:none;box-sizing:border-box;background:#100d15;color:white;border:1px solid var(--line);border-radius:12px;padding:12px}
+.pm-conversations{overflow-y:auto;max-height:570px}
+.pm-conversation{display:flex;width:100%;text-align:left;align-items:center;gap:11px;padding:14px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:#fff;cursor:pointer}
+.pm-conversation:hover,.pm-conversation.active{background:#3b2537}
+.pm-avatar{width:40px;height:40px;flex:none;display:grid;place-items:center;background:#62314f;border-radius:50%;font-weight:800;color:#fff}
+.pm-conversation-info{flex:1;min-width:0}
+.pm-conversation-info strong,.pm-conversation-info small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pm-conversation-info small{color:var(--muted);font-size:12px;margin-top:5px}
+.pm-thread{display:flex;flex-direction:column;min-width:0;min-height:520px}
+.pm-thread-header{padding:18px;border-bottom:1px solid var(--line)}
+.pm-thread-header strong{display:block}
+.pm-messages{flex:1;display:flex;flex-direction:column;gap:13px;padding:18px;overflow-y:auto;max-height:450px}
+.pm-bubble{max-width:78%;width:fit-content;padding:12px 15px;border-radius:15px;background:#352b3d;overflow-wrap:anywhere;white-space:pre-wrap}
+.pm-bubble.admin{align-self:flex-end;background:#743456}
+.pm-bubble.partner{align-self:flex-start}
+.pm-bubble p{margin:0 0 6px}
+.pm-bubble small{font-size:11px;color:#e2cedd}
+.pm-reply{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line);align-items:end}
+.pm-reply textarea{flex:1;min-width:0;max-width:none;resize:vertical;background:#100d15;color:white;border:1px solid var(--line);border-radius:12px;padding:12px;box-sizing:border-box}
+.pm-reply button{flex:none}
+#notice:not(:empty){padding:12px;margin:12px 0;border:1px solid var(--line);border-radius:10px}
+@media(max-width:850px){
+.pm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.pm-chat{grid-template-columns:1fr}
+.pm-chat-list{border-right:0;border-bottom:1px solid var(--line)}
+.pm-conversations{max-height:220px}
+.pm-thread{min-height:400px}
+.pm-messages{max-height:360px}
+}
+@media(max-width:480px){
+body>main{padding:14px}
+.pm-tab{padding:10px;font-size:12px}
+.pm-stats{gap:8px}
+.pm-stat{padding:12px}
+.pm-stat strong{font-size:23px}
+.pm-reply{flex-wrap:wrap}
+.pm-reply button{width:100%}
+}
+</style>
+</head>
+<body>
+<header>
+<a class="brand" href="/admin/index.html">DONE<span>DEAL</span></a>
+<span>PARTNER MANAGEMENT</span>
+<a href="/admin/index.html">← Admin</a>
+</header>
+
+<main>
+<div class="pm-intro">
+<div class="eyebrow">AFFILIATE OPERATIONS</div>
+<h1>Partner Management</h1>
+<p class="pm-muted">Manage your partners, commissions, payouts and conversations.</p>
+</div>
+
+<div id="notice" role="status" aria-live="polite"></div>
+
+<section id="signin" class="panel">
+<h2>Admin sign in</h2>
+<form id="login">
+<label>Admin password
+<input type="password" name="password" autocomplete="current-password" required>
+</label>
+<button type="submit">Sign in</button>
+</form>
+</section>
+
+<section id="content" hidden>
+<nav class="pm-tabs" aria-label="Partner management sections">
+<button type="button" class="pm-tab active" data-tab="overview"><span class="pm-icon">▦</span>Overview</button>
+<button type="button" class="pm-tab" data-tab="applications"><span class="pm-icon">♙</span>Applications</button>
+<button type="button" class="pm-tab" data-tab="messages"><span class="pm-icon">✉</span>Messages <span id="message-badge" class="pm-count" hidden>0</span></button>
+<button type="button" class="pm-tab" data-tab="commissions"><span class="pm-icon">%</span>Commissions</button>
+<button type="button" class="pm-tab" data-tab="payouts"><span class="pm-icon">₱</span>Payouts</button>
+</nav>
+
+<section class="pm-view" data-view="overview">
+<h2>Overview</h2>
+<div class="pm-stats">
+<div class="pm-stat"><span class="pm-icon">♙</span><strong id="stat-pending">0</strong><span>Pending applications</span></div>
+<div class="pm-stat"><span class="pm-icon">✓</span><strong id="stat-approved">0</strong><span>Approved partners</span></div>
+<div class="pm-stat"><span class="pm-icon">%</span><strong id="stat-commissions">0</strong><span>Pending commissions</span></div>
+<div class="pm-stat"><span class="pm-icon">₱</span><strong id="stat-payouts">0</strong><span>Payout requests</span></div>
+</div>
+<div class="pm-box" style="margin-top:16px">
+<h3>Messages</h3>
+<p class="pm-muted"><span id="stat-unread">0</span> unread partner messages</p>
+<button type="button" id="go-messages">Open messages</button>
+</div>
+</section>
+
+<section class="pm-view" data-view="applications" hidden>
+<h2>Partner applications & accounts</h2>
+<div id="partners" class="pm-entries"></div>
+</section>
+
+<section class="pm-view" data-view="messages" hidden>
+<h2>Partner Messages</h2>
+<p class="pm-muted">Private conversations with your affiliate partners.</p>
+<div class="pm-chat">
+<div class="pm-chat-list">
+<div class="pm-chat-search">
+<input id="message-search" type="search" placeholder="Search name or email…" aria-label="Search partners">
+</div>
+<div id="conversations" class="pm-conversations"></div>
+</div>
+<div class="pm-thread">
+<div class="pm-thread-header">
+<strong id="admin-thread-title">Select a conversation</strong>
+<small class="pm-muted" id="thread-subtitle">Choose a partner to view messages.</small>
+</div>
+<div id="admin-thread" class="pm-messages">
+<div class="pm-empty">No conversation selected.</div>
+</div>
+<form id="admin-reply" class="pm-reply" hidden>
+<textarea name="message" rows="2" maxlength="2000" placeholder="Write your reply…" required></textarea>
+<button type="submit">Send</button>
+</form>
+</div>
+</div>
+</section>
+
+<section class="pm-view" data-view="commissions" hidden>
+<h2>Referral Commissions</h2>
+<p class="pm-muted">Approve only after verifying payment.</p>
+<div id="orders" class="pm-entries"></div>
+</section>
+
+<section class="pm-view" data-view="payouts" hidden>
+<h2>Payout Requests</h2>
+<p class="pm-muted">Complete transfers externally, then record the transaction reference.</p>
+<div id="payouts" class="pm-entries"></div>
+</section>
+</section>
+</main>
+
+<script src="/admin/dd-shell.js"></script>
+<script src="/admin/partners.js" defer></script>
+</body>
+</html>
