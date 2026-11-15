@@ -2,7 +2,7 @@ import {allowed,originOK,reply} from './_auth.js';
 import {permissions,passwordHash,newSalt,audit} from '../staff/_auth.js';
 const usernameOK=s=>typeof s==='string'&&/^[a-zA-Z0-9._-]{3,40}$/.test(s);
 const nameOK=s=>typeof s==='string'&&s.trim().length>=2&&s.trim().length<=100;
-const passOK=s=>typeof s==='string'&&s.length>=12&&s.length<=256;
+const passOK=s=>typeof s==='string'&&s.length>=8&&s.length<=256;
 const permissionOK=p=>Array.isArray(p)&&p.every(x=>permissions.includes(x))&&new Set(p).size===p.length;
 export async function onRequestGet({request,env}){
  if(!await allowed(request,env))return reply({error:'Unauthorized'},401);
@@ -17,7 +17,7 @@ export async function onRequestPost({request,env}){
  if(!originOK(request))return reply({error:'Invalid origin'},403);
  if(!env.DB)return reply({error:'Database unavailable'},503);
  let b;try{b=await request.json()}catch{return reply({error:'Invalid JSON'},400)}
- if(!usernameOK(b?.username)||!nameOK(b?.display_name)||!passOK(b?.password)||!permissionOK(b?.permissions))return reply({error:'Invalid staff details; password must be at least 12 characters'},400);
+ if(!usernameOK(b?.username)||!nameOK(b?.display_name)||!passOK(b?.password)||!permissionOK(b?.permissions))return reply({error:'Invalid staff details; password must be at least 8 characters'},400);
  try{
  const id=crypto.randomUUID(),salt=newSalt(),hash=await passwordHash(b.password,salt);
  await env.DB.prepare('INSERT INTO dd_support_staff(id,username,display_name,password_salt,password_hash,permissions_json) VALUES(?,?,?,?,?,?)').bind(id,b.username.trim(),b.display_name.trim(),salt,hash,JSON.stringify(b.permissions)).run();
