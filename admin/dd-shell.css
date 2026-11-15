@@ -108,3 +108,101 @@ body>header,body>main{margin-left:0!important}
 .dd-menu-toggle{display:inline-flex}
 }
 @media(prefers-reduced-motion:reduce){.dd-sidebar,.dd-link{transition:none}}
+
+
+/* DONEDEAL Admin Sidebar — Layout Repair */
+
+.dd-sidebar {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  width: 264px;
+  max-width: 264px;
+}
+
+.dd-sidebar .dd-nav {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 18px 12px !important;
+}
+
+.dd-sidebar .dd-nav-section {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin-bottom: 20px;
+}
+
+.dd-sidebar .dd-group {
+  display: block !important;
+  margin: 0 0 9px 10px;
+}
+
+.dd-sidebar .dd-link {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: 12px !important;
+  padding: 12px 13px !important;
+  margin: 2px 0;
+  white-space: normal !important;
+}
+
+.dd-sidebar .dd-icon {
+  display: inline-flex !important;
+  flex: 0 0 19px !important;
+  width: 19px !important;
+  height: 19px !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.dd-sidebar .dd-icon svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+}
+
+.dd-sidebar .dd-label {
+  display: block !important;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+
+.dd-sidebar .dd-footer {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+body:not(.dd-collapsed) .dd-sidebar {
+  width: 264px !important;
+}
+
+body:not(.dd-collapsed) .dd-nav-section {
+  display: block !important;
+}
+
+body.dd-collapsed .dd-sidebar {
+  width: 74px !important;
+}
+
+body.dd-collapsed .dd-sidebar .dd-label,
+body.dd-collapsed .dd-sidebar .dd-group {
+  display: none !important;
+}
+
+body.dd-collapsed .dd-sidebar .dd-link {
+  justify-content: center !important;
+  padding: 12px !important;
+}
+
+body.dd-collapsed .dd-sidebar .dd-icon {
+  flex-basis: 19px !important;
+}
+
