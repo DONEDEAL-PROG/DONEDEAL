@@ -403,6 +403,67 @@
       }
     }
   </style>
+  
+<style>
+/* DONEDEAL Wishlist — Mobile Layout Fix */
+@media (max-width: 767px) {
+
+  /* Keep header elements from overlapping */
+  body > header,
+  header.nav,
+  header .topbar {
+    min-width: 0 !important;
+  }
+
+  header .topbar,
+  header.nav {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  header a,
+  header button {
+    min-width: 0;
+  }
+
+  /* Allow logo and brand text to fit */
+  header img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent oversized header links */
+  header a {
+    overflow-wrap: normal;
+  }
+
+  /* Wishlist content spacing */
+  main {
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  /* Keep the empty wishlist card inside screen */
+  #dd-wishlist-grid,
+  .dd-extra-grid {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Avoid text spilling outside cards */
+  #dd-wishlist-grid *,
+  .dd-extra-grid * {
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  /* Leave space for fixed bottom navigation */
+  body {
+    padding-bottom: calc(95px + env(safe-area-inset-bottom));
+  }
+}
+</style>
+
 </head>
 
 <body>
