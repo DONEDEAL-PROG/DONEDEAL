@@ -1,27 +1,366 @@
+
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="referrer" content="no-referrer"><title>Customer Support | DONEDEAL</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Customer Support | DONEDEAL</title>
 <style>
-:root{font-family:system-ui,-apple-system,sans-serif;color:#192039;background:#f5f6fa}*{box-sizing:border-box}body{margin:0}
-header{background:#121c37;color:#fff;padding:18px max(20px,calc((100vw - 900px)/2));display:flex;align-items:center;justify-content:space-between}
-header a{color:white;text-decoration:none;font-weight:700}main{max-width:750px;margin:35px auto;padding:0 16px}h1{font-size:clamp(25px,5vw,36px);margin-bottom:8px}
-p{line-height:1.55;color:#606a7d}.panel{background:#fff;border:1px solid #e2e5ee;border-radius:18px;padding:24px;box-shadow:0 8px 35px #14223b10;margin-top:20px}
-label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}input,textarea,button{font:inherit}input,textarea{width:100%;padding:13px;border:1px solid #c9cfdb;border-radius:9px}textarea{min-height:110px;resize:vertical}
-button{background:#e72d81;color:#fff;border:0;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer}button:disabled{opacity:.5}
-small{color:#606a7d}#messages{height:360px;overflow:auto;background:#f8f9fc;border-radius:12px;padding:15px;border:1px solid #e2e5ee}
-.bubble{max-width:88%;padding:11px 14px;border-radius:12px;background:#e8ecf5;margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere}
-.bubble.mine{background:#f9dce9;margin-left:auto}.bubble small{display:block;margin-top:5px}
-.hidden{display:none}.row{display:flex;gap:10px;align-items:center}.row button{flex-shrink:0}#notice{font-weight:600;color:#9d2458}
-</style></head><body><header><a href="/">← DONEDEAL</a><span>Customer Support</span></header>
-<main><h1>Chat with a Live Agent</h1><p>Need help? Leave a message and our team can reply here. When agents are unavailable, your conversation stays open as a support ticket.</p>
-<section class="panel" id="start"><h2>Start a conversation</h2><form id="newTicket">
-<label for="name">Your name</label><input id="name" maxlength="80" autocomplete="name" required>
-<label for="email">Email address</label><input id="email" type="email" maxlength="160" autocomplete="email" required>
-<label for="subject">What can we help with?</label><input id="subject" maxlength="140" required>
-<label for="initial">Message</label><textarea id="initial" maxlength="2000" required></textarea>
-<p><small>Never share passwords, OTPs, full card numbers, or banking credentials. Order changes require separate verification.</small></p>
-<button type="submit">Start support chat</button></form></section>
-<section class="panel hidden" id="conversation"><h2>Your support conversation</h2><p id="ticketInfo"></p><div id="messages" role="log" aria-live="polite"></div>
-<form id="send"><label for="message">Your reply</label><textarea id="message" maxlength="2000" required></textarea><div class="row"><button type="submit">Send message</button><small>Messages refresh about every 5 seconds.</small></div></form>
-<p><small>Keep this browser's ticket access saved to return later. If you clear browser storage, you may lose access to this conversation.</small></p><button type="button" id="newConversation">Start another ticket</button></section>
-<p id="notice" role="status"></p></main><script src="/support.js" defer></script></body></html>
+:root{
+  font-family:system-ui,-apple-system,sans-serif;
+  color:#192039;
+  background:#f5f6fa;
+}
+*{box-sizing:border-box}
+body{margin:0}
+[hidden],.hidden{display:none!important}
+header{
+  background:#121c37;
+  color:#fff;
+  padding:18px max(20px,calc((100vw - 900px)/2));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+header a{color:#fff;text-decoration:none;font-weight:700}
+main{max-width:750px;margin:35px auto;padding:0 16px 45px}
+h1{font-size:clamp(25px,5vw,36px);margin-bottom:8px}
+h2{margin-top:0;font-size:21px}
+p{line-height:1.55;color:#606a7d}
+.panel{
+  background:#fff;
+  border:1px solid #e2e5ee;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 8px 35px #14223b10;
+  margin-top:20px;
+}
+label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}
+input,textarea,select,button{font:inherit}
+input,textarea,select{
+  width:100%;
+  padding:13px;
+  border:1px solid #c9cfdb;
+  border-radius:9px;
+  background:#fff;
+  color:#192039;
+}
+textarea{min-height:110px;resize:vertical}
+button{
+  background:#e72d81;
+  color:#fff;
+  border:0;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.secondary{
+  background:#edf0f7;
+  color:#26324d;
+}
+button.outline{
+  background:#fff;
+  color:#bd2367;
+  border:1px solid #e72d81;
+}
+small{color:#606a7d}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row button{flex-shrink:0}
+#notice{font-weight:600;color:#9d2458}
+.choice-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-top:20px;
+}
+.choice{
+  text-align:left;
+  padding:20px;
+  background:#fff;
+  color:#192039;
+  border:2px solid #e2e5ee;
+  border-radius:16px;
+  min-height:155px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+  transition:border-color .15s,background .15s;
+}
+.choice:hover,.choice.active{
+  border-color:#e72d81;
+  background:#fff5fa;
+}
+.choice .symbol{font-size:29px}
+.choice strong{font-size:18px}
+.choice small{font-weight:400;line-height:1.5}
+.info-box{
+  background:#f7f8fc;
+  border:1px solid #e2e5ee;
+  border-radius:12px;
+  padding:15px;
+  margin:16px 0;
+}
+.info-box p{margin:6px 0 0}
+.info-box strong{color:#26324d}
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 13px;
+  border-radius:999px;
+  background:#fff3df;
+  color:#8a5708;
+  font-size:13px;
+  font-weight:800;
+}
+.status::before{
+  content:"";
+  width:9px;
+  height:9px;
+  background:#e7a12b;
+  border-radius:50%;
+}
+.status.accepted{
+  background:#e4f7eb;
+  color:#17683c;
+}
+.status.accepted::before{background:#27a35b}
+.status.ended{
+  background:#edf0f5;
+  color:#586477;
+}
+.status.ended::before{background:#8c96a7}
+#messages{
+  height:360px;
+  overflow:auto;
+  background:#f8f9fc;
+  border-radius:12px;
+  padding:15px;
+  border:1px solid #e2e5ee;
+}
+.bubble{
+  max-width:88%;
+  padding:11px 14px;
+  border-radius:12px;
+  background:#e8ecf5;
+  margin:10px 0;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+.bubble.mine{background:#f9dce9;margin-left:auto}
+.bubble small{display:block;margin-top:5px}
+.helper{font-size:13px}
+.section-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.contact-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0 12px;
+}
+@media(max-width:540px){
+  .choice-grid,.contact-grid{grid-template-columns:1fr}
+  .choice{min-height:auto}
+  .panel{padding:18px}
+  main{margin-top:22px}
+  header{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/">← DONEDEAL</a>
+  <span>Customer Support</span>
+</header>
+
+<main>
+  <h1>How can we help you?</h1>
+  <p>
+    Connect with our support team or create a ticket.
+    Your messages stay in your secure support conversation.
+  </p>
+
+  <!-- Support method selection -->
+  <section id="supportChoices">
+    <div class="choice-grid">
+      <button type="button" class="choice" id="chooseLive">
+        <span class="symbol" aria-hidden="true">💬</span>
+        <strong>Live Agent</strong>
+        <small>
+          Join the waiting queue and chat with an available
+          DONEDEAL support agent.
+        </small>
+      </button>
+
+      <button type="button" class="choice active" id="chooseTicket">
+        <span class="symbol" aria-hidden="true">🎫</span>
+        <strong>Create a Ticket</strong>
+        <small>
+          Send your concern and receive replies in your
+          support conversation.
+        </small>
+      </button>
+    </div>
+  </section>
+
+  <!-- Existing ticket form: original IDs preserved -->
+  <section class="panel" id="start">
+    <div class="section-top">
+      <h2 id="startTitle">Create a Support Ticket</h2>
+      <span id="startModeLabel" class="status ended">Ticket Support</span>
+    </div>
+
+    <p id="startDescription">
+      Describe your concern and our support team can reply here.
+    </p>
+
+    <form id="newTicket">
+      <label for="name">Your name</label>
+      <input id="name" maxlength="80" autocomplete="name" required>
+
+      <div class="contact-grid">
+        <div>
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            maxlength="160"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div>
+          <label for="phone">Phone number (optional)</label>
+          <input
+            id="phone"
+            type="tel"
+            maxlength="30"
+            autocomplete="tel"
+            placeholder="+63..."
+          >
+        </div>
+      </div>
+
+      <p class="helper">
+        A valid email address is currently required to create a
+        support conversation. Phone-only contact is coming in
+        a separate update.
+      </p>
+
+      <label for="subject">What can we help with?</label>
+      <input id="subject" maxlength="140" required>
+
+      <label for="initial">Message</label>
+      <textarea id="initial" maxlength="2000" required></textarea>
+
+      <!-- Shown when live mode is activated by support.js -->
+      <div id="liveFormNotice" class="info-box hidden">
+        <strong>Live Agent Queue</strong>
+        <p>
+          After submitting, your request will enter the waiting queue.
+          The first available agent to accept can assist you.
+        </p>
+      </div>
+
+      <p>
+        <small>
+          Never share passwords, OTPs, full card numbers,
+          or banking credentials. Order changes require
+          separate verification.
+        </small>
+      </p>
+
+      <button type="submit" id="startSubmit">
+        Create Support Ticket
+      </button>
+    </form>
+  </section>
+
+  <!-- Live agent availability / queue notice -->
+  <section class="panel hidden" id="liveWaitingPanel">
+    <div class="section-top">
+      <h2>Live Agent Status</h2>
+      <span id="liveQueueStatus" class="status">
+        Waiting
+      </span>
+    </div>
+
+    <p id="liveQueueMessage">
+      Waiting for an available support agent.
+    </p>
+
+    <div id="agentsBusyNotice" class="info-box hidden">
+      <strong>Our live agents are currently busy</strong>
+      <p>
+        You may continue waiting, or create a separate
+        support ticket for follow-up.
+      </p>
+    </div>
+
+    <div class="row">
+      <button type="button" id="waitForAgent" class="secondary">
+        Continue Waiting
+      </button>
+      <button type="button" id="createTicketInstead" class="outline">
+        Create a Ticket
+      </button>
+    </div>
+
+    <p class="helper">
+      Queue status updates automatically while this page is open.
+    </p>
+  </section>
+
+  <!-- Existing conversation: original IDs preserved -->
+  <section class="panel hidden" id="conversation">
+    <div class="section-top">
+      <h2>Your Support Conversation</h2>
+      <span id="conversationMode" class="status ended">
+        Support Ticket
+      </span>
+    </div>
+
+    <p id="ticketInfo"></p>
+
+    <div id="messages" role="log" aria-live="polite"></div>
+
+    <form id="send">
+      <label for="message">Your reply</label>
+      <textarea id="message" maxlength="2000" required></textarea>
+
+      <div class="row">
+        <button type="submit">Send Message</button>
+        <small>Messages refresh about every 5 seconds.</small>
+      </div>
+    </form>
+
+    <p>
+      <small>
+        Keep this browser's ticket access saved to return later.
+        If you clear browser storage, you may lose access
+        to this conversation.
+      </small>
+    </p>
+
+    <button type="button" id="newConversation" class="secondary">
+      Start Another Conversation
+    </button>
+  </section>
+
+  <p id="notice" role="status"></p>
+</main>
+
+<script src="/support.js" defer></script>
+</body>
+</html>
