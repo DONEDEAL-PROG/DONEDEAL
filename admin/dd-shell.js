@@ -3,6 +3,7 @@ const items=[
 ['OVERVIEW',[['▦','Dashboard','/admin/operations.html#dashboard']]],
 ['SALES',[['▤','Orders','/admin/operations.html#orders'],['♧','Customers','/admin/customers.html'],['▥','Payments / Transactions','/admin/payments.html'],['↗','Sales Analytics','/admin/operations.html#analytics']]],
 ['CATALOG',[['▣','Products','/admin/'],['▦','Categories','/admin/#categories'],['◫','Inventory / Stock','/admin/#inventory']]],
+['PARTNERS',[['♡','Affiliate Partners','/admin/partners.html']]],
 ['OPERATIONS',[['⇄','Track Orders / Shipping','/admin/operations.html#shipping'],['⚙','Store Settings','/admin/operations.html#settings']]]];
 let theme;try{theme=localStorage.getItem('dd-admin-theme')}catch(e){}
 document.documentElement.dataset.ddTheme=theme==='dark'?'dark':'light';
