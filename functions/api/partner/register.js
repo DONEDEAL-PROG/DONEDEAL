@@ -10,5 +10,18 @@ export async function onRequestPost({request,env}){
   const id=rand(),salt=rand(),hash=await hashPassword(password,salt),code=crypto.randomUUID().replace(/-/g,'').slice(0,12);
   await env.DB.prepare('INSERT INTO dd_affiliates(id,name,email,social_url,password_salt,password_hash,referral_code) VALUES(?,?,?,?,?,?,?)').bind(id,name,email,social,salt,hash,code).run();
   return respond({ok:true,message:'Application submitted. You can sign in after admin approval.'},201);
- }catch(e){if(/UNIQUE/i.test(String(e)))return respond({error:'This email is already registered'},409);return respond({error:'Unable to submit application'},500)}
+ catch (e) {
+  console.error('Affiliate registration failed:', e);
+
+  if (/UNIQUE/i.test(String(e))) {
+    return respond(
+      { error: 'This email is already registered' },
+      409
+    );
+  }
+
+  return respond(
+    { error: 'Unable to submit application' },
+    500
+  );
 }
