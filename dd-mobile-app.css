@@ -1,0 +1,40 @@
+
+/* DONEDEAL mobile shopping-app layout: desktop remains unchanged */
+.dd-mobile-hero,.dd-mobile-bottom-nav,.dd-mobile-search{display:none}
+@media (max-width: 767px){
+ html{scroll-padding-top:74px}
+ body{padding-bottom:calc(80px + env(safe-area-inset-bottom,0px))!important}
+ header.nav{position:sticky!important;top:0;z-index:850!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:10px 14px!important;min-height:64px!important}
+ header.nav .logoLink{min-width:0!important;flex:1!important}
+ header.nav .logo{display:flex!important;align-items:center!important;gap:6px!important;font-size:clamp(13px,4vw,18px)!important;white-space:nowrap!important}
+ header.nav .logo span{display:none!important}
+ header.nav .ddBrandMark{width:35px!important;height:35px!important;object-fit:contain!important;flex-shrink:0!important}
+ header.nav .navlinks{display:none!important}
+ header.nav>button:not(.dd-menu-trigger){padding:9px!important;font-size:12px!important}
+ .top{font-size:9px!important;letter-spacing:.5px!important;padding:6px 8px!important;text-align:center!important}
+ .dd-mobile-search{display:flex;align-items:center;gap:10px;margin:12px 14px 8px;padding:12px 15px;border-radius:16px;background:#23232c;color:#c5c5cf;text-decoration:none;font:500 13px/1.4 system-ui,sans-serif;border:1px solid #ffffff18}
+ .dd-mobile-hero{display:block;margin:10px 14px 16px;border-radius:20px;overflow:hidden;background:#13131b;color:#fff;box-shadow:0 8px 25px #0002}
+ .dd-mobile-hero img{display:block;width:100%;height:auto;object-fit:contain;max-height:none}
+ .dd-mobile-hero-content{padding:16px 17px 18px;background:linear-gradient(120deg,#191923,#352032);display:flex;align-items:center;justify-content:space-between;gap:12px}
+ .dd-mobile-hero-content strong{display:block;font:800 17px/1.25 system-ui,sans-serif}
+ .dd-mobile-hero-content small{display:block;color:#e0bdce;font:500 11px/1.4 system-ui,sans-serif;margin-top:5px}
+ .dd-mobile-hero-content button{border:0;border-radius:999px;padding:11px 13px;flex-shrink:0;background:#ed3e7c;color:white;font:800 12px system-ui,sans-serif}
+ main#home>.hero{display:none!important}
+ .brandBar{margin:0 12px 18px!important;border-radius:16px!important;overflow:hidden!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ .brandBar .brandTile{min-width:0!important;min-height:72px!important;padding:9px 3px!important;font-size:11px!important;gap:4px!important;justify-content:center!important}
+ .brandBar .brandTile img{max-width:27px!important;max-height:27px!important;object-fit:contain!important}
+ .container{padding-left:14px!important;padding-right:14px!important}
+ .featuredHeading h2,.sectionhead h2{font-size:clamp(21px,6vw,27px)!important}
+ .dd-mobile-bottom-nav{position:fixed;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));bottom:0;left:0;right:0;z-index:100000;min-height:calc(64px + env(safe-area-inset-bottom,0px));padding:7px 6px calc(6px + env(safe-area-inset-bottom,0px));background:#181820;border-top:1px solid #ffffff24;box-shadow:0 -8px 28px #0002}
+ .dd-mobile-bottom-nav a,.dd-mobile-bottom-nav button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;min-width:0;background:none;border:0;color:#b9b9c5;text-decoration:none;font:600 10px/1.2 system-ui,sans-serif;padding:4px 0;cursor:pointer}
+ .dd-mobile-bottom-nav svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+ .dd-mobile-bottom-nav .dd-active{color:#ff4b99}
+ .dd-support-float{bottom:calc(139px + env(safe-area-inset-bottom,0px))!important}
+ .dd-track-float{bottom:calc(80px + env(safe-area-inset-bottom,0px))!important}
+ html[data-dd-store-theme="light"] .dd-mobile-search{background:#f4f4f7;color:#6d6d78;border-color:#e5e5ec}
+ html[data-dd-store-theme="light"] .dd-mobile-bottom-nav{background:#fff;border-top-color:#e8e8ed}
+ html[data-dd-store-theme="light"] .dd-mobile-bottom-nav a,html[data-dd-store-theme="light"] .dd-mobile-bottom-nav button{color:#777783}
+ html[data-dd-store-theme="light"] .dd-mobile-bottom-nav .dd-active{color:#df2877}
+ html[data-dd-store-theme="light"] .dd-mobile-hero-content{background:#fff0f6;color:#29242a}
+ html[data-dd-store-theme="light"] .dd-mobile-hero-content small{color:#765d69}
+}
