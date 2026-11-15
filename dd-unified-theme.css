@@ -79,3 +79,64 @@ html[data-dd-store-theme="light"] img.ddBrandMark {
 }
 html[data-dd-store-theme="light"] .nav .logo { color: #29212b !important; }
 html[data-dd-store-theme="light"] .nav .logo span { color: #b72b6a !important; }
+
+
+/* DONEDEAL light-mode readability repair — desktop and mobile, 2026-11-15 */
+html[data-dd-store-theme="light"] .dd-extra-section,
+html[data-dd-store-theme="light"] .dd-extra-section h1,
+html[data-dd-store-theme="light"] .dd-extra-section h2,
+html[data-dd-store-theme="light"] .dd-extra-section h3,
+html[data-dd-store-theme="light"] .dd-extra-info,
+html[data-dd-store-theme="light"] .dd-extra-info h3,
+html[data-dd-store-theme="light"] #dd-wishlist-grid {
+  color: #251c28 !important;
+}
+html[data-dd-store-theme="light"] .dd-extra-section > p,
+html[data-dd-store-theme="light"] .dd-extra-info small,
+html[data-dd-store-theme="light"] .dd-extra-info .muted {
+  color: #625566 !important;
+}
+html[data-dd-store-theme="light"] .dd-extra-card {
+  background: #ffffff !important;
+  border-color: #dfcdd8 !important;
+  color: #251c28 !important;
+}
+html[data-dd-store-theme="light"] .dd-extra-card .dd-extra-info p {
+  color: #a92260 !important;
+}
+html[data-dd-store-theme="light"] .dd-extra-photo {
+  background: #f6f0f4 !important;
+}
+html[data-dd-store-theme="light"] .dd-extra-actions button {
+  color: #ffffff !important;
+}
+html[data-dd-store-theme="light"] .dd-extra-actions .dd-save {
+  background: #67334f !important;
+  color: #ffffff !important;
+}
+/* Wishlist page has a standalone dark header; switch it with the selected theme. */
+html[data-dd-store-theme="light"] body > header:not(.nav) {
+  background: #ffffff !important;
+  color: #251c28 !important;
+  border-bottom: 1px solid #e7d9e2 !important;
+}
+html[data-dd-store-theme="light"] body > header:not(.nav) b,
+html[data-dd-store-theme="light"] body > header:not(.nav) strong {
+  color: #251c28 !important;
+}
+html[data-dd-store-theme="light"] body > header:not(.nav) a {
+  color: #a92260 !important;
+}
+html[data-dd-store-theme="light"] body > header:not(.nav) [data-dd-theme-toggle] {
+  background: #fff0f6 !important;
+  color: #84214e !important;
+  border: 1px solid #dba6bd !important;
+}
+/* Prevent low-contrast inherited colors in empty-state messages and links. */
+html[data-dd-store-theme="light"] #dd-wishlist-grid a,
+html[data-dd-store-theme="light"] .dd-extra-section a {
+  color: #a92260 !important;
+}
+html[data-dd-store-theme="light"] #dd-wishlist-grid :is(.empty,.empty-state,.dd-empty) {
+  color: #625566 !important;
+}
