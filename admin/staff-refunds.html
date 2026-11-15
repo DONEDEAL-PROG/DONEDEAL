@@ -1,1 +1,322 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>DONEDEAL | Refund Requests</title><style>body{font:16px system-ui;background:#12121a;color:#fff;max-width:980px;margin:auto;padding:24px}a{color:#ff9ac7}.card{background:#252532;border:1px solid #444;border-radius:12px;padding:18px;margin:12px 0}textarea{width:100%;min-height:65px;background:#171720;color:#fff;border:1px solid #666;border-radius:8px;padding:10px;box-sizing:border-box}button{background:#e72d81;color:white;border:0;border-radius:8px;padding:10px;margin:8px 8px 0 0;cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style></head><body><a href="/admin/">← Admin</a><h1>Staff Refund Requests</h1><p>Approval records the Admin decision only. It does not automatically refund payments or change payment status. Process actual refunds separately through the correct payment provider.</p><p id="notice" role="status"></p><button id="refresh">Refresh</button><div id="requests"></div><script src="/admin/staff-refunds.js" defer></script></body></html>
+
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+
+<title>DONEDEAL | Refund Requests</title>
+
+<script>
+(function(){
+  try {
+    document.documentElement.dataset.ddTheme =
+      localStorage.getItem('dd-admin-theme') === 'dark'
+        ? 'dark'
+        : 'light';
+  } catch(e) {
+    document.documentElement.dataset.ddTheme = 'light';
+  }
+})();
+</script>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light;
+
+  --page: #f5f3f2;
+  --surface: #ffffff;
+  --surface-alt: #fbfafb;
+  --text: #29252b;
+  --muted: #736d75;
+  --border: #e6dfe3;
+  --input-border: #d9d1d8;
+  --accent: #a63871;
+  --accent-hover: #922f63;
+  --notice: #a63871;
+}
+
+html[data-dd-theme="dark"] {
+  color-scheme: dark;
+
+  --page: #111116;
+  --surface: #1d1d26;
+  --surface-alt: #292936;
+  --text: #f7f7fc;
+  --muted: #b8b7c4;
+  --border: #37303a;
+  --input-border: #5b5665;
+  --accent: #e72d81;
+  --accent-hover: #f04494;
+  --notice: #ff9ec7;
+}
+
+html {
+  background: var(--page);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--page);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 20px max(4%, 18px);
+}
+
+header strong {
+  display: block;
+  font-size: 23px;
+  letter-spacing: .04em;
+}
+
+header small {
+  display: block;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: .08em;
+}
+
+main {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 0 18px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 650;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: clamp(25px, 4vw, 34px);
+  letter-spacing: -.035em;
+}
+
+.description {
+  margin: 0 0 24px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 18px #3620320b;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.toolbar h2 {
+  margin: 0;
+  font-size: 21px;
+}
+
+.card {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 14px 0;
+  overflow-wrap: anywhere;
+}
+
+.card h2,
+.card h3 {
+  color: var(--text);
+}
+
+.card p {
+  line-height: 1.65;
+}
+
+textarea {
+  display: block;
+  width: 100%;
+  min-height: 85px;
+  resize: vertical;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+  border-radius: 9px;
+  padding: 12px;
+  font: inherit;
+}
+
+textarea::placeholder {
+  color: var(--muted);
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 9px;
+  padding: 11px 16px;
+  margin: 8px 8px 0 0;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+button:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+button:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 13px/1.6 ui-monospace, SFMono-Regular,
+        Consolas, monospace;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 14px;
+  color: var(--text);
+}
+
+#notice {
+  color: var(--notice);
+  font-weight: 600;
+  min-height: 24px;
+  overflow-wrap: anywhere;
+}
+
+#requests {
+  min-height: 80px;
+}
+
+.warning {
+  padding: 15px 18px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 22px 0;
+}
+
+.warning strong {
+  color: var(--accent);
+}
+
+@media(max-width: 600px) {
+  main {
+    margin-top: 22px;
+    padding: 0 14px;
+  }
+
+  .panel {
+    padding: 17px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .toolbar {
+    align-items: flex-start;
+  }
+}
+</style>
+
+<link rel="stylesheet" href="/admin/dd-shell.css">
+
+</head>
+
+<body>
+
+<header>
+  <strong>DONEDEAL</strong>
+  <small>PRIVATE ADMIN DASHBOARD</small>
+</header>
+
+<main>
+
+<a class="back" href="/admin/">
+  ← Admin Dashboard
+</a>
+
+<h1>Staff Refund Requests</h1>
+
+<p class="description">
+  Review refund requests submitted by customer service staff.
+  Approve or reject each request and record the reason for
+  your decision.
+</p>
+
+<div class="warning">
+  <strong>Important:</strong>
+  Approval records the Admin decision only.
+  It does not automatically refund payments or change
+  the order payment status. Actual refunds must be
+  processed separately through the correct payment provider.
+</div>
+
+<section class="panel">
+
+  <div class="toolbar">
+    <h2>Refund Requests &amp; Approvals</h2>
+
+    <button
+      id="refresh"
+      type="button"
+    >
+      Refresh Requests
+    </button>
+  </div>
+
+  <p id="notice" role="status"></p>
+
+  <div id="requests"></div>
+
+</section>
+
+</main>
+
+<script src="/admin/staff-refunds.js" defer></script>
+<script src="/admin/dd-shell.js" defer></script>
+
+</body>
+</html>
