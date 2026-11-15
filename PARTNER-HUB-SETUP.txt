@@ -1,0 +1,38 @@
+DONEDEAL PARTNER HUB — GitHub + Cloudflare Pages + D1
+
+1. Extract this ZIP into the ROOT of your EXISTING DONEDEAL GitHub repository.
+   Merge folders and replace only the included functions/api/create-checkout.js.
+   Do NOT replace the entire repository with this ZIP.
+
+2. Cloudflare D1: execute database/migration-partner-hub.sql against the SAME D1
+   database already bound to Cloudflare Pages as DB.
+   Example with Wrangler:
+   npx wrangler d1 execute YOUR_DATABASE_NAME --remote --file=database/migration-partner-hub.sql
+   Use the actual database name from your Cloudflare account.
+
+3. Cloudflare Pages > Settings > Variables and Secrets:
+   Add PARTNER_SESSION_SECRET as a secret, with a long random value (32+ bytes).
+   Keep existing ADMIN_PASSWORD, ADMIN_SESSION_SECRET and DB binding.
+
+4. Redeploy. Open:
+   /partner.html           Affiliate signup, login, dashboard, payout requests
+   /admin/partners.html    Admin approval, custom percentage, commissions, payouts
+
+5. Test end-to-end:
+   - Apply for affiliate account, log into /admin/partners.html and approve it.
+   - Set the partner commission percentage, sign into /partner.html.
+   - Copy the referral link and open it in a separate browser session.
+   - Place a test order through the store checkout.
+   - Confirm the order payment in the existing admin payment management.
+   - Approve the commission in /admin/partners.html.
+   - Request payout in /partner.html.
+   - Approve, pay manually, and mark paid with a transfer reference in admin.
+
+NOTES:
+- Referral cookie persists 30 days on the same browser; last valid referral click wins.
+- Commissions are calculated on the store's checkout total at the rate recorded
+  when the order is placed. No commission is withdrawable until admin approval.
+- Payment and payout transfers are NOT automatic.
+- Existing shop pages and layout are not modified; partner pages are new.
+- For launch, consider adding abuse prevention (Cloudflare Turnstile/rate limits)
+  and a written affiliate agreement before accepting public applications.
