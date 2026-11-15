@@ -20,7 +20,8 @@ export async function onRequestPost({request,env}){
    const sku=b.product_id+'::'+b.storage.trim();
    const existing=await env.DB.prepare('SELECT name FROM store_variants WHERE sku LIKE ? LIMIT 1').bind(b.product_id+'::%').first();
    if(!existing)return reply({error:'Gadget not found'},404);
-   await env.DB.prepare('INSERT INTO store_variants(sku,name,variant,price_centavos,stock,enabled) VALUES(?,?,?,?,?,0)').bind(sku,existing.name,b.storage.trim(),b.price_centavos,b.stock).run();
+   const official=await env.DB.prepare('SELECT price_centavos FROM dd_master_prices WHERE device_name=? COLLATE NOCASE AND variant=? COLLATE NOCASE').bind(existing.name,b.storage.trim()).first();
+   await env.DB.prepare('INSERT INTO store_variants(sku,name,variant,price_centavos,stock,enabled) VALUES(?,?,?,?,?,0)').bind(sku,existing.name,b.storage.trim(),official?.price_centavos??b.price_centavos,b.stock).run();
    return reply({ok:true,sku,enabled:0},201);
   }
   if(['inspect_gadget','delete_gadget'].includes(b.action)){
@@ -78,9 +79,10 @@ export async function onRequestPost({request,env}){
    // Renaming a variant with reserved orders is blocked to keep cancellation restocks accurate.
    const reserved=await env.DB.prepare(`SELECT o.id FROM store_orders o WHERE o.status NOT IN ('delivered','cancelled') AND EXISTS(SELECT 1 FROM json_each(o.items_json) j WHERE json_extract(j.value,'$.sku')=?) LIMIT 1`).bind(b.sku).first();
    if(reserved)return reply({error:'This storage has an active order. Deactivate it and add a new storage variant instead.'},409);
+   const official=await env.DB.prepare('SELECT price_centavos FROM dd_master_prices WHERE device_name=? COLLATE NOCASE AND variant=? COLLATE NOCASE').bind(old.name,b.storage.trim()).first();
    await env.DB.batch([
     env.DB.prepare('UPDATE store_variants SET stock=0,enabled=0,updated_at=CURRENT_TIMESTAMP WHERE sku=?').bind(b.sku),
-    env.DB.prepare('INSERT INTO store_variants(sku,name,variant,price_centavos,stock,enabled) VALUES(?,?,?,?,?,0)').bind(newSku,old.name,b.storage.trim(),old.price_centavos,old.stock)
+    env.DB.prepare('INSERT INTO store_variants(sku,name,variant,price_centavos,stock,enabled) VALUES(?,?,?,?,?,0)').bind(newSku,old.name,b.storage.trim(),official?.price_centavos??old.price_centavos,old.stock)
    ]);
    return reply({ok:true,sku:newSku,enabled:0},201);
   }

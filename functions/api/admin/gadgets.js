@@ -13,6 +13,9 @@ export async function onRequestPost({request,env}){
   if(new Set(variants.map(v=>v.label.toLowerCase())).size!==variants.length)return reply({error:'Duplicate variants'},400);
   const id='custom-'+crypto.randomUUID();
   const name=b.brand.trim()+' '+b.model.trim();
+  const master=await env.DB.prepare('SELECT variant,price_centavos FROM dd_master_prices WHERE device_name=? COLLATE NOCASE').bind(name).all();
+  const official=new Map((master.results||[]).map(x=>[x.variant.trim().toLowerCase(),x.price_centavos]));
+  for(const v of variants)if(official.has(v.label.toLowerCase()))v.price_centavos=official.get(v.label.toLowerCase());
   const stmts=[env.DB.prepare('INSERT INTO store_products(id,brand,model,description) VALUES(?,?,?,?)').bind(id,b.brand.trim(),b.model.trim(),b.description.trim())];
   for(const v of variants)stmts.push(env.DB.prepare('INSERT INTO store_variants(sku,name,variant,price_centavos,stock,enabled) VALUES(?,?,?,?,?,?)').bind(id+'::'+v.label,name,v.label,v.price_centavos,v.stock,v.enabled));
   await env.DB.batch(stmts);

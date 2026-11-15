@@ -63,6 +63,7 @@ const result = await env.DB.prepare(`
     v.name,
     v.variant,
     v.price_centavos,
+    (SELECT m.price_centavos FROM dd_master_prices m WHERE m.device_name=v.name COLLATE NOCASE AND m.variant=v.variant COLLATE NOCASE) AS master_price_centavos,
     v.stock,
     v.enabled,
     COALESCE(g.enabled,1) AS gadget_enabled,
@@ -123,6 +124,11 @@ export async function onRequestPost({ request, env }) {
   }
 
   try {
+    const current=await env.DB.prepare('SELECT name,variant FROM store_variants WHERE sku=?').bind(sku).first();
+    if(!current)return json({error:'Product not found'},404);
+    const ledger=await env.DB.prepare('SELECT price_centavos FROM dd_master_prices WHERE device_name=? COLLATE NOCASE AND variant=? COLLATE NOCASE')
+      .bind(current.name.trim(),current.variant.trim()).first();
+    if(ledger&&price!==ledger.price_centavos)return json({error:'Price is locked by Master Price Ledger. Edit it in the ledger.'},409);
     const result = await env.DB.prepare(
       `UPDATE store_variants
        SET price_centavos = ?,
