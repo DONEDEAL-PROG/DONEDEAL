@@ -288,7 +288,58 @@ html[data-dd-theme="light"] .pm-conversation.active strong {
     width: auto !important;
   }
 }
+/* Final fix: Partner Messages composer */
 
+#admin-reply.pm-reply {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  overflow: hidden;
+}
+
+#admin-reply.pm-reply[hidden] {
+  display: none !important;
+}
+
+#admin-reply .pm-reply-inner {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+#admin-reply .pm-reply-inner textarea {
+  display: block;
+  flex: 1 1 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  box-sizing: border-box !important;
+  resize: vertical;
+}
+
+#admin-reply .pm-reply-inner button {
+  display: inline-flex !important;
+  flex: 0 0 90px !important;
+  width: 90px !important;
+  min-width: 90px !important;
+  max-width: 90px !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
 </style>
 </head>
 <body>
@@ -365,8 +416,16 @@ html[data-dd-theme="light"] .pm-conversation.active strong {
 <div class="pm-empty">No conversation selected.</div>
 </div>
 <form id="admin-reply" class="pm-reply" hidden>
-<textarea name="message" rows="2" maxlength="2000" placeholder="Write your reply…" required></textarea>
-<button type="submit">Send</button>
+  <div class="pm-reply-inner">
+    <textarea
+      name="message"
+      rows="2"
+      maxlength="2000"
+      placeholder="Write your reply..."
+      required
+    ></textarea>
+    <button type="submit">Send ➤</button>
+  </div>
 </form>
 </div>
 </div>
