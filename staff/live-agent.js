@@ -7,7 +7,8 @@
   const API = {
     me: '/api/staff/me',
     presence: '/api/staff/live-presence',
-    queue: '/api/staff/live-queue'
+    queue: '/api/staff/live-queue',
+    support: '/api/staff/support'
   };
 
   const POLL_MS = 12000;
@@ -15,10 +16,12 @@
 
   let staff = null;
   let availability = 'offline';
+
   let previousWaiting = null;
   let refreshing = false;
   let saving = false;
   let accepting = false;
+
   let soundEnabled = false;
   let audioContext = null;
 
@@ -101,6 +104,49 @@
     }
   }
 
+  function setUnreadCount(count) {
+    const safeCount = Math.max(
+      0,
+      Number(count) || 0
+    );
+
+    const counter = $('unreadCount');
+    const badge = $('unreadBadge');
+
+    if (counter) {
+      counter.textContent = String(safeCount);
+    }
+
+    if (badge) {
+      badge.textContent = String(safeCount);
+      badge.hidden = safeCount === 0;
+    }
+  }
+
+  async function loadUnread() {
+    if (!staff) {
+      return;
+    }
+
+    const data = await api(API.support);
+
+    const tickets = Array.isArray(data.tickets)
+      ? data.tickets
+      : [];
+
+    const total = tickets.reduce(
+      (sum, ticket) => {
+        return sum + Math.max(
+          0,
+          Number(ticket.unread_count) || 0
+        );
+      },
+      0
+    );
+
+    setUnreadCount(total);
+  }
+
   function playNotification() {
     if (!soundEnabled || !audioContext) {
       return;
@@ -139,6 +185,7 @@
       gain.connect(audioContext.destination);
 
       oscillator.start();
+
       oscillator.stop(
         audioContext.currentTime + 0.23
       );
@@ -154,7 +201,9 @@
   async function loadPresence() {
     const data = await api(API.presence);
 
-    updateStatus(data.availability || 'offline');
+    updateStatus(
+      data.availability || 'offline'
+    );
 
     return data;
   }
@@ -181,6 +230,12 @@
       );
 
       updateStatus(data.availability);
+
+      const select = $('availability');
+
+      if (select) {
+        select.value = data.availability;
+      }
 
       if (!quiet) {
         message(
@@ -218,6 +273,7 @@
       const empty = document.createElement('p');
 
       empty.className = 'empty-state';
+
       empty.textContent =
         'No customers waiting for a live agent.';
 
@@ -233,6 +289,7 @@
       info.className = 'queue-info';
 
       const title = document.createElement('strong');
+
       title.textContent =
         item.subject || 'Live Support';
 
@@ -246,6 +303,7 @@
       info.append(title, details);
 
       const button = document.createElement('button');
+
       button.type = 'button';
       button.textContent = 'Accept Chat';
 
@@ -253,12 +311,15 @@
         availability !== 'available' ||
         accepting;
 
-      button.addEventListener('click', async () => {
-        await acceptChat(
-          item.ticket_id,
-          button
-        );
-      });
+      button.addEventListener(
+        'click',
+        async () => {
+          await acceptChat(
+            item.ticket_id,
+            button
+          );
+        }
+      );
 
       row.append(info, button);
       container.append(row);
@@ -275,7 +336,8 @@
     const count = waiting.length;
 
     if ($('waitingCount')) {
-      $('waitingCount').textContent = count;
+      $('waitingCount').textContent =
+        String(count);
     }
 
     if ($('queueBadge')) {
@@ -303,7 +365,10 @@
   }
 
   async function acceptChat(ticketId, button) {
-    if (accepting || availability !== 'available') {
+    if (
+      accepting ||
+      availability !== 'available'
+    ) {
       message(
         'Set your status to Available first.'
       );
@@ -311,6 +376,7 @@
     }
 
     accepting = true;
+
     button.disabled = true;
     button.textContent = 'Accepting...';
 
@@ -327,15 +393,12 @@
 
       await loadQueue();
 
-      // Refresh the existing ticket list.
       const reload = $('reload');
 
       if (reload) {
         reload.click();
       }
 
-      // Keep the existing staff.js ticket
-      // selection and reply workflow intact.
       if (data.ticket_id) {
         message(
           'Chat accepted! Select the customer ' +
@@ -352,6 +415,7 @@
 
     } finally {
       accepting = false;
+
       button.disabled = false;
       button.textContent = 'Accept Chat';
     }
@@ -369,9 +433,20 @@
     refreshing = true;
 
     try {
-      await loadQueue();
-    } catch (error) {
-      message(error.message);
+      const results = await Promise.allSettled([
+        loadQueue(),
+        loadUnread()
+      ]);
+
+      for (const item of results) {
+        if (item.status === 'rejected') {
+          console.warn(
+            'Staff dashboard refresh failed',
+            item.reason
+          );
+        }
+      }
+
     } finally {
       refreshing = false;
     }
@@ -408,12 +483,17 @@
         !nextStaff.permissions.includes('chat_reply')
       ) {
         staff = null;
+        previousWaiting = null;
+
+        setUnreadCount(0);
         setPanels(false);
+
         return;
       }
 
       const changed =
-        !staff || staff.id !== nextStaff.id;
+        !staff ||
+        staff.id !== nextStaff.id;
 
       staff = nextStaff;
 
@@ -421,6 +501,7 @@
 
       if (changed) {
         previousWaiting = null;
+
         await loadPresence();
         await refresh();
       }
@@ -428,6 +509,8 @@
     } catch {
       staff = null;
       previousWaiting = null;
+
+      setUnreadCount(0);
       setPanels(false);
     }
   }
@@ -439,7 +522,6 @@
         const state = $('availability').value;
 
         await savePresence(state);
-
         await refresh();
       }
     );
@@ -496,7 +578,9 @@
       () => {
         staff = null;
         previousWaiting = null;
+
         updateStatus('offline');
+        setUnreadCount(0);
         setPanels(false);
       }
     );
@@ -504,7 +588,9 @@
     document.addEventListener(
       'visibilitychange',
       () => {
-        if (document.visibilityState === 'visible') {
+        if (
+          document.visibilityState === 'visible'
+        ) {
           initialize().then(refresh);
         }
       }
@@ -515,16 +601,26 @@
 
   initialize();
 
-  setInterval(initialize, 30000);
-  setInterval(refresh, POLL_MS);
+  setInterval(
+    initialize,
+    30000
+  );
 
-  setInterval(() => {
-    heartbeat().catch(error => {
-      console.warn(
-        'Live agent heartbeat failed',
-        error
-      );
-    });
-  }, HEARTBEAT_MS);
+  setInterval(
+    refresh,
+    POLL_MS
+  );
+
+  setInterval(
+    () => {
+      heartbeat().catch(error => {
+        console.warn(
+          'Live agent heartbeat failed',
+          error
+        );
+      });
+    },
+    HEARTBEAT_MS
+  );
 
 })();
