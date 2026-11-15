@@ -1,4 +1,4 @@
-
+const $=id=>document.getElementById(id),money=n=>'₱'+(Number(n||0)/100).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 import { allowed, originOK, reply, validText } from './_auth.js';
 
 const states = ['pending', 'approved', 'rejected', 'suspended'];
