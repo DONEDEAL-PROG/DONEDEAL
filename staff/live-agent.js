@@ -327,7 +327,15 @@
   }
 
   async function loadQueue() {
-    const data = await api(API.queue);
+    const data = await api(API.queue); 
+    // Update My Active Chats counter
+const activeCount = Number(data.my_active_count ?? 0);
+
+const myChatsCounter = document.getElementById('myChatsCount');
+
+if (myChatsCounter) {
+  myChatsCounter.textContent = String(activeCount);
+}
 
     const waiting = Array.isArray(data.waiting)
       ? data.waiting
