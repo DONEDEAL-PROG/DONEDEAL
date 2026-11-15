@@ -114,6 +114,21 @@ html[data-dd-theme=dark] .dd-orders-table th,html[data-dd-theme=dark] .dd-orders
 .dd-pickup-collapsible:not([open]){padding:0!important}
 .dd-pickup-collapsible[open]>summary{margin-bottom:12px}
 @media(max-width:700px){.dd-orders-scroll{border-radius:10px}.dd-orders-table{min-width:1000px}}
+
+/* Center status, payment and action columns */
+.dd-orders-table thead th:nth-child(6),
+.dd-orders-table thead th:nth-child(7),
+.dd-orders-table thead th:nth-child(8),
+.dd-orders-table tbody tr:not(.dd-order-detail-row) > td:nth-child(6),
+.dd-orders-table tbody tr:not(.dd-order-detail-row) > td:nth-child(7),
+.dd-orders-table tbody tr:not(.dd-order-detail-row) > td:nth-child(8) {
+  text-align:center !important;
+  vertical-align:middle !important;
+}
+.dd-orders-table tbody tr:not(.dd-order-detail-row) > td:nth-child(6) > * {
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
 </style>
 </head><body>
 <header><div class="row space"><div><h1>DONE DEAL <span class="pink">/ CONTROL CENTER</span></h1><small>Add gadgets • manage orders • Warm Light admin</small></div><a href="/admin/">← Product Manager</a></div></header>
