@@ -1,4 +1,3 @@
-
 (() => {
   'use strict';
 
@@ -37,6 +36,147 @@
     }
 
     return d;
+  }
+
+  async function getOverviewData(path) {
+    const r = await fetch(path, {
+      cache: 'no-store',
+      credentials: 'same-origin'
+    });
+    let d;
+    try {
+      d = await r.json();
+    } catch {
+      throw Error('Invalid API response');
+    }
+    if (!r.ok) throw Error(d.error || 'Unable to load data');
+    return d;
+  }
+
+  function showOverviewMessage(id, message) {
+    const element = $(id);
+    if (element) element.textContent = message;
+  }
+
+  function philippinesDay(value) {
+    if (!value) return '';
+    const raw = String(value).trim();
+    const normalized = /^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/.test(raw)
+      ? raw.replace(' ', 'T') + 'Z'
+      : raw;
+    const date = new Date(normalized);
+    if (Number.isNaN(date.getTime())) return '';
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Manila',
+      year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(date);
+  }
+
+  function formatManilaTime(value) {
+    if (!value) return '';
+    const raw = String(value).trim();
+    const normalized = /^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/.test(raw)
+      ? raw.replace(' ', 'T') + 'Z'
+      : raw;
+    const date = new Date(normalized);
+    if (Number.isNaN(date.getTime())) return raw;
+    return new Intl.DateTimeFormat('en-PH', {
+      timeZone: 'Asia/Manila',
+      month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    }).format(date);
+  }
+
+  function listLines(containerId, entries, emptyMessage) {
+    const container = $(containerId);
+    if (!container) return;
+    container.replaceChildren();
+    if (!entries.length) {
+      container.textContent = emptyMessage;
+      return;
+    }
+    const ul = document.createElement('ul');
+    for (const entry of entries) {
+      const li = document.createElement('li');
+      li.textContent = entry;
+      ul.append(li);
+    }
+    container.append(ul);
+  }
+
+  async function loadOverview(staffData = null) {
+    const errors = [];
+
+    const staffResult = staffData
+      ? { status: 'fulfilled', value: staffData }
+      : await Promise.allSettled([api()]).then(r => r[0]);
+
+    if (staffResult.status === 'fulfilled' &&
+        Array.isArray(staffResult.value.staff)) {
+      const staff = staffResult.value.staff;
+      $('totalStaff').textContent = String(staff.length);
+      $('activeStaff').textContent =
+        String(staff.filter(s => !!s.active).length);
+    } else {
+      $('totalStaff').textContent = '—';
+      $('activeStaff').textContent = '—';
+      errors.push('staff counts');
+    }
+
+    const [refundResult, activityResult] = await Promise.allSettled([
+      getOverviewData('/api/admin/staff-refunds'),
+      getOverviewData('/api/admin/staff-activity?limit=200')
+    ]);
+
+    if (refundResult.status === 'fulfilled' &&
+        Array.isArray(refundResult.value.requests)) {
+      const requests = refundResult.value.requests;
+      const pending = requests.filter(r => r.status === 'pending');
+      $('pendingRefunds').textContent = String(pending.length);
+      listLines(
+        'refundSummary',
+        pending.slice(0, 3).map(r =>
+          'Order ' + (r.order_id || '—') +
+          ' · ' + (r.staff_name || 'Staff') +
+          ' · Pending review'
+        ),
+        'No pending requests in the latest 200 records.'
+      );
+    } else {
+      $('pendingRefunds').textContent = '—';
+      showOverviewMessage('refundSummary', 'Unable to load refund requests.');
+      errors.push('refund requests');
+    }
+
+    if (activityResult.status === 'fulfilled' &&
+        Array.isArray(activityResult.value.logs)) {
+      const logs = activityResult.value.logs;
+      const today = philippinesDay(new Date().toISOString());
+      $('activitiesToday').textContent =
+        String(logs.filter(log => philippinesDay(log.created_at) === today).length);
+      listLines(
+        'activitySummary',
+        logs.slice(0, 4).map(log =>
+          (log.staff_name || log.staff_username ||
+           (log.actor_type === 'admin' ? 'Admin' : 'Staff')) +
+          ' · ' + String(log.action || 'Activity').replace(/_/g, ' ') +
+          (log.target_id ? ' · ' + log.target_id : '') +
+          (log.created_at ? ' · ' + formatManilaTime(log.created_at) : '')
+        ),
+        'No staff activity records yet.'
+      );
+    } else {
+      $('activitiesToday').textContent = '—';
+      showOverviewMessage('activitySummary', 'Unable to load staff activity.');
+      errors.push('activity logs');
+    }
+
+    showOverviewMessage(
+      'overviewStatus',
+      errors.length
+        ? 'Some overview data could not load: ' + errors.join(', ') + '.'
+        : 'Live data · Philippines time · Refunds and activities use the latest 200 records.'
+    );
   }
 
   const json = (method, data) => ({
@@ -90,11 +230,9 @@
     const card = document.createElement('section');
     card.className = 'staff';
 
-    // Staff name
     const h = document.createElement('h3');
     h.textContent = s.display_name + ' (@' + s.username + ')';
 
-    // Active account
     const activeLabel = document.createElement('label');
     const active = document.createElement('input');
 
@@ -106,13 +244,11 @@
       document.createTextNode(' Active account')
     );
 
-    // Permissions
     const permBox = document.createElement('div');
     permBox.className = 'permissions';
 
     checkboxes(permBox, s.permissions);
 
-    // Password
     const passwordLabel = document.createElement('label');
     passwordLabel.textContent =
       'New password (optional, min 8 characters)';
@@ -125,7 +261,6 @@
 
     passwordLabel.append(password);
 
-    // Buttons
     const actions = document.createElement('div');
 
     actions.style.display = 'flex';
@@ -139,7 +274,6 @@
 
     actions.append(edit, save, cancel);
 
-    // Store original values for Cancel
     const original = {
       active: !!s.active,
       permissions: [...s.permissions]
@@ -157,11 +291,9 @@
       setVisible(save, enabled);
       setVisible(cancel, enabled);
 
-      // Hide password field until Edit is clicked
       setVisible(passwordLabel, enabled);
     }
 
-    // Default: read-only
     setEditMode(false);
 
     edit.addEventListener('click', () => {
@@ -203,7 +335,6 @@
 
         await api(json('PATCH', data));
 
-        // Update original values after successful save
         original.active = data.active;
         original.permissions = [...data.permissions];
 
@@ -215,6 +346,9 @@
           'Saved ' + s.username +
           '. Existing staff sessions revoked.'
         );
+        loadOverview().catch(() => {
+          showOverviewMessage('overviewStatus', 'Unable to refresh overview.');
+        });
 
       } catch (e) {
         notice(e.message);
@@ -250,12 +384,15 @@
         staffList.textContent = 'No staff accounts yet.';
       }
 
+      await loadOverview(d);
     } catch (e) {
       notice(e.message);
+      loadOverview().catch(() => {
+        showOverviewMessage('overviewStatus', 'Unable to refresh overview.');
+      });
     }
   }
 
-  // Create new staff account
   $('create').addEventListener('submit', async e => {
     e.preventDefault();
 
