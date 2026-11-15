@@ -3,6 +3,7 @@
 'use strict';
 
 const $=id=>document.getElementById(id);
+
 const storageKey='dd_support_guest_v1';
 const historyKey='dd_support_guest_history_v1';
 
@@ -13,14 +14,14 @@ let checkingLive=false;
 let checkingAvailability=false;
 let lastAvailability=null;
 
-const note=msg=>{
-  $('notice').textContent=msg;
+const note=message=>{
+  $('notice').textContent=message;
 };
 
-async function json(url,opts={}){
+async function json(url,options={}){
   const response=await fetch(url,{
     cache:'no-store',
-    ...opts
+    ...options
   });
 
   let data;
@@ -38,6 +39,57 @@ async function json(url,opts={}){
   return data;
 }
 
+function validSavedTicket(item){
+  return !!(
+    item&&
+    typeof item.id==='string'&&
+    /^SUP-[0-9a-f-]{36}$/i.test(item.id)&&
+    typeof item.access==='string'&&
+    item.access.length>0
+  );
+}
+
+function normalizeTicket(item){
+  return {
+    id:item.id,
+    access:item.access,
+    mode:item.mode==='live'?'live':'ticket',
+    subject:typeof item.subject==='string'
+      ?item.subject.slice(0,140)
+      :'',
+    savedAt:typeof item.savedAt==='string'
+      ?item.savedAt
+      :new Date().toISOString()
+  };
+}
+
+function readHistory(){
+  try{
+    const raw=JSON.parse(
+      localStorage.getItem(historyKey)||'[]'
+    );
+
+    if(!Array.isArray(raw))return [];
+
+    const seen=new Set();
+    const items=[];
+
+    for(const item of raw){
+      if(!validSavedTicket(item))continue;
+      if(seen.has(item.id))continue;
+
+      seen.add(item.id);
+      items.push(normalizeTicket(item));
+
+      if(items.length>=20)break;
+    }
+
+    return items;
+  }catch{
+    return [];
+  }
+}
+
 function saveTicket(){
   try{
     if(ticket){
@@ -52,25 +104,114 @@ function saveTicket(){
 }
 
 function saveHistory(item){
-  if(!item?.id||!item?.access)return;
+  if(!validSavedTicket(item))return;
+
+  const saved=normalizeTicket(item);
+
+  const updated=[
+    saved,
+    ...readHistory().filter(
+      old=>old.id!==saved.id
+    )
+  ].slice(0,20);
 
   try{
-    const saved=JSON.parse(
-      localStorage.getItem(historyKey)||'[]'
-    );
-
-    const history=Array.isArray(saved)?saved:[];
-
-    const updated=[
-      item,
-      ...history.filter(t=>t.id!==item.id)
-    ].slice(0,20);
-
     localStorage.setItem(
       historyKey,
       JSON.stringify(updated)
     );
   }catch{}
+
+  renderHistory();
+}
+
+function renderHistory(){
+  const container=$('conversationHistory');
+  const count=$('conversationCount');
+
+  if(!container||!count)return;
+
+  const history=readHistory();
+
+  // Include the current ticket even if it was
+  // created before history storage existed.
+  if(
+    validSavedTicket(ticket)&&
+    !history.some(item=>item.id===ticket.id)
+  ){
+    history.unshift(normalizeTicket(ticket));
+  }
+
+  count.textContent=
+    history.length+' Saved';
+
+  container.replaceChildren();
+
+  if(history.length===0){
+    const empty=document.createElement('div');
+    empty.className='info-box';
+
+    const title=document.createElement('strong');
+    title.textContent='No saved conversations yet';
+
+    const description=document.createElement('p');
+    description.textContent=
+      'Your support conversations will appear here after you create one.';
+
+    empty.append(title,description);
+    container.append(empty);
+    return;
+  }
+
+  for(const item of history){
+    const card=document.createElement('div');
+    card.className='history-item';
+
+    const details=document.createElement('div');
+    details.className='history-details';
+
+    const title=document.createElement('strong');
+
+    const type=item.mode==='live'
+      ?'💬 Live Agent'
+      :'🎫 Support Ticket';
+
+    title.textContent=item.subject
+      ?type+' — '+item.subject
+      :type;
+
+    const reference=document.createElement('small');
+    reference.textContent=item.id;
+
+    const date=document.createElement('small');
+
+    const parsed=new Date(item.savedAt);
+
+    date.textContent=Number.isNaN(parsed.getTime())
+      ?'Saved conversation'
+      :'Saved: '+parsed.toLocaleString();
+
+    details.append(title,reference,date);
+
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='history-open';
+
+    const isCurrent=ticket?.id===item.id;
+
+    button.textContent=isCurrent
+      ?'Current Chat'
+      :'Open Conversation';
+
+    button.disabled=isCurrent;
+
+    button.addEventListener('click',()=>{
+      openSavedConversation(item);
+    });
+
+    card.append(details,button);
+    container.append(card);
+  }
 }
 
 function setMode(next){
@@ -78,8 +219,15 @@ function setMode(next){
 
   const live=mode==='live';
 
-  $('chooseLive').classList.toggle('active',live);
-  $('chooseTicket').classList.toggle('active',!live);
+  $('chooseLive').classList.toggle(
+    'active',
+    live
+  );
+
+  $('chooseTicket').classList.toggle(
+    'active',
+    !live
+  );
 
   $('chooseLive').setAttribute(
     'aria-pressed',
@@ -148,21 +296,21 @@ function show(){
   $('conversationMode').className=isLive
     ?'status'
     :'status ended';
+
+  renderHistory();
 }
 
 function updateBusyNotice(){
-  const panel=$('agentsBusyNotice');
-
   const waiting=
     ticket?.mode==='live'&&
     ticket.liveState==='waiting';
 
-  const noAvailableAgents=
+  const noAgents=
     lastAvailability?.available===false;
 
-  panel.classList.toggle(
+  $('agentsBusyNotice').classList.toggle(
     'hidden',
-    !(waiting&&noAvailableAgents)
+    !(waiting&&noAgents)
   );
 }
 
@@ -180,8 +328,7 @@ function renderLiveState(state,message){
     badge.textContent='Agent Connected';
     badge.classList.add('accepted');
 
-    info.textContent=
-      message||
+    info.textContent=message||
       'A support agent has accepted your chat.';
 
     $('waitForAgent').hidden=true;
@@ -190,8 +337,7 @@ function renderLiveState(state,message){
   }else if(state==='waiting'){
     badge.textContent='Waiting for Agent';
 
-    info.textContent=
-      message||
+    info.textContent=message||
       'Waiting for an available support agent.';
 
     $('waitForAgent').hidden=false;
@@ -206,8 +352,7 @@ function renderLiveState(state,message){
 
     badge.classList.add('ended');
 
-    info.textContent=
-      message||
+    info.textContent=message||
       'This live chat is no longer in the queue.';
 
     $('waitForAgent').hidden=true;
@@ -236,21 +381,16 @@ async function refreshAvailability(){
       status:data.status
     };
 
-    updateBusyNotice();
-
   }catch(error){
-    // Unknown availability must not be
-    // displayed as confirmed busy.
     lastAvailability=null;
-    updateBusyNotice();
 
     console.warn(
       'Availability check failed:',
       error.message
     );
-
   }finally{
     checkingAvailability=false;
+    updateBusyNotice();
   }
 }
 
@@ -317,6 +457,15 @@ async function refresh(){
       data.ticket.subject+' · '+
       data.ticket.status;
 
+    if(
+      data.ticket.subject&&
+      ticket.subject!==data.ticket.subject
+    ){
+      ticket.subject=data.ticket.subject;
+      saveTicket();
+      saveHistory(ticket);
+    }
+
     const list=$('messages');
 
     const nearBottom=
@@ -379,12 +528,58 @@ async function refreshAll(){
   ]);
 }
 
+function openSavedConversation(item){
+  if(!validSavedTicket(item))return;
+
+  if(ticket){
+    saveHistory(ticket);
+  }
+
+  ticket=normalizeTicket(item);
+
+  lastAvailability=null;
+
+  $('message').value='';
+  $('messages').replaceChildren();
+  $('ticketInfo').textContent='Loading conversation...';
+
+  saveTicket();
+  saveHistory(ticket);
+
+  setMode(ticket.mode);
+  show();
+
+  if(ticket.mode==='live'){
+    renderLiveState(
+      'waiting',
+      'Checking your Live Agent status...'
+    );
+
+    refreshAvailability();
+  }
+
+  note('Opening saved conversation...');
+
+  refreshAll().then(()=>{
+    if(ticket?.id===item.id){
+      note('');
+    }
+  });
+
+  $('conversation').scrollIntoView({
+    behavior:'smooth',
+    block:'start'
+  });
+}
+
 function startNewConversation(nextMode){
   if(ticket){
     saveHistory(ticket);
   }
 
   ticket=null;
+  lastAvailability=null;
+
   saveTicket();
 
   $('message').value='';
@@ -448,7 +643,9 @@ $('newTicket').addEventListener(
       ticket={
         id:data.id,
         access:data.access,
-        mode:selectedMode
+        mode:selectedMode,
+        subject:payload.subject,
+        savedAt:new Date().toISOString()
       };
 
       saveTicket();
@@ -490,6 +687,7 @@ $('send').addEventListener(
     if(!ticket)return;
 
     const active=ticket;
+
     const button=event.target.querySelector(
       'button'
     );
@@ -565,22 +763,14 @@ $('newConversation').addEventListener(
   }
 );
 
-// Restore existing conversation.
+// Restore current conversation.
 try{
   const saved=JSON.parse(
     localStorage.getItem(storageKey)||'null'
   );
 
-  if(
-    saved&&
-    typeof saved.id==='string'&&
-    typeof saved.access==='string'
-  ){
-    ticket={
-      id:saved.id,
-      access:saved.access,
-      mode:saved.mode==='live'?'live':'ticket'
-    };
+  if(validSavedTicket(saved)){
+    ticket=normalizeTicket(saved);
   }
 }catch{}
 
@@ -588,14 +778,20 @@ setMode(ticket?.mode||'ticket');
 show();
 
 if(ticket){
+  saveHistory(ticket);
   refreshAll();
 
   if(ticket.mode==='live'){
+    renderLiveState(
+      'waiting',
+      'Checking your Live Agent status...'
+    );
+
     refreshAvailability();
   }
 }
 
-// Conversation updates every 5 seconds.
+// Refresh messages and queue every 5 seconds.
 setInterval(()=>{
   if(
     ticket&&
@@ -605,7 +801,7 @@ setInterval(()=>{
   }
 },5000);
 
-// Availability updates every 15 seconds.
+// Refresh agent availability every 15 seconds.
 setInterval(()=>{
   if(
     ticket?.mode==='live'&&
