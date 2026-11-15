@@ -10,25 +10,28 @@ let ticket=null;
 let mode='ticket';
 let busy=false;
 let checkingLive=false;
+let checkingAvailability=false;
+let lastAvailability=null;
 
 const note=msg=>{
   $('notice').textContent=msg;
 };
 
 async function json(url,opts={}){
-  const r=await fetch(url,{
+  const response=await fetch(url,{
     cache:'no-store',
     ...opts
   });
 
   let data;
+
   try{
-    data=await r.json();
+    data=await response.json();
   }catch{
     throw Error('Support service unavailable');
   }
 
-  if(!r.ok){
+  if(!response.ok){
     throw Error(data.error||'Request failed');
   }
 
@@ -89,24 +92,24 @@ function setMode(next){
   );
 
   $('startTitle').textContent=live
-    ? 'Chat with a Live Agent'
-    : 'Create a Support Ticket';
+    ?'Chat with a Live Agent'
+    :'Create a Support Ticket';
 
   $('startDescription').textContent=live
-    ? 'Tell us how we can help. Your conversation will join the Live Agent waiting queue.'
-    : 'Describe your concern and our support team can reply here.';
+    ?'Tell us how we can help. Your conversation will join the Live Agent waiting queue.'
+    :'Describe your concern and our support team can reply here.';
 
   $('startModeLabel').textContent=live
-    ? 'Live Agent'
-    : 'Ticket Support';
+    ?'Live Agent'
+    :'Ticket Support';
 
   $('startModeLabel').className=live
-    ? 'status'
-    : 'status ended';
+    ?'status'
+    :'status ended';
 
   $('startSubmit').textContent=live
-    ? 'Join Live Agent Queue'
-    : 'Create Support Ticket';
+    ?'Join Live Agent Queue'
+    :'Create Support Ticket';
 
   $('liveFormNotice').classList.toggle(
     'hidden',
@@ -116,6 +119,7 @@ function setMode(next){
 
 function show(){
   const hasTicket=!!ticket;
+  const isLive=hasTicket&&ticket.mode==='live';
 
   $('supportChoices').classList.toggle(
     'hidden',
@@ -132,23 +136,41 @@ function show(){
     !hasTicket
   );
 
-  const isLive=hasTicket&&ticket.mode==='live';
-
   $('liveWaitingPanel').classList.toggle(
     'hidden',
     !isLive
   );
 
   $('conversationMode').textContent=isLive
-    ? 'Live Agent'
-    : 'Support Ticket';
+    ?'Live Agent'
+    :'Support Ticket';
 
   $('conversationMode').className=isLive
-    ? 'status'
-    : 'status ended';
+    ?'status'
+    :'status ended';
+}
+
+function updateBusyNotice(){
+  const panel=$('agentsBusyNotice');
+
+  const waiting=
+    ticket?.mode==='live'&&
+    ticket.liveState==='waiting';
+
+  const noAvailableAgents=
+    lastAvailability?.available===false;
+
+  panel.classList.toggle(
+    'hidden',
+    !(waiting&&noAvailableAgents)
+  );
 }
 
 function renderLiveState(state,message){
+  if(!ticket||ticket.mode!=='live')return;
+
+  ticket.liveState=state;
+
   const badge=$('liveQueueStatus');
   const info=$('liveQueueMessage');
 
@@ -159,18 +181,22 @@ function renderLiveState(state,message){
     badge.classList.add('accepted');
 
     info.textContent=
-      message||'A support agent has accepted your chat.';
+      message||
+      'A support agent has accepted your chat.';
 
     $('waitForAgent').hidden=true;
     $('createTicketInstead').hidden=true;
+
   }else if(state==='waiting'){
     badge.textContent='Waiting for Agent';
 
     info.textContent=
-      message||'Waiting for an available support agent.';
+      message||
+      'Waiting for an available support agent.';
 
     $('waitForAgent').hidden=false;
     $('createTicketInstead').hidden=false;
+
   }else{
     badge.textContent='Chat '+(
       state==='ended'?'Ended':
@@ -181,15 +207,51 @@ function renderLiveState(state,message){
     badge.classList.add('ended');
 
     info.textContent=
-      message||'This live chat is no longer in the queue.';
+      message||
+      'This live chat is no longer in the queue.';
 
     $('waitForAgent').hidden=true;
     $('createTicketInstead').hidden=false;
   }
 
-  // Do not claim agents are busy without
-  // verified public availability data.
-  $('agentsBusyNotice').classList.add('hidden');
+  updateBusyNotice();
+}
+
+async function refreshAvailability(){
+  if(checkingAvailability)return;
+
+  checkingAvailability=true;
+
+  try{
+    const data=await json(
+      '/api/support/availability'
+    );
+
+    if(typeof data.available!=='boolean'){
+      throw Error('Invalid availability response');
+    }
+
+    lastAvailability={
+      available:data.available,
+      status:data.status
+    };
+
+    updateBusyNotice();
+
+  }catch(error){
+    // Unknown availability must not be
+    // displayed as confirmed busy.
+    lastAvailability=null;
+    updateBusyNotice();
+
+    console.warn(
+      'Availability check failed:',
+      error.message
+    );
+
+  }finally{
+    checkingAvailability=false;
+  }
 }
 
 async function refreshLive(){
@@ -199,26 +261,33 @@ async function refreshLive(){
     checkingLive
   )return;
 
+  const active=ticket;
   checkingLive=true;
 
   try{
     const data=await json(
       '/api/support/live?id='+
-      encodeURIComponent(ticket.id),
+      encodeURIComponent(active.id),
       {
         headers:{
-          'X-Support-Access':ticket.access
+          'X-Support-Access':active.access
         }
       }
     );
+
+    if(!ticket||ticket.id!==active.id)return;
 
     renderLiveState(
       data.state,
       data.message
     );
-  }catch(err){
-    $('liveQueueMessage').textContent=
-      'Unable to check live status: '+err.message;
+
+  }catch(error){
+    if(ticket?.id===active.id){
+      $('liveQueueMessage').textContent=
+        'Unable to check live status: '+
+        error.message;
+    }
   }finally{
     checkingLive=false;
   }
@@ -227,11 +296,10 @@ async function refreshLive(){
 async function refresh(){
   if(!ticket||busy)return;
 
+  const active=ticket;
   busy=true;
 
   try{
-    const active=ticket;
-
     const data=await json(
       '/api/support/conversation?id='+
       encodeURIComponent(active.id),
@@ -258,23 +326,25 @@ async function refresh(){
 
     list.replaceChildren();
 
-    for(const m of data.messages){
+    for(const message of data.messages){
       const div=document.createElement('div');
 
       div.className='bubble'+(
-        m.sender==='guest'?' mine':''
+        message.sender==='guest'
+          ?' mine'
+          :''
       );
 
       const text=document.createElement('div');
-      text.textContent=m.body;
+      text.textContent=message.body;
 
       const meta=document.createElement('small');
 
       meta.textContent=(
-        m.sender==='guest'
+        message.sender==='guest'
           ?'You'
           :'DONEDEAL Support'
-      )+' · '+m.created_at;
+      )+' · '+message.created_at;
 
       div.append(text,meta);
       list.append(div);
@@ -289,8 +359,10 @@ async function refresh(){
       data.ticket.status==='closed'
     );
 
-  }catch(err){
-    note(err.message);
+  }catch(error){
+    if(ticket?.id===active.id){
+      note(error.message);
+    }
   }finally{
     busy=false;
   }
@@ -299,11 +371,12 @@ async function refresh(){
 async function refreshAll(){
   if(!ticket)return;
 
-  await refresh();
-
-  if(ticket?.mode==='live'){
-    await refreshLive();
-  }
+  await Promise.all([
+    refresh(),
+    ticket.mode==='live'
+      ?refreshLive()
+      :Promise.resolve()
+  ]);
 }
 
 function startNewConversation(nextMode){
@@ -339,8 +412,8 @@ $('chooseTicket').addEventListener('click',()=>{
 
 $('newTicket').addEventListener(
   'submit',
-  async e=>{
-    e.preventDefault();
+  async event=>{
+    event.preventDefault();
 
     const button=$('startSubmit');
     button.disabled=true;
@@ -359,8 +432,6 @@ $('newTicket').addEventListener(
       message:$('initial').value.trim()
     };
 
-    // The live endpoint supports optional phone.
-    // The existing ticket endpoint does not.
     if(selectedMode==='live'){
       payload.phone=$('phone').value.trim();
     }
@@ -391,15 +462,20 @@ $('newTicket').addEventListener(
         );
       }
 
-      await refreshAll();
+      await Promise.all([
+        refreshAll(),
+        selectedMode==='live'
+          ?refreshAvailability()
+          :Promise.resolve()
+      ]);
 
       note(selectedMode==='live'
         ?'Live Agent request created. Keep this page open while waiting.'
         :'Ticket created. Save your ticket reference.'
       );
 
-    }catch(err){
-      note(err.message);
+    }catch(error){
+      note(error.message);
     }finally{
       button.disabled=false;
     }
@@ -408,13 +484,15 @@ $('newTicket').addEventListener(
 
 $('send').addEventListener(
   'submit',
-  async e=>{
-    e.preventDefault();
+  async event=>{
+    event.preventDefault();
 
     if(!ticket)return;
 
     const active=ticket;
-    const button=e.target.querySelector('button');
+    const button=event.target.querySelector(
+      'button'
+    );
 
     button.disabled=true;
     note('');
@@ -435,8 +513,8 @@ $('send').addEventListener(
       $('message').value='';
       await refreshAll();
 
-    }catch(err){
-      note(err.message);
+    }catch(error){
+      note(error.message);
     }finally{
       button.disabled=false;
     }
@@ -446,8 +524,13 @@ $('send').addEventListener(
 $('waitForAgent').addEventListener(
   'click',
   async()=>{
-    note('Checking your Live Agent queue status...');
-    await refreshLive();
+    note('Checking your Live Agent status...');
+
+    await Promise.all([
+      refreshLive(),
+      refreshAvailability()
+    ]);
+
     note('');
   }
 );
@@ -457,7 +540,7 @@ $('createTicketInstead').addEventListener(
   ()=>{
     const proceed=window.confirm(
       'Create a separate support ticket? '+
-      'Your current Live Agent conversation will remain open '+
+      'Your Live Agent conversation will remain open '+
       'and its access will be saved in this browser.'
     );
 
@@ -482,7 +565,7 @@ $('newConversation').addEventListener(
   }
 );
 
-// Restore the most recently active conversation.
+// Restore existing conversation.
 try{
   const saved=JSON.parse(
     localStorage.getItem(storageKey)||'null'
@@ -506,9 +589,13 @@ show();
 
 if(ticket){
   refreshAll();
+
+  if(ticket.mode==='live'){
+    refreshAvailability();
+  }
 }
 
-// Existing message refresh: every 5 seconds.
+// Conversation updates every 5 seconds.
 setInterval(()=>{
   if(
     ticket&&
@@ -518,14 +605,29 @@ setInterval(()=>{
   }
 },5000);
 
+// Availability updates every 15 seconds.
+setInterval(()=>{
+  if(
+    ticket?.mode==='live'&&
+    document.visibilityState==='visible'
+  ){
+    refreshAvailability();
+  }
+},15000);
+
 document.addEventListener(
   'visibilitychange',
   ()=>{
-    if(
-      document.visibilityState==='visible'&&
-      ticket
-    ){
+    if(document.visibilityState!=='visible'){
+      return;
+    }
+
+    if(ticket){
       refreshAll();
+
+      if(ticket.mode==='live'){
+        refreshAvailability();
+      }
     }
   }
 );
