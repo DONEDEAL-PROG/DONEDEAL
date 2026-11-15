@@ -83,6 +83,16 @@
           My Wishlist
         </a>
 
+        <a href="/track-order.html">
+          <span aria-hidden="true">📦</span>
+          Track My Order
+        </a>
+
+        <button type="button" class="dd-menu-theme-control" aria-label="Switch color theme">
+          <span aria-hidden="true">☀</span>
+          <span class="dd-menu-theme-label">Light Mode</span>
+        </button>
+
         <a href="/#dd-recent-grid">
           <span aria-hidden="true">◷</span>
           Recently Viewed
@@ -147,7 +157,65 @@
       </div>
     `;
 
+    // Keep secondary actions in the sidebar; no floating buttons on phones.
+    if (!document.getElementById('dd-menu-actions-style')) {
+      const style = document.createElement('style');
+      style.id = 'dd-menu-actions-style';
+      style.textContent = `
+        .dd-menu-panel .dd-menu-theme-control {
+          display:flex;align-items:center;gap:12px;width:100%;
+          padding:12px 18px;border:0;background:transparent;
+          color:inherit;text-align:left;font:inherit;cursor:pointer;
+        }
+        .dd-menu-panel .dd-menu-theme-control:hover {background:rgba(150,150,160,.12)}
+        /* The track-order shortcut is now inside the menu on every screen. */
+        .dd-track-float {display:none!important}
+        /* Theme and wishlist live in the menu rather than crowding the header. */
+        header.nav [data-dd-theme-toggle],
+        header.nav [data-dd-global-theme],
+        header.nav #ddCheckoutTheme,
+        header.nav a[href*="wishlist"],
+        header.nav button[onclick*="wishlist" i],
+        header.nav #wishlistToggle,
+        header.nav .wishlist-btn {display:none!important}
+        @media(max-width:767px){
+          .dd-global-live-agent,.dd-support-float,.dd-track-float {
+            display:none!important
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
     document.body.append(scrim, panel);
+
+    // One theme control in the menu for desktop and mobile.
+    const menuTheme = panel.querySelector('.dd-menu-theme-control');
+    function syncMenuTheme() {
+      const current = document.documentElement.getAttribute('data-dd-store-theme') || 'dark';
+      const next = current === 'dark' ? 'Light' : 'Dark';
+      panel.querySelector('.dd-menu-theme-label').textContent = next + ' Mode';
+      menuTheme.setAttribute('aria-label', 'Switch to ' + next.toLowerCase() + ' mode');
+      menuTheme.querySelector('span[aria-hidden]').textContent = current === 'dark' ? '☀' : '☾';
+    }
+    menuTheme.addEventListener('click', function() {
+      const current = document.documentElement.getAttribute('data-dd-store-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('dd_store_theme_v1', next); } catch(e) {}
+      if (window.DDTheme && typeof window.DDTheme.apply === 'function') {
+        window.DDTheme.apply(next);
+      } else {
+        document.documentElement.setAttribute('data-dd-store-theme', next);
+        document.querySelectorAll('[data-dd-theme-toggle]').forEach(function(b) {
+          b.textContent = next === 'dark' ? '☀ Light' : '☾ Dark';
+        });
+      }
+      syncMenuTheme();
+    });
+    syncMenuTheme();
+    new MutationObserver(syncMenuTheme).observe(document.documentElement, {
+      attributes:true, attributeFilter:['data-dd-store-theme']
+    });
 
     const closeButton = panel.querySelector('.dd-menu-close');
 
