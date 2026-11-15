@@ -175,6 +175,15 @@ button:disabled{opacity:.58}
 #loginPanel{background:#fff!important}
 @media(max-width:600px){.dd-brand-tile{min-height:118px!important}#products .product{padding:16px!important}}
 
+
+/* Customer Service Management links */
+.dd-service-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.dd-service-link{display:block;text-decoration:none;background:#fbf7fa;border:1px solid #e6d4df;border-radius:12px;padding:20px;color:#29252b;transition:border-color .15s,box-shadow .15s}
+.dd-service-link:hover{border-color:#b64c84;box-shadow:0 5px 18px #36203214}
+.dd-service-link strong{display:block;font-size:17px;margin-bottom:7px}
+.dd-service-link span{display:block;font-size:13px;color:#736d75;line-height:1.5}
+.dd-service-next{margin:16px 0 0;color:#736d75;font-size:13px}
+@media(max-width:600px){.dd-service-links{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="/admin/dd-shell.css">
 </head>
@@ -191,6 +200,16 @@ button:disabled{opacity:.58}
 <p id="loginMessage" class="notice" role="status"></p>
 </section>
 <section id="dashboard">
+<section class="panel" aria-labelledby="dd-service-heading">
+<h2 id="dd-service-heading" style="margin:0">Customer Service Management</h2>
+<p style="color:#736d75;margin:8px 0 0">Manage customer service staff and review refund requests.</p>
+<nav class="dd-service-links" aria-label="Customer service admin pages">
+<a class="dd-service-link" href="/admin/support-staff"><strong>👥 Staff Accounts &amp; Permissions</strong><span>Create staff accounts, manage access permissions, and activate or deactivate accounts.</span></a>
+<a class="dd-service-link" href="/admin/staff-refunds.html"><strong>↩ Refund Requests &amp; Approvals</strong><span>Review staff refund requests, approve or reject them, and record Admin notes.</span></a>
+</nav>
+<p class="dd-service-next">Staff Activity Logs — coming in the next step.</p>
+</section>
+
 <div class="panel">
 <div class="productHead"><div><h2 style="margin:0 0 8px">Product Manager</h2><p class="subtitle" style="margin:0">Browse by brand, search, then edit a gadget</p></div><button class="secondary" id="refreshBtn">Refresh</button></div>
 <p id="status" role="status"></p>
