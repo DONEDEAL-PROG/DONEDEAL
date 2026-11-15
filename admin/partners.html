@@ -615,6 +615,103 @@ body > main > #content {
     max-width: 72px;
   }
 }
+  
+/* Compact Partner Messages layout */
+
+body > main {
+  box-sizing: border-box;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  overflow-x: hidden;
+}
+
+#content,
+.pm-view {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pm-chat {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: 480px !important;
+  max-height: 65vh !important;
+  overflow: hidden !important;
+}
+
+.pm-conversations,
+.pm-thread {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden;
+}
+
+.pm-thread {
+  display: flex;
+  flex-direction: column;
+}
+
+.pm-messages {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#admin-reply {
+  display: flex !important;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#admin-reply[hidden] {
+  display: none !important;
+}
+
+#admin-reply textarea {
+  flex: 1 1 auto;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  resize: none;
+  box-sizing: border-box;
+}
+
+#admin-reply button {
+  flex: 0 0 76px;
+  width: 76px !important;
+  max-width: 76px !important;
+  height: 42px;
+}
+
+@media (max-width: 700px) {
+  .pm-chat {
+    grid-template-columns: minmax(0, 1fr) !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .pm-conversations {
+    max-height: 170px;
+    overflow-y: auto;
+  }
+
+  .pm-thread {
+    height: 350px;
+  }
+}
+
 </style>
 </head>
 
