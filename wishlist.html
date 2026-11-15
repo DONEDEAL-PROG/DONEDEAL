@@ -1,1 +1,550 @@
-<!doctype html><html lang="en"><head><script src="dd-unified-theme.js"></script><link rel="stylesheet" href="dd-unified-theme.css"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Wishlist | DONEDEAL</title><link rel="stylesheet" href="dd-customer-extras.css"><style>body{margin:0;background:#151119;color:#fff;font:15px system-ui,sans-serif}header{padding:20px;background:#241c27;display:flex;justify-content:space-between;align-items:center}a{color:#ff8bbb}main{max-width:1200px;margin:auto}</style><link rel="stylesheet" href="dd-unified-theme.css"><link rel="stylesheet" href="/dd-mobile-app.css?v=1"></head><body><header><b>♡ DONEDEAL Wishlist</b><a href="shop.html">Continue Shopping →</a><button data-dd-theme-toggle>☾ Dark</button></header><main><section class="dd-extra-section"><h1>My Wishlist</h1><p>Your saved gadgets on this device</p><div id="dd-wishlist-grid" class="dd-extra-grid"></div></section></main><script src="dd-customer-extras.js"></script><script src="dd-menu-sidebar.js"></script><script src="/dd-mobile-app.js?v=1"></script></body></html>
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#141218">
+
+  <title>My Wishlist | DONEDEAL Gadgets & Supplies</title>
+
+  <script src="/dd-unified-theme.js"></script>
+  <link rel="stylesheet" href="/dd-unified-theme.css">
+  <link rel="stylesheet" href="/dd-customer-extras.css">
+  <link rel="stylesheet" href="/dd-mobile-app.css?v=1">
+
+  <style>
+    :root {
+      --wish-bg: #111015;
+      --wish-surface: #1b1920;
+      --wish-border: rgba(255,255,255,.10);
+      --wish-text: #f8f6f9;
+      --wish-muted: #aaa4b0;
+      --wish-accent: #f0448c;
+      --wish-soft: rgba(240,68,140,.10);
+    }
+
+    html[data-dd-store-theme="light"] {
+      --wish-bg: #faf9fb;
+      --wish-surface: #ffffff;
+      --wish-border: #e9e4eb;
+      --wish-text: #211d26;
+      --wish-muted: #655f6c;
+      --wish-accent: #c9236c;
+      --wish-soft: #fce9f2;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--wish-bg) !important;
+      color: var(--wish-text) !important;
+      font-family: "DM Sans", Inter, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    /* HEADER */
+
+    .wish-header {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px clamp(20px, 5vw, 72px);
+      background: var(--wish-surface);
+      border-bottom: 1px solid var(--wish-border);
+      min-height: 90px;
+    }
+
+    .wish-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      min-width: 0;
+    }
+
+    .wish-brand-mark {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .wish-logo-light {
+      display: none;
+    }
+
+    html[data-dd-store-theme="light"] .wish-logo-dark {
+      display: none;
+    }
+
+    html[data-dd-store-theme="light"] .wish-logo-light {
+      display: block;
+    }
+
+    .wish-brand-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .wish-brand-name {
+      font-size: 24px;
+      font-weight: 850;
+      letter-spacing: -1.2px;
+      line-height: 1;
+      color: var(--wish-text);
+    }
+
+    .wish-brand-name span {
+      color: var(--wish-accent);
+    }
+
+    .wish-brand-tagline {
+      font-size: 9px;
+      font-weight: 750;
+      letter-spacing: 2px;
+      color: var(--wish-muted);
+    }
+
+    .wish-header-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 750;
+      color: var(--wish-text);
+      transition: color .2s;
+    }
+
+    .wish-header-link:hover {
+      color: var(--wish-accent);
+    }
+
+    /* PAGE */
+
+    .wish-main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 60px 24px 110px;
+    }
+
+    .wish-intro {
+      margin-bottom: 32px;
+    }
+
+    .wish-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--wish-accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+    }
+
+    .wish-title {
+      margin: 13px 0 12px;
+      color: var(--wish-text);
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 850;
+      line-height: 1.08;
+      letter-spacing: -2px;
+    }
+
+    .wish-description {
+      color: var(--wish-muted);
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* EMPTY WISHLIST */
+
+    .wish-empty {
+      display: none;
+      text-align: center;
+      padding: clamp(42px, 7vw, 80px) 24px;
+      border: 1px solid var(--wish-border);
+      border-radius: 24px;
+      background:
+        radial-gradient(
+          ellipse at 50% 0%,
+          var(--wish-soft),
+          transparent 65%
+        ),
+        var(--wish-surface);
+    }
+
+    .wish-empty-icon {
+      width: 84px;
+      height: 84px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 26px;
+      border-radius: 50%;
+      background: var(--wish-soft);
+      color: var(--wish-accent);
+    }
+
+    .wish-empty-icon svg {
+      width: 38px;
+      height: 38px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .wish-empty h2 {
+      margin: 0 0 14px;
+      color: var(--wish-text);
+      font-size: clamp(25px, 4vw, 35px);
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .wish-empty p {
+      max-width: 450px;
+      margin: 0 auto 28px;
+      color: var(--wish-muted);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .wish-shop-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-height: 50px;
+      padding: 14px 26px;
+      border-radius: 10px;
+      background: var(--wish-accent);
+      color: #ffffff !important;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .wish-shop-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(240,68,140,.22);
+    }
+
+    .wish-shop-button svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .wish-empty-note {
+      display: block;
+      margin-top: 22px;
+      color: var(--wish-muted);
+      font-size: 12px;
+    }
+
+    /* SAVED PRODUCTS */
+
+    #dd-wishlist-grid {
+      display: grid;
+      gap: 20px;
+      color: var(--wish-text);
+    }
+
+    #dd-wishlist-grid:empty {
+      display: none;
+    }
+
+    .wish-products-heading {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 0 0 22px;
+    }
+
+    .wish-products-heading h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--wish-text);
+    }
+
+    .wish-products-heading a {
+      color: var(--wish-accent);
+      font-size: 13px;
+      font-weight: 750;
+      text-decoration: none;
+    }
+
+    /* Make existing product cards readable in Light Mode */
+
+    html[data-dd-store-theme="light"]
+    #dd-wishlist-grid,
+    html[data-dd-store-theme="light"]
+    #dd-wishlist-grid h2,
+    html[data-dd-store-theme="light"]
+    #dd-wishlist-grid h3,
+    html[data-dd-store-theme="light"]
+    #dd-wishlist-grid h4 {
+      color: #211d26;
+    }
+
+    html[data-dd-store-theme="light"]
+    #dd-wishlist-grid p {
+      color: #655f6c;
+    }
+
+    /* FOOTER */
+
+    .wish-footer {
+      padding: 28px 20px;
+      border-top: 1px solid var(--wish-border);
+      color: var(--wish-muted);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 767px) {
+      .wish-header {
+        padding: 14px 16px 14px 70px;
+        min-height: 76px;
+        gap: 8px;
+      }
+
+      .wish-brand-mark {
+        width: 38px;
+        height: 38px;
+      }
+
+      .wish-brand-name {
+        font-size: 18px;
+        letter-spacing: -.7px;
+      }
+
+      .wish-brand-tagline {
+        font-size: 7px;
+        letter-spacing: 1.1px;
+      }
+
+      .wish-header-link {
+        font-size: 11px;
+        white-space: nowrap;
+      }
+
+      .wish-main {
+        padding: 34px 16px 110px;
+      }
+
+      .wish-title {
+        font-size: 36px;
+        letter-spacing: -1.5px;
+      }
+
+      .wish-description {
+        font-size: 14px;
+      }
+
+      .wish-empty {
+        border-radius: 18px;
+        padding: 48px 20px;
+      }
+
+      .wish-empty-icon {
+        width: 74px;
+        height: 74px;
+      }
+
+      .wish-shop-button {
+        width: 100%;
+        max-width: 290px;
+      }
+
+      .wish-products-heading h2 {
+        font-size: 19px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .wish-brand-tagline {
+        display: none;
+      }
+
+      .wish-header-link {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Original DONEDEAL logo images -->
+  <header class="wish-header">
+
+    <a href="/" class="wish-brand" aria-label="DONEDEAL Home">
+
+      <img
+        src="/done-deal-mark.png"
+        alt="DONEDEAL logo"
+        class="wish-brand-mark wish-logo-dark"
+      >
+
+      <img
+        src="/done-deal-mark-light.png"
+        alt=""
+        class="wish-brand-mark wish-logo-light"
+      >
+
+      <span class="wish-brand-copy">
+        <span class="wish-brand-name">
+          DONE<span>DEAL</span>
+        </span>
+        <span class="wish-brand-tagline">
+          GADGETS &amp; SUPPLIES
+        </span>
+      </span>
+
+    </a>
+
+    <a href="/shop" class="wish-header-link">
+      Continue Shopping
+      <span aria-hidden="true">↗</span>
+    </a>
+
+  </header>
+
+  <main class="wish-main">
+
+    <section class="wish-intro">
+      <div class="wish-eyebrow">
+        <span aria-hidden="true">♡</span>
+        YOUR PERSONAL COLLECTION
+      </div>
+
+      <h1 class="wish-title">Your Wishlist</h1>
+
+      <p class="wish-description">
+        Your favorite gadgets, all in one place.
+      </p>
+    </section>
+
+    <!-- Visible only when no products are saved -->
+    <section id="wish-empty" class="wish-empty">
+
+      <div class="wish-empty-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>
+        </svg>
+      </div>
+
+      <h2>Your wishlist is waiting.</h2>
+
+      <p>
+        Discover gadgets you'll love. Tap the heart on any product
+        to save it here and revisit it whenever you like.
+      </p>
+
+      <a href="/shop" class="wish-shop-button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 8h16l-1 13H5L4 8Z"/>
+          <path d="M9 9V6a3 3 0 0 1 6 0v3"/>
+        </svg>
+        Explore Gadgets
+        <span aria-hidden="true">↗</span>
+      </a>
+
+      <span class="wish-empty-note">
+        Your saved gadgets will appear here.
+      </span>
+
+    </section>
+
+    <!-- Visible when saved products exist -->
+    <div id="wish-products-heading" class="wish-products-heading">
+      <h2>Saved Gadgets</h2>
+      <a href="/shop">Explore More ↗</a>
+    </div>
+
+    <!-- Existing wishlist script renders products here -->
+    <div id="dd-wishlist-grid" class="dd-extra-grid"></div>
+
+  </main>
+
+  <footer class="wish-footer">
+    © DONEDEAL Gadgets &amp; Supplies
+  </footer>
+
+  <script src="/dd-customer-extras.js"></script>
+  <script src="/dd-menu-sidebar.js"></script>
+  <script src="/dd-mobile-app.js?v=1"></script>
+
+  <script>
+    (function () {
+      const grid = document.getElementById('dd-wishlist-grid');
+      const empty = document.getElementById('wish-empty');
+      const heading = document.getElementById('wish-products-heading');
+
+      if (!grid || !empty || !heading) return;
+
+      function updateWishlistState() {
+        const hasProducts = Array.from(grid.children).some(function (child) {
+          return child.nodeType === 1 &&
+            !child.matches('.dd-empty, .empty, [data-empty]');
+        });
+
+        empty.style.display = hasProducts ? 'none' : 'block';
+        heading.style.display = hasProducts ? 'flex' : 'none';
+
+        // Hide old empty-state text inserted by existing scripts.
+        Array.from(grid.children).forEach(function (child) {
+          if (
+            child.matches &&
+            child.matches('.dd-empty, .empty, [data-empty]')
+          ) {
+            child.style.display = hasProducts ? '' : 'none';
+          }
+        });
+      }
+
+      const observer = new MutationObserver(updateWishlistState);
+
+      observer.observe(grid, {
+        childList: true,
+        subtree: false
+      });
+
+      updateWishlistState();
+    })();
+  </script>
+
+</body>
+</html>
