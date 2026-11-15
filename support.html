@@ -229,6 +229,63 @@ small{color:#606a7d}
   main{margin-top:22px}
   header{padding:16px}
 }
+  
+/* My Conversations layout fix */
+#conversationHistory{
+  display:grid;
+  gap:12px;
+  margin-top:16px;
+}
+
+#conversationHistory .history-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:16px;
+  background:#f8f9fc;
+  border:1px solid #e2e5ee;
+  border-radius:12px;
+}
+
+#conversationHistory .history-details{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  flex:1;
+  min-width:0;
+}
+
+#conversationHistory .history-details strong{
+  display:block;
+  font-size:15px;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+}
+
+#conversationHistory .history-details small{
+  display:block;
+  font-size:12px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+
+#conversationHistory .history-open{
+  flex-shrink:0;
+  white-space:nowrap;
+}
+
+@media(max-width:560px){
+  #conversationHistory .history-item{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  #conversationHistory .history-open{
+    width:100%;
+  }
+}
+
 </style>
 </head>
 <body>
