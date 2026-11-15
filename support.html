@@ -399,6 +399,218 @@
         padding: 16px;
       }
     }
+    
+/* =========================================
+   DONEDEAL CUSTOMER SUPPORT THEME
+   Pink + Black + White
+   Design only — preserves support functions
+   ========================================= */
+
+:root {
+  color-scheme: light;
+  color: #171717;
+  background: #ffffff;
+  --dd-pink: #ed0871;
+  --dd-pink-hover: #d00662;
+  --dd-black: #111111;
+  --dd-text: #202020;
+  --dd-muted: #656565;
+  --dd-border: #e6e6e9;
+  --dd-soft-pink: #fff1f7;
+}
+
+body {
+  background: #ffffff;
+  color: var(--dd-text);
+}
+
+/* Black header */
+header {
+  background: var(--dd-black);
+  color: #ffffff;
+  border-bottom: 3px solid var(--dd-pink);
+}
+
+header a {
+  color: #ffffff;
+}
+
+header a:hover {
+  color: #ff75b3;
+}
+
+/* Black headings and neutral descriptions */
+h1,
+h2,
+h3 {
+  color: var(--dd-black);
+}
+
+p,
+small,
+.helper {
+  color: var(--dd-muted);
+}
+
+/* White panels */
+.panel {
+  background: #ffffff;
+  border-color: var(--dd-border);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .055);
+}
+
+/* Pink primary buttons */
+button:not(.choice):not(.secondary):not(.outline) {
+  background: var(--dd-pink);
+  color: #ffffff;
+}
+
+button:not(.choice):not(.secondary):not(.outline):hover:not(:disabled) {
+  background: var(--dd-pink-hover);
+}
+
+/* Neutral secondary buttons */
+button.secondary {
+  background: #f1f1f3;
+  color: var(--dd-black);
+}
+
+button.secondary:hover:not(:disabled) {
+  background: #e7e7ea;
+}
+
+/* Pink outline buttons */
+button.outline {
+  background: #ffffff;
+  color: var(--dd-pink);
+  border-color: var(--dd-pink);
+}
+
+button.outline:hover:not(:disabled) {
+  background: var(--dd-soft-pink);
+}
+
+/* Support choice cards */
+.choice {
+  background: #ffffff;
+  color: var(--dd-black);
+  border-color: var(--dd-border);
+}
+
+.choice:hover,
+.choice.active {
+  background: var(--dd-soft-pink);
+  border-color: var(--dd-pink);
+}
+
+.choice strong {
+  color: var(--dd-black);
+}
+
+.choice small {
+  color: var(--dd-muted);
+}
+
+/* Form inputs */
+input,
+textarea,
+select {
+  background: #ffffff;
+  color: var(--dd-black);
+  border-color: #d4d4d8;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--dd-pink);
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--dd-pink);
+  outline-offset: 3px;
+}
+
+/* Informational boxes */
+.info-box {
+  background: #fafafa;
+  border-color: var(--dd-border);
+}
+
+.info-box strong {
+  color: var(--dd-black);
+}
+
+/* Conversation history */
+#conversationHistory .history-item {
+  background: #fafafa;
+  border-color: var(--dd-border);
+}
+
+#conversationHistory .history-details strong {
+  color: var(--dd-black);
+}
+
+/* Conversation messages */
+#messages {
+  background: #fafafa;
+  border-color: var(--dd-border);
+}
+
+.bubble {
+  background: #eeeeef;
+  color: var(--dd-black);
+}
+
+.bubble.mine {
+  background: #ffe0ee;
+  color: var(--dd-black);
+}
+
+/* Neutral saved / ended badges */
+.status.ended {
+  background: #f0f0f2;
+  color: #525252;
+}
+
+.status.ended::before {
+  background: #999999;
+}
+
+/* Keep waiting and accepted status meaningful */
+.status:not(.accepted):not(.ended) {
+  background: #fff1f7;
+  color: #a90050;
+}
+
+.status:not(.accepted):not(.ended)::before {
+  background: var(--dd-pink);
+}
+
+/* Notices */
+#notice {
+  color: #b50057;
+}
+
+/* Mobile-friendly */
+@media (max-width: 540px) {
+  header {
+    border-bottom-width: 2px;
+  }
+
+  .choice {
+    border-radius: 14px;
+  }
+
+  .panel {
+    border-radius: 16px;
+  }
+}
+
   </style>
 </head>
 
