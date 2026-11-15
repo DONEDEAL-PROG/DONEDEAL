@@ -1,36 +1,153 @@
-const enc=new TextEncoder();
-export const permissions=['chat_reply','orders_view','payment_change','orders_cancel','orders_edit','refund_request','ticket_assign'];
-export const result=(data,status=200,headers={})=>Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
-export const originOK=req=>req.headers.get('Origin')===new URL(req.url).origin;
-const hex=bytes=>Array.from(new Uint8Array(bytes),x=>x.toString(16).padStart(2,'0')).join('');
-const unhex=s=>new Uint8Array(s.match(/../g).map(x=>parseInt(x,16)));
-export async function sign(value,secret){
- const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
- return hex(await crypto.subtle.sign('HMAC',key,enc.encode(value)));
-}
-export async function verify(value,signature,secret){
- const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['verify']);
- return crypto.subtle.verify('HMAC',key,unhex(signature),enc.encode(value));
-}
-export async function passwordHash(password,salt){
- const key=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveBits']);
- return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:unhex(salt),iterations:180000,hash:'SHA-256'},key,256));
-}
-export function newSalt(){return hex(crypto.getRandomValues(new Uint8Array(16)))}
-export async function staffAuth(request,env){
- if(!env.DB||!env.ADMIN_SESSION_SECRET)return null;
- const cookie=(request.headers.get('Cookie')||'').split(';').map(x=>x.trim()).find(x=>x.startsWith('dd_staff='));
- if(!cookie)return null;
- const m=/^dd_staff=([a-f0-9-]{36})\.(\d+)\.(\d+)\.([a-f0-9]{64})$/.exec(cookie);
- if(!m||Number(m[2])<=Date.now()/1000)return null;
- const payload=`${m[1]}.${m[2]}.${m[3]}`;
- if(!await verify(payload,m[4],env.ADMIN_SESSION_SECRET))return null;
- const staff=await env.DB.prepare('SELECT id,username,display_name,permissions_json,active,session_version FROM dd_support_staff WHERE id=?').bind(m[1]).first();
- if(!staff||!staff.active||staff.session_version!==Number(m[3]))return null;
- try{staff.permissions=JSON.parse(staff.permissions_json)}catch{staff.permissions=[]}
- return staff;
-}
-export const can=(staff,permission)=>staff?.permissions?.includes(permission);
-export async function audit(env,actorType,actorId,action,targetId=null,details=null){
- await env.DB.prepare('INSERT INTO dd_support_audit(id,actor_type,actor_id,action,target_id,details) VALUES(?,?,?,?,?,?)').bind(crypto.randomUUID(),actorType,actorId,action,targetId,details).run();
+{
+  "wallTime": 13,
+  "cpuTime": 12,
+  "truncated": false,
+  "executionModel": "stateless",
+  "outcome": "ok",
+  "scriptVersion": {
+    "id": "464933bc-0813-41ce-855a-2f8ee833d1ce"
+  },
+  "scriptName": "pages-worker--24000239-production",
+  "diagnosticsChannelEvents": [],
+  "exceptions": [],
+  "logs": [
+    {
+      "message": [
+        "Staff create failed",
+        "NotSupportedError: Pbkdf2 failed: iteration counts above 100000 are not supported (requested 180000)."
+      ],
+      "level": "error",
+      "timestamp": 1794723124302
+    }
+  ],
+  "eventTimestamp": 1794723124301,
+  "event": {
+    "request": {
+      "url": "https://donedeal-51i.pages.dev/api/admin/support-staff",
+      "method": "POST",
+      "headers": {
+        "accept": "*/*",
+        "accept-encoding": "gzip, br",
+        "accept-language": "en-US,en;q=0.9",
+        "cache-control": "no-cache",
+        "cf-connecting-ip": "136.158.124.1",
+        "cf-ipcountry": "PH",
+        "cf-ray": "a5ac1a266c1bfc72",
+        "cf-visitor": "{\"scheme\":\"https\"}",
+        "connection": "Keep-Alive",
+        "content-length": "184",
+        "content-type": "application/json",
+        "cookie": "REDACTED",
+        "host": "donedeal-51i.pages.dev",
+        "origin": "https://donedeal-51i.pages.dev",
+        "pragma": "no-cache",
+        "priority": "u=1, i",
+        "referer": "https://donedeal-51i.pages.dev/admin/support-staff?utm_source=chatgpt.com",
+        "sec-ch-ua": "\"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"150\", \"Google Chrome\";v=\"150\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+        "x-forwarded-proto": "https",
+        "x-real-ip": "136.158.124.1"
+      },
+      "cf": {
+        "httpProtocol": "HTTP/3",
+        "clientAcceptEncoding": "gzip, deflate, br",
+        "requestPriority": "",
+        "edgeRequestKeepAliveStatus": 1,
+        "requestHeaderNames": [
+          ":method",
+          ":authority",
+          ":scheme",
+          ":path",
+          "content-length",
+          "pragma",
+          "cache-control",
+          "sec-ch-ua-platform",
+          "user-agent",
+          "sec-ch-ua",
+          "content-type",
+          "sec-ch-ua-mobile",
+          "accept",
+          "origin",
+          "sec-fetch-site",
+          "sec-fetch-mode",
+          "sec-fetch-dest",
+          "referer",
+          "accept-encoding",
+          "accept-language",
+          "cookie",
+          "cookie",
+          "priority"
+        ],
+        "clientTcpRtt": 0,
+        "clientQuicRtt": 9,
+        "colo": "MNL",
+        "asn": 17639,
+        "asOrganization": "Converge ICT Network",
+        "country": "PH",
+        "isEUCountry": false,
+        "city": "Siclong",
+        "continent": "AS",
+        "region": "Central Luzon",
+        "regionCode": "03",
+        "timezone": "Asia/Manila",
+        "longitude": "121.2239",
+        "latitude": "15.5808",
+        "postalCode": "3129",
+        "tlsVersion": "TLSv1.3",
+        "tlsCipher": "AEAD-AES128-GCM-SHA256",
+        "tlsClientRandom": "NOMm1Lu5rikv65BivlZEDXMGCpf2ZkXY7UfgAFgcXQc=",
+        "tlsClientCiphersSha1": "3HTt3+R/6BL3zeALJDSq0pR1yOQ=",
+        "tlsClientExtensionsSha1": "9dyA6uAP0aqZ6Apl4tG5UoLUK2w=",
+        "tlsClientExtensionsSha1Le": "8EPoARbWnzKM9mDnDhK+WtxPydU=",
+        "tlsClientHelloLength": "1733",
+        "tlsClientAuth": {
+          "certPresented": "0",
+          "certVerified": "NONE",
+          "certRevoked": "0",
+          "certIssuerDN": "",
+          "certSubjectDN": "",
+          "certIssuerDNRFC2253": "",
+          "certSubjectDNRFC2253": "",
+          "certIssuerDNLegacy": "",
+          "certSubjectDNLegacy": "",
+          "certSerial": "",
+          "certIssuerSerial": "",
+          "certSKI": "",
+          "certIssuerSKI": "",
+          "certFingerprintSHA1": "",
+          "certFingerprintSHA256": "",
+          "certNotBefore": "",
+          "certNotAfter": "",
+          "certRFC9440": "",
+          "certRFC9440TooLarge": false,
+          "certChainRFC9440": "",
+          "certChainRFC9440TooLarge": false
+        },
+        "verifiedBotCategory": "",
+        "edgeL4": {
+          "deliveryRate": 155542
+        },
+        "pagesHostName": "donedeal-51i.pages.dev",
+        "botManagement": {
+          "corporateProxy": false,
+          "verifiedBot": false,
+          "jsDetection": {
+            "passed": false
+          },
+          "staticResource": false,
+          "detectionIds": {},
+          "score": 99
+        }
+      }
+    },
+    "response": {
+      "status": 409
+    }
+  },
+  "id": 0
 }
