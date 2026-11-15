@@ -1,366 +1,469 @@
 
 const $ = id => document.getElementById(id);
+const money = n => '₱' + (Number(n || 0) / 100).toLocaleString('en-PH', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
 
-const money = n =>
-  '₱' + (Number(n || 0) / 100).toLocaleString('en-PH', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+let activePartnerId = null;
+let conversations = [];
+let data = { partners: [], orders: [], payouts: [] };
 
-const msg = s => {
-  $('notice').textContent = s;
+const msg = text => {
+  $('notice').textContent = text || '';
 };
 
 async function api(url, body) {
-  const r = await fetch(url, {
+  const response = await fetch(url, {
     method: body ? 'POST' : 'GET',
     credentials: 'same-origin',
     headers: body ? { 'Content-Type': 'application/json' } : {},
     body: body ? JSON.stringify(body) : undefined
   });
 
-  const d = await r.json();
+  const raw = await response.text();
+  let result;
 
-  if (!r.ok) {
-    throw Error(d.error || 'Request failed');
+  try {
+    result = JSON.parse(raw);
+  } catch {
+    throw Error('API returned HTML or invalid JSON: ' + url);
   }
 
-  return d;
+  if (!response.ok) {
+    throw Error(result.error || 'Request failed');
+  }
+
+  return result;
 }
 
-function node(tag, txt, cls) {
+function node(tag, text, className) {
   const el = document.createElement(tag);
-  if (txt != null) el.textContent = txt;
-  if (cls) el.className = cls;
+  if (text != null) el.textContent = text;
+  if (className) el.className = className;
   return el;
 }
 
-function button(label, fn) {
-  const b = node('button', label);
+function button(label, action) {
+  const el = node('button', label);
 
-  b.onclick = async () => {
-    b.disabled = true;
+  el.type = 'button';
+  el.onclick = async () => {
+    el.disabled = true;
     msg('');
 
     try {
-      await fn();
+      await action();
       await load();
-      msg('Saved');
-    } catch (e) {
-      msg(e.message);
+      msg('Saved successfully.');
+    } catch (error) {
+      msg(error.message);
     } finally {
-      b.disabled = false;
+      el.disabled = false;
     }
   };
 
-  return b;
+  return el;
 }
 
 function select(options, value) {
-  const s = document.createElement('select');
+  const el = document.createElement('select');
 
-  for (const x of options) {
-    s.add(new Option(x, x));
+  for (const option of options) {
+    el.add(new Option(option, option));
   }
 
-  s.value = value;
-  return s;
+  el.value = value;
+  return el;
 }
 
-async function load() {
-  let d;
+function switchTab(name) {
+  document.querySelectorAll('[data-tab]').forEach(tab => {
+    const selected = tab.dataset.tab === name;
+    tab.classList.toggle('active', selected);
+    tab.setAttribute('aria-current', selected ? 'page' : 'false');
+  });
 
-  try {
-    d = await api('/api/admin/partners');
-  } catch (e) {
-    msg(e.message);
-    return;
+  document.querySelectorAll('[data-view]').forEach(view => {
+    view.hidden = view.dataset.view !== name;
+  });
+
+  if (name === 'messages') {
+    loadConversations();
   }
+}
 
-  $('signin').hidden = true;
-  $('content').hidden = false;
+document.querySelectorAll('[data-tab]').forEach(tab => {
+  tab.onclick = () => switchTab(tab.dataset.tab);
+});
 
-  for (const id of ['partners', 'orders', 'payouts']) {
-    $(id).replaceChildren();
-  }
+$('go-messages').onclick = () => switchTab('messages');
 
-  for (const p of d.partners) {
+function renderStats() {
+  $('stat-pending').textContent =
+    data.partners.filter(p => p.status === 'pending').length;
+
+  $('stat-approved').textContent =
+    data.partners.filter(p => p.status === 'approved').length;
+
+  $('stat-commissions').textContent =
+    data.orders.filter(o => o.status === 'pending').length;
+
+  $('stat-payouts').textContent =
+    data.payouts.filter(p => p.status === 'requested').length;
+}
+
+function renderPartners() {
+  const root = $('partners');
+  root.replaceChildren();
+
+  for (const partner of data.partners) {
     const row = node('div', null, 'entry');
     const info = node('div');
-    const controls = node('div', null, 'controls');
+    const controls = node('div', null, 'pm-controls');
 
     const rate = document.createElement('input');
     const status = select(
       ['pending', 'approved', 'rejected', 'suspended'],
-      p.status
+      partner.status
     );
 
     info.append(
-      node('strong', p.name),
-      node('small', p.email),
-      node('small', p.social_url || 'No social link'),
-      node('small', 'Referral: ' + p.referral_code)
+      node('strong', partner.name),
+      node('small', partner.email),
+      node('small', partner.social_url || 'No social link'),
+      node('small', 'Referral: ' + partner.referral_code)
     );
 
     rate.type = 'number';
-    rate.min = 0;
-    rate.max = 100;
-    rate.step = 0.01;
-    rate.value = (p.commission_bps / 100).toFixed(2);
-    rate.title = 'Commission %';
+    rate.min = '0';
+    rate.max = '100';
+    rate.step = '0.01';
+    rate.value = (Number(partner.commission_bps || 0) / 100).toFixed(2);
+    rate.title = 'Commission percentage';
 
     controls.append(
       node('small', 'Commission %'),
       rate,
       status,
       button('Save', async () => {
-        const bps = Math.round(Number(rate.value) * 100);
+        const percentage = Number(rate.value);
+
+        if (!Number.isFinite(percentage) ||
+            percentage < 0 || percentage > 100) {
+          throw Error('Commission must be between 0% and 100%.');
+        }
 
         await api('/api/admin/partners', {
           action: 'partner',
-          id: p.id,
+          id: partner.id,
           status: status.value,
-          commission_bps: bps
+          commission_bps: Math.round(percentage * 100)
         });
       })
     );
 
     row.append(info, controls);
-    $('partners').append(row);
+    root.append(row);
   }
 
-  for (const o of d.orders) {
+  if (!root.children.length) {
+    root.append(node('div', 'No partner records yet.', 'pm-empty'));
+  }
+}
+
+function renderOrders() {
+  const root = $('orders');
+  root.replaceChildren();
+
+  for (const order of data.orders) {
     const row = node('div', null, 'entry');
     const info = node('div');
-    const controls = node('div', null, 'controls');
+    const controls = node('div', null, 'pm-controls');
 
     info.append(
-      node('strong', o.name + ' · ' + o.order_id),
-      node(
-        'small',
-        'Order ' + money(o.total_centavos) +
-        ' · Commission ' + money(o.commission_centavos)
+      node('strong', order.name + ' · ' + order.order_id),
+      node('small',
+        'Order ' + money(order.total_centavos) +
+        ' · Commission ' + money(order.commission_centavos)
       ),
-      node(
-        'small',
-        'Payment: ' + (o.payment_status || 'unknown') +
-        ' · ' + (o.paid_at ? 'Paid at ' + o.paid_at : 'Not yet paid')
+      node('small',
+        'Payment: ' + (order.payment_status || 'unknown') +
+        ' · ' + (order.paid_at || 'Not yet paid')
       )
     );
 
-    controls.append(node('span', o.status, 'tag'));
+    controls.append(node('span', order.status, 'tag'));
 
-    if (o.status === 'pending') {
+    if (order.status === 'pending') {
       controls.append(
-        button('Approve', () =>
-          api('/api/admin/partners', {
-            action: 'commission',
-            id: o.order_id,
-            status: 'approved'
-          })
-        ),
-        button('Void', () =>
-          api('/api/admin/partners', {
-            action: 'commission',
-            id: o.order_id,
-            status: 'void'
-          })
-        )
+        button('Approve', () => api('/api/admin/partners', {
+          action: 'commission',
+          id: order.order_id,
+          status: 'approved'
+        })),
+        button('Void', () => api('/api/admin/partners', {
+          action: 'commission',
+          id: order.order_id,
+          status: 'void'
+        }))
       );
     }
 
     row.append(info, controls);
-    $('orders').append(row);
+    root.append(row);
   }
 
-  for (const p of d.payouts) {
+  if (!root.children.length) {
+    root.append(node('div', 'No commissions yet.', 'pm-empty'));
+  }
+}
+
+function renderPayouts() {
+  const root = $('payouts');
+  root.replaceChildren();
+
+  for (const payout of data.payouts) {
     const row = node('div', null, 'entry');
     const info = node('div');
-    const controls = node('div', null, 'controls');
+    const controls = node('div', null, 'pm-controls');
 
     info.append(
-      node('strong', p.name + ' · ' + money(p.amount_centavos)),
-      node('small', p.method + ' · ' + p.account),
-      node('small', 'Requested ' + p.created_at),
-      node('small', p.note || '')
+      node('strong', payout.name + ' · ' + money(payout.amount_centavos)),
+      node('small', payout.method + ' · ' + payout.account),
+      node('small', 'Requested ' + payout.created_at),
+      node('small', payout.note || '')
     );
 
-    controls.append(node('span', p.status, 'tag'));
+    controls.append(node('span', payout.status, 'tag'));
 
-    if (p.status === 'requested') {
+    if (payout.status === 'requested') {
       controls.append(
-        button('Approve', () =>
-          api('/api/admin/partners', {
-            action: 'payout',
-            id: p.id,
-            status: 'approved'
-          })
-        ),
-        button('Reject', () =>
-          api('/api/admin/partners', {
-            action: 'payout',
-            id: p.id,
-            status: 'rejected'
-          })
-        )
+        button('Approve', () => api('/api/admin/partners', {
+          action: 'payout',
+          id: payout.id,
+          status: 'approved'
+        })),
+        button('Reject', () => api('/api/admin/partners', {
+          action: 'payout',
+          id: payout.id,
+          status: 'rejected'
+        }))
       );
     }
 
-    if (p.status === 'approved') {
+    if (payout.status === 'approved') {
       controls.append(
         button('Mark paid', async () => {
-          const note = prompt('Enter actual transfer reference (required):');
+          const reference = prompt('Enter actual transfer reference:');
 
-          if (!note) return;
+          if (!reference?.trim()) {
+            throw Error('Transfer reference is required.');
+          }
 
           await api('/api/admin/partners', {
             action: 'payout',
-            id: p.id,
+            id: payout.id,
             status: 'paid',
-            note
+            note: reference.trim()
           });
         })
       );
     }
 
     row.append(info, controls);
-    $('payouts').append(row);
+    root.append(row);
   }
 
-  for (const id of ['partners', 'orders', 'payouts']) {
-    if (!$(id).children.length) {
-      $(id).textContent = 'No records yet.';
-    }
+  if (!root.children.length) {
+    root.append(node('div', 'No payout requests yet.', 'pm-empty'));
   }
-
-  await loadConversations();
 }
 
-let activePartnerId = null;
+async function load() {
+  try {
+    data = await api('/api/admin/partners');
+
+    $('signin').hidden = true;
+    $('content').hidden = false;
+
+    renderStats();
+    renderPartners();
+    renderOrders();
+    renderPayouts();
+
+    await loadConversations();
+  } catch (error) {
+    msg(error.message);
+  }
+}
+
+function updateUnread() {
+  const total = conversations.reduce(
+    (sum, conversation) => sum + Number(conversation.unread_count || 0),
+    0
+  );
+
+  $('message-badge').textContent = total > 99 ? '99+' : String(total);
+  $('message-badge').hidden = total === 0;
+  $('stat-unread').textContent = total;
+}
+
+function renderConversations() {
+  const root = $('conversations');
+  const query = $('message-search').value.trim().toLowerCase();
+
+  root.replaceChildren();
+
+  const filtered = conversations.filter(conversation =>
+    String(conversation.name || '').toLowerCase().includes(query) ||
+    String(conversation.email || '').toLowerCase().includes(query)
+  );
+
+  for (const conversation of filtered) {
+    const row = node('button', null, 'pm-conversation');
+    const avatar = node(
+      'span',
+      String(conversation.name || '?').slice(0, 1).toUpperCase(),
+      'pm-avatar'
+    );
+    const info = node('span', null, 'pm-conversation-info');
+
+    row.type = 'button';
+    row.classList.toggle('active', conversation.id === activePartnerId);
+
+    info.append(
+      node('strong', conversation.name),
+      node('small', conversation.email),
+      node('small', conversation.last_message || '')
+    );
+
+    row.append(avatar, info);
+
+    const unread = Number(conversation.unread_count || 0);
+
+    if (unread > 0) {
+      row.append(node('span', unread > 99 ? '99+' : String(unread), 'pm-count'));
+    }
+
+    row.onclick = () => openConversation(conversation.id);
+    root.append(row);
+  }
+
+  if (!root.children.length) {
+    root.append(node('div', 'No matching conversations.', 'pm-empty'));
+  }
+}
 
 async function loadConversations() {
   try {
-    const d = await api('/api/admin/partner-messages');
-    const el = $('conversations');
+    const result = await api('/api/admin/partner-messages');
 
-    el.replaceChildren();
+    conversations = (result.conversations || []).sort((a, b) =>
+      String(b.last_message || '').localeCompare(String(a.last_message || ''))
+    );
 
-    if (!d.conversations.length) {
-      el.textContent = 'No partner messages yet.';
-      return;
-    }
-
-    for (const c of d.conversations) {
-      const row = node('div', null, 'entry');
-      const info = node('div');
-
-      info.append(
-        node('strong', c.name),
-        node('small', c.email),
-        node(
-          'small',
-          c.message_count + ' messages · Last: ' + c.last_message
-        )
-      );
-
-      const b = node('button', 'Open conversation');
-      b.onclick = () => openConversation(c.id);
-
-      row.append(info, b);
-      el.append(row);
-    }
-  } catch (e) {
-    $('conversations').textContent = e.message;
+    renderConversations();
+    updateUnread();
+  } catch (error) {
+    $('conversations').replaceChildren(
+      node('div', error.message, 'pm-empty')
+    );
   }
 }
 
 async function openConversation(id) {
   try {
-    activePartnerId = id;
-
-    const d = await api(
-      '/api/admin/partner-messages?partner_id=' +
-      encodeURIComponent(id)
+    const result = await api(
+      '/api/admin/partner-messages?partner_id=' + encodeURIComponent(id)
     );
 
-    $('admin-thread-wrap').hidden = false;
-    $('admin-thread-title').textContent =
-      'Conversation with ' + d.partner.name;
+    activePartnerId = id;
 
-    const el = $('admin-thread');
-    el.replaceChildren();
+    $('admin-thread-title').textContent = result.partner.name;
+    $('thread-subtitle').textContent = result.partner.email;
+    $('admin-reply').hidden = false;
 
-    if (!d.messages.length) {
-      el.textContent = 'No messages yet.';
-    }
+    const root = $('admin-thread');
+    root.replaceChildren();
 
-    for (const m of d.messages) {
-      const row = node('div', null, 'entry');
-      const info = node('div');
-
-      info.append(
-        node(
-          'strong',
-          m.sender === 'admin' ? 'DONEDEAL Admin' : 'Partner'
-        ),
-        node('small', m.created_at),
-        node('p', m.body)
+    for (const message of result.messages || []) {
+      const bubble = node(
+        'div',
+        null,
+        'pm-bubble ' + (message.sender === 'admin' ? 'admin' : 'partner')
       );
 
-      info.style.whiteSpace = 'pre-wrap';
-      info.style.overflowWrap = 'anywhere';
+      bubble.append(
+        node('p', message.body),
+        node('small', message.created_at || '')
+      );
 
-      row.append(info);
-      el.append(row);
+      root.append(bubble);
     }
 
-    $('admin-thread-wrap').scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest'
-    });
-  } catch (e) {
-    msg(e.message);
+    if (!root.children.length) {
+      root.append(node('div', 'No messages yet.', 'pm-empty'));
+    }
+
+    root.scrollTop = root.scrollHeight;
+
+    try {
+      await api('/api/admin/partner-messages', {
+        action: 'read',
+        partner_id: id
+      });
+    } catch (error) {
+      msg('Conversation opened, but unread status was not saved: ' + error.message);
+    }
+
+    await loadConversations();
+  } catch (error) {
+    msg(error.message);
   }
 }
 
-$('login').onsubmit = async e => {
-  e.preventDefault();
+$('message-search').addEventListener('input', renderConversations);
 
-  try {
-    await api('/api/admin/login', {
-      password: new FormData(e.target).get('password')
-    });
-
-    await load();
-  } catch (err) {
-    msg(err.message);
-  }
-};
-
-$('admin-reply').onsubmit = async e => {
-  e.preventDefault();
+$('admin-reply').onsubmit = async event => {
+  event.preventDefault();
 
   if (!activePartnerId) return;
 
-  const btn = e.target.querySelector('button');
-  btn.disabled = true;
+  const form = event.currentTarget;
+  const sendButton = form.querySelector('button');
+  const message = new FormData(form).get('message');
+
+  sendButton.disabled = true;
 
   try {
     await api('/api/admin/partner-messages', {
       partner_id: activePartnerId,
-      message: new FormData(e.target).get('message')
+      message
     });
 
-    e.target.reset();
-
+    form.reset();
     await openConversation(activePartnerId);
-    await loadConversations();
-
-    msg('Reply sent');
-  } catch (err) {
-    msg(err.message);
+    msg('Reply sent.');
+  } catch (error) {
+    msg(error.message);
   } finally {
-    btn.disabled = false;
+    sendButton.disabled = false;
+  }
+};
+
+$('login').onsubmit = async event => {
+  event.preventDefault();
+
+  try {
+    await api('/api/admin/login', {
+      password: new FormData(event.currentTarget).get('password')
+    });
+
+    event.currentTarget.reset();
+    await load();
+  } catch (error) {
+    msg(error.message);
   }
 };
 
