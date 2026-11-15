@@ -36,7 +36,7 @@ tr:last-child td{border-bottom:0}
 .meta{display:block;color:#827981;font-size:12px;margin-top:4px}
 .action{display:inline-block;border:1px solid #e6c6d8;border-radius:7px;background:#f8edf3;color:#85345d;padding:4px 8px;font-size:12px;font-weight:750}
 .target{font-size:12px;word-break:break-word}
-details{max-width:400px}
+details{max-width:400px}.detail-list{margin:8px 0 0;display:grid;gap:7px}.detail-line{display:grid;gap:2px;padding:7px 9px;background:#f8f5f7;border-radius:7px}.detail-key{font-size:11px;font-weight:800;color:#716771;text-transform:uppercase;letter-spacing:.03em}.detail-value{font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}.detail-summary{font-size:12px;color:#6d606c;margin-top:4px}
 summary{color:var(--pink);cursor:pointer;font-weight:650}
 pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace;background:#f8f5f7;border-radius:8px;padding:10px;max-height:250px;overflow:auto}
 .empty{text-align:center;color:#827981;padding:35px 10px}
@@ -131,10 +131,40 @@ function render(){
   if(log.details){
    const details=document.createElement("details");
    const summary=document.createElement("summary");summary.textContent="View details";
-   const pre=document.createElement("pre");
-   try{pre.textContent=JSON.stringify(JSON.parse(log.details),null,2)}
-   catch{pre.textContent=String(log.details)}
-   details.append(summary,pre);detailTd.append(details);
+   const content=document.createElement("div");content.className="detail-list";
+   let data;
+   try{data=JSON.parse(log.details)}catch{data=log.details}
+   const labels={
+    status:"Decision",note:"Admin note",reason:"Reason",
+    request_id:"Refund request ID",order_id:"Order ID",
+    customer_name:"Customer name",name:"Name",phone:"Phone",
+    address:"Address",payment_method:"Payment method",
+    old_method:"Previous payment method",new_method:"New payment method",
+    changed_fields:"Fields changed",changes:"Changes",
+    permissions:"Permissions",username:"Username"
+   };
+   const show=(key,value)=>{
+    if(value===null||value===undefined||value==="")return;
+    const line=document.createElement("div");line.className="detail-line";
+    const heading=document.createElement("span");heading.className="detail-key";
+    heading.textContent=labels[key]||String(key).replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+    const text=document.createElement("span");text.className="detail-value";
+    if(typeof value==="object")text.textContent=JSON.stringify(value,null,2);
+    else if(typeof value==="boolean")text.textContent=value?"Yes":"No";
+    else text.textContent=String(value);
+    if(key==="status")text.textContent=String(value).replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+    line.append(heading,text);content.append(line);
+   };
+   if(data&&typeof data==="object"&&!Array.isArray(data)){
+    const keys=Object.keys(data);
+    for(const key of ["status","note","reason","changes","changed_fields",...keys]){
+     if(Object.prototype.hasOwnProperty.call(data,key)&&!content.querySelector('[data-key="'+key+'"]')){
+      show(key,data[key]);
+      const last=content.lastElementChild;if(last)last.dataset.key=key;
+     }
+    }
+   }else show("Details",data);
+   details.append(summary,content);detailTd.append(details);
   }else detailTd.textContent="—";
   body.append(tr);
  }
