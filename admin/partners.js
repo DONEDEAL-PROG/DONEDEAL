@@ -113,6 +113,7 @@ function renderStats() {
     data.payouts.filter(p => p.status === 'requested').length;
 }
 
+
 function renderPartners() {
   const root = $('partners');
   root.replaceChildren();
@@ -128,12 +129,20 @@ function renderPartners() {
       partner.status
     );
 
-    info.append(
-      node('strong', partner.name),
-      node('small', partner.email),
-      node('small', partner.social_url || 'No social link'),
-      node('small', 'Referral: ' + partner.referral_code)
+    const rateLabel = node(
+      'strong',
+      (Number(partner.commission_bps || 0) / 100).toFixed(2) + '%'
     );
+
+    const statusLabel = node('span', partner.status, 'tag');
+
+    const editButton = node('button', '✎ Edit');
+    const saveButton = node('button', 'Save changes');
+    const cancelButton = node('button', 'Cancel');
+
+    editButton.type = 'button';
+    saveButton.type = 'button';
+    cancelButton.type = 'button';
 
     rate.type = 'number';
     rate.min = '0';
@@ -142,35 +151,102 @@ function renderPartners() {
     rate.value = (Number(partner.commission_bps || 0) / 100).toFixed(2);
     rate.title = 'Commission percentage';
 
-    controls.append(
-      node('small', 'Commission %'),
-      rate,
-      status,
-      button('Save', async () => {
-        const percentage = Number(rate.value);
+    info.append(
+      node('strong', partner.name),
+      node('small', partner.email),
+      node('small', partner.social_url || 'No social link'),
+      node('small', 'Referral: ' + partner.referral_code)
+    );
 
-        if (!Number.isFinite(percentage) ||
-            percentage < 0 || percentage > 100) {
-          throw Error('Commission must be between 0% and 100%.');
-        }
+    function setEditing(editing) {
+      rate.hidden = !editing;
+      status.hidden = !editing;
+      saveButton.hidden = !editing;
+      cancelButton.hidden = !editing;
 
+      rateLabel.hidden = editing;
+      statusLabel.hidden = editing;
+      editButton.hidden = editing;
+    }
+
+    editButton.onclick = () => setEditing(true);
+
+    cancelButton.onclick = () => {
+      rate.value =
+        (Number(partner.commission_bps || 0) / 100).toFixed(2);
+      status.value = partner.status;
+      setEditing(false);
+    };
+
+    saveButton.onclick = async () => {
+      const percentage = Number(rate.value);
+
+      if (
+        rate.value.trim() === '' ||
+        !Number.isFinite(percentage) ||
+        percentage < 0 ||
+        percentage > 100
+      ) {
+        msg('Commission must be between 0% and 100%.');
+        return;
+      }
+
+      const changes =
+        percentage !== Number(partner.commission_bps || 0) / 100 ||
+        status.value !== partner.status;
+
+      if (!changes) {
+        setEditing(false);
+        return;
+      }
+
+      if (!confirm('Save changes to this partner account?')) {
+        return;
+      }
+
+      saveButton.disabled = true;
+      msg('');
+
+      try {
         await api('/api/admin/partners', {
           action: 'partner',
           id: partner.id,
           status: status.value,
           commission_bps: Math.round(percentage * 100)
         });
-      })
+
+        await load();
+        msg('Partner account updated successfully.');
+      } catch (error) {
+        msg(error.message);
+        saveButton.disabled = false;
+      }
+    };
+
+    controls.append(
+      node('small', 'Commission'),
+      rateLabel,
+      rate,
+      statusLabel,
+      status,
+      editButton,
+      saveButton,
+      cancelButton
     );
 
     row.append(info, controls);
     root.append(row);
+
+    setEditing(false);
   }
 
   if (!root.children.length) {
-    root.append(node('div', 'No partner records yet.', 'pm-empty'));
+    root.append(
+      node('div', 'No partner records yet.', 'pm-empty')
+    );
   }
 }
+
 
 function renderOrders() {
   const root = $('orders');
