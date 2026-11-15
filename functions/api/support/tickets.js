@@ -14,3 +14,4 @@ export async function onRequestPost({request,env}){
   ]);
   return out({ok:true,id,access},201);
  }catch(e){console.error('Support ticket create failed',e);return out({error:'Support is temporarily unavailable. Check D1 migration.'},503)}
+}
