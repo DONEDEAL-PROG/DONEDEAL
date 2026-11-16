@@ -397,6 +397,41 @@ body:has(#app:not([hidden])) main{max-width:none;margin:0;padding:0}
 }
 @media(prefers-reduced-motion:no-preference){.dd-staff-nav button,.dd-overview-tile button,.dd-staff-tabs-mobile button{transition:background .2s,color .2s,transform .2s}.dd-overview-tile button:active{transform:scale(.98)}}
 </style>
+
+<style id="dd-compact-chat-workspace">
+[data-staff-panel="chats"]{display:flex;flex-direction:column;gap:12px;min-height:calc(100vh - 195px)}
+[data-staff-panel="chats"][hidden]{display:none!important}
+[data-staff-panel="chats"] .dd-section-intro{margin-bottom:4px}
+[data-staff-panel="chats"] #liveAgentPanel,
+[data-staff-panel="chats"] #liveQueuePanel{padding:15px 19px!important;margin:0!important;border-radius:13px}
+[data-staff-panel="chats"] #liveAgentPanel h2,
+[data-staff-panel="chats"] #liveQueuePanel h2{font-size:14px!important;margin:0 0 9px!important}
+[data-staff-panel="chats"] #liveAgentPanel .agent-toolbar,
+[data-staff-panel="chats"] #liveAgentPanel .availability{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+[data-staff-panel="chats"] #liveAgentPanel select{min-height:36px;padding:6px 10px}
+[data-staff-panel="chats"] #liveAgentPanel button{min-height:36px;padding:7px 13px}
+[data-staff-panel="chats"] #availabilityNotice{font-size:11px;margin:8px 0 0;color:#a79eae}
+[data-staff-panel="chats"] #liveQueuePanel .queue-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+[data-staff-panel="chats"] #liveQueuePanel .muted,
+[data-staff-panel="chats"] #liveQueuePanel>.live-note{display:none}
+[data-staff-panel="chats"] #liveQueuePanel #liveQueue{max-height:110px;overflow:auto;font-size:12px;margin:7px 0}
+[data-staff-panel="chats"] #liveQueuePanel .notification-row{margin-top:7px;gap:12px;display:flex;flex-wrap:wrap;align-items:center}
+[data-staff-panel="chats"] #liveQueuePanel .notification-row button{padding:7px 11px;font-size:11px}
+[data-staff-panel="chats"] #liveQueuePanel .notification-row label{font-size:11px}
+[data-staff-panel="chats"] .dd-conversation-workspace{flex:1;min-height:320px;margin:0!important;padding:20px!important}
+.dd-conversation-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:15px;border-bottom:1px solid #3b3440}
+.dd-conversation-heading h2{font-size:18px!important;margin:0 0 4px!important}
+.dd-conversation-heading p{font-size:12px;color:#aaa2b1;margin:0}
+.dd-conversation-heading button{padding:8px 12px}
+.dd-conversation-list{display:grid;align-content:start;gap:8px;padding-top:13px;max-height:calc(100vh - 360px);min-height:200px;overflow:auto}
+.dd-conversation-row{width:100%;background:#25212c;border:1px solid #3d3444;border-radius:10px;padding:14px 16px;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px;color:#f6eff7;cursor:pointer}
+.dd-conversation-row:hover,.dd-conversation-row:focus-visible{background:#332737;border-color:#a94b80}
+.dd-conversation-person{display:grid;gap:5px;min-width:0}
+.dd-conversation-person strong{font-size:13px}
+.dd-conversation-person small{font-size:11px;color:#aaa2b1;overflow-wrap:anywhere}
+.dd-conversation-state{font-size:11px;background:#42283b;color:#f3add0;padding:6px 10px;border-radius:99px;white-space:nowrap}
+@media(max-width:740px){[data-staff-panel="chats"]{min-height:0}.dd-conversation-list{max-height:none}}
+</style>
 </head>
 
 <body>
@@ -559,7 +594,10 @@ body:has(#app:not([hidden])) main{max-width:none;margin:0;padding:0}
   </section>
 
 
-      <div class="panel dd-chat-note"><h3>Active conversations</h3><p>Your existing Live Agent controls and conversations remain connected to the support system.</p></div>
+      <section class="panel dd-conversation-workspace">
+ <div class="dd-conversation-heading"><div><h2>Current Conversations</h2><p>Choose a customer conversation to view the complete thread and reply.</p></div><button type="button" id="ddRefreshConversations" class="secondary-button">Refresh</button></div>
+ <div id="ddConversationList" class="dd-conversation-list" aria-live="polite"><p class="empty-state">Loading conversations…</p></div>
+</section>
     </div>
     <div data-staff-panel="cases" hidden>
       <div class="dd-section-intro"><h2>Customer Cases & Concerns</h2><p>Search and filter support tickets. Select View / Edit to reply or update a case.</p></div>

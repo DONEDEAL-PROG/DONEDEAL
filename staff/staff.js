@@ -19,6 +19,27 @@ async function agents(){
  for(const a of d.agents){const o=document.createElement('option');o.value=a.id;o.textContent=a.display_name;$('assignee').append(o)}
  }catch(e){notice(e.message)}
 }
+function ddRenderConversations(){
+ const host=$('ddConversationList');if(!host)return;
+ host.replaceChildren();
+ const active=ddAllCases.filter(t=>!['closed','resolved','cancelled','completed'].includes(String(t.status||'').toLowerCase()));
+ if(!active.length){const p=document.createElement('p');p.className='empty-state';p.textContent='No open conversations at the moment.';host.append(p);return;}
+ for(const t of active){
+  const b=document.createElement('button');b.type='button';b.className='dd-conversation-row';
+  const left=document.createElement('span');left.className='dd-conversation-person';
+  const name=document.createElement('strong');name.textContent=t.guest_name||'Customer';
+  const detail=document.createElement('small');detail.textContent=(t.subject||'Support concern')+' · '+String(t.id||'').slice(0,14);
+  left.append(name,detail);
+  const state=document.createElement('span');state.className='dd-conversation-state';state.textContent=t.status||'Open';
+  b.append(left,state);
+  b.addEventListener('click',()=>{
+   document.querySelector('[data-staff-tab="cases"]')?.click();
+   open(t.id);
+  });
+  host.append(b);
+ }
+}
+$('ddRefreshConversations')?.addEventListener('click',list);
 const ddConcerns = new Set(["Refund Request", "Delivery Concern", "Order Follow-up", "Warranty Inquiry", "General Inquiry", "Affiliate Application", "Store Pickup", "Website Concern", "Rewards Inquiry", "Payment Error"]);
 let ddAllCases=[];
 function ddRenderCases(){
@@ -44,7 +65,7 @@ function ddRenderCases(){
 $('ddConcernFilter').addEventListener('change',ddRenderCases);
 $('ddCaseSearch').addEventListener('input',ddRenderCases);
 async function list(){
- try{const d=await api('/api/staff/support');$('tickets').replaceChildren();ddAllCases=d.tickets||[];ddRenderCases();
+ try{const d=await api('/api/staff/support');$('tickets').replaceChildren();ddAllCases=d.tickets||[];ddRenderCases();ddRenderConversations();
  for(const t of d.tickets){const b=document.createElement('button');b.type='button';b.className='ticket';b.textContent=t.subject+' · '+t.status+' · '+t.guest_name;b.addEventListener('click',()=>open(t.id));$('tickets').append(b)}
  if(!d.tickets.length)$('tickets').textContent='No tickets yet.';
  }catch(e){notice(e.message)}
