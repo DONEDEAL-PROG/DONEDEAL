@@ -56,11 +56,18 @@ for(const [id,icon,label] of [['ddTheme','theme','Toggle light / dark'],['ddColl
 aside.append(footer);
 const backdrop=document.createElement('div');backdrop.className='dd-backdrop';backdrop.addEventListener('click',()=>document.body.classList.remove('dd-open'));
 document.body.prepend(backdrop);document.body.prepend(aside);
+// Keep all menu labels visible when moving between admin pages.
+document.body.classList.remove('dd-collapsed');
+const readability=document.createElement('link');
+readability.rel='stylesheet';
+readability.href='/admin/dd-readability-fix.css';
+document.head.appendChild(readability);
 const header=document.querySelector('body>header');
 if(header){const b=document.createElement('button');b.type='button';b.className='dd-menu-toggle';b.innerHTML=svg('menu')+'<span>Menu</span>';b.setAttribute('aria-label','Open admin navigation');b.onclick=()=>document.body.classList.toggle('dd-open');header.prepend(b)}
 document.getElementById('ddTheme').onclick=()=>{const next=document.documentElement.dataset.ddTheme==='dark'?'light':'dark';document.documentElement.dataset.ddTheme=next;try{localStorage.setItem('dd-admin-theme',next)}catch(e){}};
 document.getElementById('ddCollapse').onclick=()=>{document.body.classList.toggle('dd-collapsed');const collapsed=document.body.classList.contains('dd-collapsed');document.getElementById('ddCollapse').title=collapsed?'Expand sidebar':'Collapse sidebar'};
 function navigate(){
+ document.body.classList.remove('dd-collapsed');
  const path=location.pathname,hash=location.hash;
  for(const a of aside.querySelectorAll('.dd-link')){
  const url=new URL(a.href);

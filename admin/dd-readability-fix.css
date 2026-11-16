@@ -1,0 +1,59 @@
+/* DONEDEAL admin: consistent contrast + sidebar stability */
+html[data-dd-theme="dark"] body .dd-orders-table,
+html[data-dd-theme="dark"] body .dd-orders-table tbody,
+html[data-dd-theme="dark"] body .dd-orders-table td,
+html[data-dd-theme="dark"] body #ddLatestOrders,
+html[data-dd-theme="dark"] body #ddLatestOrders td,
+html[data-dd-theme="dark"] body #ddLatestOrders td *,
+html[data-dd-theme="dark"] body .dd-table-wrap table tbody td,
+html[data-dd-theme="dark"] body .dd-table-wrap table tbody td *{
+ color:#f4edf5!important;
+}
+html[data-dd-theme="dark"] body .dd-orders-table thead th,
+html[data-dd-theme="dark"] body .dd-table-wrap table thead th{
+ background:#332b39!important;color:#e9dfea!important;border-color:#514454!important;
+}
+html[data-dd-theme="dark"] body .dd-orders-table tbody tr,
+html[data-dd-theme="dark"] body .dd-table-wrap table tbody tr{
+ background:#24212b!important;border-color:#493e4e!important;
+}
+html[data-dd-theme="dark"] body .dd-orders-table tbody tr:hover,
+html[data-dd-theme="dark"] body .dd-table-wrap table tbody tr:hover{
+ background:#302936!important;
+}
+html[data-dd-theme="dark"] body .dd-orders-table td .muted,
+html[data-dd-theme="dark"] body .dd-orders-table td small,
+html[data-dd-theme="dark"] body #ddLatestOrders small{
+ color:#c8bccc!important;
+}
+html[data-dd-theme="dark"] body .dd-orders-table td .dd-status,
+html[data-dd-theme="dark"] body .dd-orders-table td [class*="badge"]{
+ color:#a82268!important;
+}
+html[data-dd-theme="dark"] body .dd-orders-table td a{
+ color:#ff9ac8!important;
+}
+html[data-dd-theme="dark"] body .dd-orders-table tbody td{
+ border-bottom:1px solid #453c4a!important;
+}
+.dd-sidebar{width:264px!important;max-width:264px!important;overflow:hidden!important}
+.dd-sidebar .dd-nav{display:block!important;flex:1 1 auto!important;min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important}
+.dd-sidebar .dd-nav-section{display:block!important;width:100%!important;min-width:0!important}
+.dd-sidebar .dd-group{display:block!important;color:#bdb0c1!important}
+.dd-sidebar .dd-link{display:flex!important;align-items:center!important;gap:12px!important;width:100%!important;white-space:normal!important}
+.dd-sidebar .dd-label{display:block!important;min-width:0!important;overflow-wrap:break-word!important;line-height:1.35!important}
+.dd-sidebar .dd-footer{flex-shrink:0!important}
+body:not(.dd-collapsed)>header,body:not(.dd-collapsed)>main{margin-left:264px!important}
+@media(min-width:801px){
+body.dd-collapsed .dd-sidebar{width:76px!important}
+body.dd-collapsed .dd-sidebar .dd-label,
+body.dd-collapsed .dd-sidebar .dd-group,
+body.dd-collapsed .dd-sidebar .dd-brand-copy{display:none!important}
+body.dd-collapsed>header,body.dd-collapsed>main{margin-left:76px!important}
+}
+@media(max-width:800px){
+.dd-sidebar{width:min(290px,86vw)!important;max-width:min(290px,86vw)!important}
+body>header,body>main,body:not(.dd-collapsed)>header,body:not(.dd-collapsed)>main{margin-left:0!important}
+}
+body.dd-admin-signin .dd-sidebar,body.dd-admin-signin .dd-backdrop{display:none!important}
+body.dd-admin-signin>header,body.dd-admin-signin>main{margin-left:0!important}
