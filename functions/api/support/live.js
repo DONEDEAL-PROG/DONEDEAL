@@ -7,6 +7,7 @@ import {
   token,
   verified
 } from './_util.js';
+import {concernAllowed} from './concern-categories.js';
 
 const ticketOK = id =>
   typeof id === 'string' &&
@@ -67,7 +68,7 @@ export async function onRequestPost({ request, env }) {
   if (
     !valid(name, 80) ||
     !emailOK(email) ||
-    !valid(subject, 140) ||
+    !concernAllowed(subject) ||
     !valid(message, 2000) ||
     (phone && !phoneOK(phone))
   ) {
