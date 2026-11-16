@@ -140,12 +140,19 @@
           Affiliate Program
         </div>
 
-
-        <button type="button" class="dd-menu-theme-control" data-dd-global-theme="1" role="switch" aria-checked="false" aria-label="Light Mode">
+        <button
+          type="button"
+          class="dd-menu-theme-control"
+          role="switch"
+          aria-checked="false"
+          aria-label="Light Mode"
+        >
           <svg class="dd-menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5Z"/></svg>
           <span class="dd-menu-theme-label">Light Mode</span>
           <span class="dd-menu-switch-state">OFF</span>
-          <span class="dd-menu-switch-track" aria-hidden="true"><span class="dd-menu-switch-thumb"></span></span>
+          <span class="dd-menu-switch-track" aria-hidden="true">
+            <span class="dd-menu-switch-thumb"></span>
+          </span>
         </button>
 
         <a href="/partner">
@@ -160,88 +167,214 @@
       </div>
     `;
 
-    // Keep secondary actions in the sidebar; no floating buttons on phones.
+    // Sidebar styles
     if (!document.getElementById('dd-menu-actions-style')) {
       const style = document.createElement('style');
       style.id = 'dd-menu-actions-style';
+
       style.textContent = `
         .dd-menu-panel .dd-menu-links > a,
         .dd-menu-panel .dd-menu-theme-control {
-          display:flex;align-items:center;gap:14px;box-sizing:border-box;
-          min-height:48px;width:100%;padding:12px 18px;
-          color:inherit;text-decoration:none;
+          display:flex;
+          align-items:center;
+          gap:14px;
+          box-sizing:border-box;
+          min-height:48px;
+          width:100%;
+          padding:12px 18px;
+          color:inherit;
+          text-decoration:none;
         }
+
         .dd-menu-panel .dd-menu-icon {
-          display:block;flex:0 0 21px;width:21px;height:21px;
-          color:inherit;opacity:.9;
+          display:block;
+          flex:0 0 21px;
+          width:21px;
+          height:21px;
+          color:inherit;
+          opacity:.9;
         }
+
         .dd-menu-panel .dd-menu-theme-control {
-          border:0;background:transparent;text-align:left;
-          font:inherit;cursor:pointer;
+          border:0;
+          background:transparent;
+          text-align:left;
+          font:inherit;
+          cursor:pointer;
         }
+
         .dd-menu-panel .dd-menu-theme-control:hover,
         .dd-menu-panel .dd-menu-links > a:hover {
           background:rgba(150,150,160,.12);
         }
+
         .dd-menu-panel .dd-menu-theme-control:focus-visible {
-          outline:2px solid #e83b86;outline-offset:-3px;
+          outline:2px solid #e83b86;
+          outline-offset:-3px;
         }
-        .dd-menu-panel .dd-menu-theme-label {flex:1;min-width:0}
+
+        .dd-menu-panel .dd-menu-theme-label {
+          flex:1;
+          min-width:0;
+        }
+
         .dd-menu-panel .dd-menu-switch-state {
-          font-size:10px;font-weight:800;letter-spacing:.06em;opacity:.8;
+          font-size:10px;
+          font-weight:800;
+          letter-spacing:.06em;
+          opacity:.8;
         }
+
         .dd-menu-panel .dd-menu-switch-track {
-          width:42px;height:24px;flex:0 0 42px;
-          border-radius:999px;background:#66606e;
-          display:flex;align-items:center;padding:3px;box-sizing:border-box;
+          width:42px;
+          height:24px;
+          flex:0 0 42px;
+          border-radius:999px;
+          background:#66606e;
+          display:flex;
+          align-items:center;
+          padding:3px;
+          box-sizing:border-box;
           transition:background .2s ease;
         }
+
         .dd-menu-panel .dd-menu-switch-thumb {
-          width:18px;height:18px;border-radius:50%;
-          background:white;box-shadow:0 1px 4px #0003;
+          width:18px;
+          height:18px;
+          border-radius:50%;
+          background:white;
+          box-shadow:0 1px 4px #0003;
           transition:transform .2s ease;
         }
-        .dd-menu-panel .dd-menu-theme-control[aria-checked="true"] .dd-menu-switch-track {
+
+        .dd-menu-panel
+        .dd-menu-theme-control[aria-checked="true"]
+        .dd-menu-switch-track {
           background:#e83b86;
         }
-        .dd-menu-panel .dd-menu-theme-control[aria-checked="true"] .dd-menu-switch-thumb {
+
+        .dd-menu-panel
+        .dd-menu-theme-control[aria-checked="true"]
+        .dd-menu-switch-thumb {
           transform:translateX(18px);
         }
-        .dd-track-float {display:none!important}
+
+        .dd-track-float {
+          display:none!important;
+        }
+
         header.nav [data-dd-theme-toggle],
         header.nav [data-dd-global-theme],
         header.nav #ddCheckoutTheme,
         header.nav a[href*="wishlist"],
         header.nav button[onclick*="wishlist" i],
         header.nav #wishlistToggle,
-        header.nav .wishlist-btn {display:none!important}
-        @media(max-width:767px){
-          .dd-global-live-agent,.dd-support-float,.dd-track-float {
-            display:none!important
+        header.nav .wishlist-btn {
+          display:none!important;
+        }
+
+        @media(max-width:767px) {
+          .dd-global-live-agent,
+          .dd-support-float,
+          .dd-track-float {
+            display:none!important;
           }
         }
       `;
+
       document.head.appendChild(style);
     }
 
     document.body.append(scrim, panel);
 
-    // One theme control in the menu for desktop and mobile.
-    const menuTheme = panel.querySelector('.dd-menu-theme-control');
-    function syncMenuTheme() {
-      const current = document.documentElement.getAttribute('data-dd-store-theme') || 'dark';
-      const isLight = current === 'light';
-      menuTheme.setAttribute('aria-checked', String(isLight));
-      menuTheme.setAttribute('aria-label', 'Light Mode ' + (isLight ? 'on' : 'off'));
-      panel.querySelector('.dd-menu-switch-state').textContent = isLight ? 'ON' : 'OFF';
+    // Light/Dark Mode
+    const menuTheme = panel.querySelector(
+      '.dd-menu-theme-control'
+    );
+
+    function getCurrentTheme() {
+      const current =
+        document.documentElement.dataset.ddStoreTheme;
+
+      if (current === 'light' || current === 'dark') {
+        return current;
+      }
+
+      try {
+        return localStorage.getItem('dd_store_theme_v1') === 'light'
+          ? 'light'
+          : 'dark';
+      } catch (e) {
+        return 'dark';
+      }
     }
-    // The existing dd-unified-theme.js handles [data-dd-global-theme] clicks,
-    // localStorage persistence, and theme-specific logos. Do not toggle twice.
-    syncMenuTheme();
-    new MutationObserver(syncMenuTheme).observe(document.documentElement, {
-      attributes:true, attributeFilter:['data-dd-store-theme']
+
+    function syncMenuTheme() {
+      const isLight = getCurrentTheme() === 'light';
+
+      menuTheme.setAttribute(
+        'aria-checked',
+        String(isLight)
+      );
+
+      menuTheme.setAttribute(
+        'aria-label',
+        'Light Mode ' + (isLight ? 'on' : 'off')
+      );
+
+      const state = menuTheme.querySelector(
+        '.dd-menu-switch-state'
+      );
+
+      if (state) {
+        state.textContent = isLight ? 'ON' : 'OFF';
+      }
+    }
+
+    menuTheme.addEventListener('click', function (event) {
+      event.preventDefault();
+
+      // Prevent the global theme handler from
+      // toggling the theme a second time.
+      event.stopPropagation();
+
+      const current = getCurrentTheme();
+      const next = current === 'dark' ? 'light' : 'dark';
+
+      try {
+        localStorage.setItem('dd_store_theme_v1', next);
+      } catch (e) {}
+
+      if (
+        window.DDTheme &&
+        typeof window.DDTheme.apply === 'function'
+      ) {
+        window.DDTheme.apply(next);
+      } else {
+        document.documentElement.dataset.ddStoreTheme = next;
+        document.documentElement.style.colorScheme = next;
+      }
+
+      syncMenuTheme();
     });
 
+    syncMenuTheme();
+
+    new MutationObserver(syncMenuTheme).observe(
+      document.documentElement,
+      {
+        attributes: true,
+        attributeFilter: ['data-dd-store-theme']
+      }
+    );
+
+    window.addEventListener('storage', function (event) {
+      if (event.key === 'dd_store_theme_v1') {
+        syncMenuTheme();
+      }
+    });
+
+    // Sidebar open/close
     const closeButton = panel.querySelector('.dd-menu-close');
 
     function setOpen(open, restoreFocus = true) {
@@ -292,7 +425,7 @@
     });
   }
 
-  // Floating Live Agent for customer shopping pages
+  // Floating Live Agent for desktop shopping pages
   function installFloatingLiveAgent() {
     const path =
       window.location.pathname.replace(/\/+$/, '') || '/';
@@ -315,37 +448,35 @@
       style.id = 'dd-global-live-agent-style';
 
       style.textContent = `
-        /* Hide older homepage floating support button */
         .dd-support-float {
-          display: none !important;
+          display:none!important;
         }
 
-        /* New consistent Live Agent button */
         .dd-global-live-agent {
-          position: fixed;
-          right: 20px;
-          bottom: 88px;
-          z-index: 99997;
+          position:fixed;
+          right:20px;
+          bottom:88px;
+          z-index:99997;
 
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 9px;
+          display:inline-flex;
+          align-items:center;
+          justify-content:center;
+          gap:9px;
 
-          padding: 13px 18px;
-          border-radius: 999px;
+          padding:13px 18px;
+          border-radius:999px;
 
-          background: #ed0871;
-          color: #ffffff;
-          text-decoration: none;
+          background:#ed0871;
+          color:#ffffff;
+          text-decoration:none;
 
-          font-family: 'DM Sans', system-ui, sans-serif;
-          font-size: 14px;
-          font-weight: 800;
-          line-height: 1.2;
+          font-family:'DM Sans',system-ui,sans-serif;
+          font-size:14px;
+          font-weight:800;
+          line-height:1.2;
 
-          border: 1px solid rgba(255,255,255,.2);
-          box-shadow: 0 8px 26px rgba(0,0,0,.42);
+          border:1px solid rgba(255,255,255,.2);
+          box-shadow:0 8px 26px rgba(0,0,0,.42);
 
           transition:
             background .2s ease,
@@ -353,37 +484,29 @@
         }
 
         .dd-global-live-agent:hover {
-          background: #ff398c;
-          color: #ffffff;
-          transform: translateY(-2px);
+          background:#ff398c;
+          color:#ffffff;
+          transform:translateY(-2px);
         }
 
         .dd-global-live-agent:focus-visible {
-          outline: 3px solid #ffffff;
-          outline-offset: 3px;
+          outline:3px solid #ffffff;
+          outline-offset:3px;
         }
 
         .dd-global-live-agent svg {
-          width: 21px;
-          height: 21px;
-          flex: none;
+          width:21px;
+          height:21px;
+          flex:none;
         }
 
         .dd-global-live-agent span {
-          white-space: nowrap;
+          white-space:nowrap;
         }
 
-        @media (max-width: 600px) {
+        @media(max-width:767px) {
           .dd-global-live-agent {
-            right: 14px;
-            bottom: 78px;
-            padding: 12px 15px;
-            font-size: 12px;
-          }
-
-          .dd-global-live-agent svg {
-            width: 19px;
-            height: 19px;
+            display:none!important;
           }
         }
       `;
@@ -429,14 +552,17 @@
     document.body.appendChild(button);
   }
 
-  // Initialize both features
+  // Initialize
   function initialize() {
     installSidebar();
     installFloatingLiveAgent();
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize);
+    document.addEventListener(
+      'DOMContentLoaded',
+      initialize
+    );
   } else {
     initialize();
   }
