@@ -33,7 +33,7 @@
  function renderRecent(){renderInto('dd-recent-grid',read(R).slice(0,8))}
  function renderWishlist(){renderInto('dd-wishlist-grid',read(W))}
  function view(id){snapshot(id);const list=read(R).filter(x=>x!==id);list.unshift(id);write(R,list.slice(0,12));refresh()}
- function toggle(id){snapshot(id);const list=read(W);write(W,list.includes(id)?list.filter(x=>x!==id):[...list,id]);refresh()}
+ function toggle(id){snapshot(id);const list=read(W);const adding=!list.includes(id);write(W,adding?[...list,id]:list.filter(x=>x!==id));refresh();if(adding)window.DDSound?.play('wishlist')}
  document.addEventListener('click',e=>{const b=e.target.closest('[data-dd-wish]');if(b){e.preventDefault();e.stopPropagation();toggle(b.dataset.ddWish)}});
  function theme(t){document.documentElement.dataset.ddStoreTheme=t;try{localStorage.setItem(T,t)}catch{};document.querySelectorAll('[data-dd-theme-toggle]').forEach(b=>{b.textContent=t==='dark'?'☀ Light':'☾ Dark';b.setAttribute('aria-label','Switch to '+(t==='dark'?'light':'dark')+' mode')})}
  theme(localStorage.getItem(T)==='light'?'light':'dark');

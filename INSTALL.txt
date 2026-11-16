@@ -1,0 +1,9 @@
+DONEDEAL shopping motion + optional soft sounds
+Upload every file to the same relative path in the ROOT of your GitHub repository.
+Existing files: replace them. New files: add them.
+Do not place these files inside admin/.
+Sound is OFF by default; customers enable it from the shopping sidebar.
+Sounds play only for confirmed add-to-cart, wishlist additions, accepted checkout requests, and handled cart/checkout errors.
+Browsers may restrict audio until a customer interacts with the page.
+Existing app/cart/checkout business logic is preserved; admin pages are unchanged.
+Test on a preview deployment before publishing.

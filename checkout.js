@@ -104,7 +104,7 @@ $('pay').addEventListener('click',async()=>{
   window.scrollTo({top:0,behavior:'smooth'});
   $('step2').className='step done';$('step3').className='step active';
   $('status').textContent='';
- }catch(e){$('status').textContent=e.message;$('status').className='error';button.disabled=false}
+ }catch(e){window.DDSound?.play('error');$('status').textContent=e.message;$('status').className='error';button.disabled=false}
 });
 
 refresh();

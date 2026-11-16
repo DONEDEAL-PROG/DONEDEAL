@@ -1,0 +1,23 @@
+/* DONEDEAL — lightweight motion on desktop and mobile; respects reduced motion */
+:root{--dd-motion-ease:cubic-bezier(.22,.72,.23,1)}
+@media(prefers-reduced-motion:no-preference){
+ .dd-menu-panel,.dd-menu-scrim,.dd-mobile-bottom-nav,.dd-mobile-bottom-nav a,.dd-mobile-bottom-nav button{
+  transition:transform .25s var(--dd-motion-ease),opacity .2s ease,background-color .2s ease,box-shadow .2s ease!important
+ }
+ button,a,.product,.dd-extra-card,.brand-card,.dd-brand-tile{
+  transition:background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .23s ease,transform .2s var(--dd-motion-ease)
+ }
+ button:active,.dd-mobile-bottom-nav button:active{transform:scale(.97)}
+ .dd-mobile-bottom-nav a:active{transform:translateY(1px)}
+ .dd-motion-reveal{animation:dd-soft-enter .34s var(--dd-motion-ease) both}
+ @keyframes dd-soft-enter{from{opacity:.5;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+}
+@media(prefers-reduced-motion:reduce){.dd-motion-reveal{animation:none!important}}
+.dd-sound-toggle{
+ display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;
+ border:0;border-radius:10px;background:transparent;color:inherit;
+ font:600 14px/1.4 system-ui,sans-serif;cursor:pointer;text-align:left
+}
+.dd-sound-toggle:hover{background:rgba(210,80,145,.1)}
+.dd-sound-toggle svg{flex:none}
+.dd-sound-toggle[aria-pressed=true]{color:#d83285}

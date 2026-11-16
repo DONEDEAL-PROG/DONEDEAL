@@ -360,12 +360,14 @@ function confirmCartVariant(){
    const overlay=document.getElementById('variantOverlay');
    if(overlay)overlay.classList.remove('open');
    // Animation must never prevent a successful cart addition.
+   window.DDSound?.play('cart');
    try { showCartCelebration(label,qty); }
    catch(animationError){
      console.error('Cart celebration error:',animationError);
      alert('Added to cart: '+label);
    }
  } catch(error){
+   window.DDSound?.play('error');
    console.error('Done Deal cart error:',error);
    alert('Could not add this gadget to cart. Please try again.');
  } finally {
