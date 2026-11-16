@@ -49,18 +49,24 @@ function ddRenderCases(){
  body.replaceChildren();
  const shown=ddAllCases.filter(t=>{
   const match=category==='__other'?!ddConcerns.has(t.subject):!category||t.subject===category;
-  return match&&[t.id,t.guest_name,t.subject,t.status].join(' ').toLowerCase().includes(query);
+  return match&&[t.id,t.guest_name,t.subject,t.status,t.guest_email].join(' ').toLowerCase().includes(query);
  });
  for(const t of shown){
-  const tr=document.createElement('tr');
-  for(const value of [t.id,t.guest_name,t.subject||'Uncategorized',t.status,t.updated_at||t.created_at||'—']){
-   const td=document.createElement('td');td.textContent=value||'—';tr.append(td);
-  }
-  const action=document.createElement('td'),button=document.createElement('button');
-  button.type='button';button.className='dd-case-open';button.textContent='View / Edit';
-  button.addEventListener('click',()=>open(t.id));action.append(button);tr.append(action);body.append(tr);
+  const row=document.createElement('button');row.type='button';row.className='dd-messenger-thread';
+  if(current===t.id)row.classList.add('is-selected');
+  const avatar=document.createElement('span');avatar.className='dd-messenger-avatar';
+  avatar.textContent=(t.guest_name||'C').trim().split(/\s+/).slice(0,2).map(s=>s[0]).join('').toUpperCase();
+  const main=document.createElement('span');main.className='dd-messenger-thread-main';
+  const top=document.createElement('span');top.className='dd-messenger-thread-top';
+  const name=document.createElement('strong');name.textContent=t.guest_name||'Customer';
+  const time=document.createElement('small');time.textContent=String(t.updated_at||t.created_at||'').slice(0,16);
+  top.append(name,time);
+  const concern=document.createElement('span');concern.className='dd-concern';concern.textContent=t.subject||'Uncategorized concern';
+  const preview=document.createElement('span');preview.className='dd-preview';preview.textContent=(t.status||'Open')+' · '+String(t.id||'').slice(0,16);
+  main.append(top,concern,preview);row.append(avatar,main);
+  row.addEventListener('click',()=>open(t.id));body.append(row);
  }
- if(!shown.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=6;td.className='dd-case-empty';td.textContent='No matching customer cases.';tr.append(td);body.append(tr);}
+ if(!shown.length){const p=document.createElement('p');p.className='empty-state';p.style.padding='20px';p.textContent='No matching conversations.';body.append(p);}
 }
 $('ddConcernFilter').addEventListener('change',ddRenderCases);
 $('ddCaseSearch').addEventListener('input',ddRenderCases);
@@ -72,6 +78,7 @@ async function list(){
 }
 async function open(id){
  try{const d=await api('/api/staff/support?id='+encodeURIComponent(id));current=id;
+ $('ddMessenger')?.classList.add('has-selection');ddRenderCases();
  $('heading').textContent=d.ticket.subject;$('details').textContent=d.ticket.guest_name+' · '+d.ticket.guest_email+' · '+id;
  $('messages').replaceChildren();
  for(const m of d.messages){const div=document.createElement('div');div.className='bubble'+(m.sender==='agent'?' agent':'');const body=document.createElement('div');body.textContent=m.body;const small=document.createElement('small');small.textContent=m.sender+' · '+m.created_at;div.append(body,small);$('messages').append(div)}
@@ -88,5 +95,8 @@ $('reload').addEventListener('click',list);
 $('reply').addEventListener('submit',async e=>{e.preventDefault();if(!current)return;const b=e.target.querySelector('button');b.disabled=true;try{await api('/api/staff/support',json('POST',{id:current,message:$('message').value}));$('message').value='';await open(current);await list()}catch(err){notice(err.message)}finally{b.disabled=false}});
 $('saveState').addEventListener('click',async()=>{if(!current)return;try{await api('/api/staff/support',json('PATCH',{action:'status',id:current,status:$('state').value}));await open(current);await list()}catch(e){notice(e.message)}});
 $('saveAssign').addEventListener('click',async()=>{if(!current)return;try{await api('/api/staff/support',json('PATCH',{action:'assign',id:current,staff_id:$('assignee').value}));await open(current);notice('Ticket assigned')}catch(e){notice(e.message)}});
-session();setInterval(()=>{if(me&&document.visibilityState==='visible'){list();if(current)open(current)}},12000);
+$('ddBackToInbox')?.addEventListener('click',()=>{$('ddMessenger').classList.remove('has-selection');$('ddMessenger').classList.remove('is-expanded');$('ddExpandChat').textContent='Expand ↗';});
+$('ddExpandChat')?.addEventListener('click',()=>{const m=$('ddMessenger');const expanded=m.classList.toggle('is-expanded');$('ddExpandChat').textContent=expanded?'Minimize ↙':'Expand ↗';$('ddExpandChat').setAttribute('aria-pressed',String(expanded));});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('ddMessenger')?.classList.contains('is-expanded')){$('ddMessenger').classList.remove('is-expanded');$('ddExpandChat').textContent='Expand ↗';}});
+session();setInterval(()=>{if(me&&document.visibilityState==='visible'){list();if(current&&!document.activeElement?.matches('#message'))open(current)}},12000);
 })();

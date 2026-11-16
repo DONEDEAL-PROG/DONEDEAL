@@ -432,7 +432,58 @@ body:has(#app:not([hidden])) main{max-width:none;margin:0;padding:0}
 .dd-conversation-state{font-size:11px;background:#42283b;color:#f3add0;padding:6px 10px;border-radius:99px;white-space:nowrap}
 @media(max-width:740px){[data-staff-panel="chats"]{min-height:0}.dd-conversation-list{max-height:none}}
 </style>
-</head>
+<style id="dd-messenger-style">
+.dd-staff-content{font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.55}
+.dd-staff-content h1,.dd-staff-content h2,.dd-staff-content h3{font-family:'Manrope',system-ui,sans-serif}
+.dd-messenger{display:grid;grid-template-columns:minmax(280px,350px) minmax(0,1fr);min-height:650px;height:min(78vh,860px);border:1px solid #3b3341;border-radius:17px;overflow:hidden;background:#1d1a24}
+.dd-messenger-list{min-width:0;border-right:1px solid #3b3341;display:flex;flex-direction:column}
+.dd-messenger-heading{display:flex;justify-content:space-between;align-items:center;padding:20px 18px 10px}
+.dd-messenger-heading h3{font-size:20px;margin:0}.dd-messenger-heading p{color:#aaa3b3;font-size:12px;margin:2px 0}
+.dd-messenger-heading button{border:1px solid #514459;background:#292331;color:#fff;border-radius:10px;padding:8px 13px}
+.dd-messenger .dd-case-controls{display:grid;gap:8px;padding:8px 14px 15px;margin:0}
+.dd-messenger .dd-case-controls label{font-size:12px;color:#b9b1c0}
+.dd-messenger .dd-case-controls input,.dd-messenger .dd-case-controls select{width:100%;max-width:none;background:#282330;border:1px solid #504354;border-radius:10px;padding:12px;color:#f8f3f9;font-size:14px}
+.dd-messenger-threads{overflow:auto;flex:1}
+.dd-messenger-thread{width:100%;text-align:left;display:flex;gap:12px;align-items:center;border:0;border-bottom:1px solid #302a35;border-radius:0;background:transparent;color:#f5f1f7;padding:15px;cursor:pointer}
+.dd-messenger-thread:hover{background:#302637}.dd-messenger-thread.is-selected{background:#45283b;border-left:3px solid #e44a94}
+.dd-messenger-avatar{flex:0 0 43px;height:43px;display:grid;place-items:center;border-radius:50%;background:#673452;color:#ffe4f1;font-weight:800;font-size:15px}
+.dd-messenger-thread-main{min-width:0;flex:1}.dd-messenger-thread-top{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
+.dd-messenger-thread strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd-messenger-thread small{font-size:11px;color:#b3aab8;white-space:nowrap}
+.dd-messenger-thread .dd-concern{display:block;color:#f4a2cc;font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd-messenger-thread .dd-preview{display:block;color:#aaa3b3;font-size:12px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dd-messenger-chat{min-width:0;min-height:0;display:flex;flex-direction:column}
+.dd-chat-head{display:flex;align-items:center;gap:15px;padding:17px 20px;border-bottom:1px solid #39323e;background:#24202b}
+.dd-chat-person{flex:1;min-width:0}.dd-chat-head h2{font-size:18px;margin:0 0 2px;overflow:hidden;text-overflow:ellipsis}
+.dd-chat-head #details{font-size:12px;color:#aca3b1;margin:0;overflow-wrap:anywhere}
+#ddBackToInbox,#ddExpandChat{background:#342b3b;color:#f5d8e7;border:1px solid #55405a;border-radius:9px;padding:9px 12px;font-size:12px;white-space:nowrap}
+#ddBackToInbox{display:none}
+.dd-messenger-chat #messages{flex:1;min-height:200px;overflow-y:auto;padding:25px 22px;background:#17151d;display:flex;flex-direction:column;gap:12px}
+.dd-messenger-chat #messages .bubble{align-self:flex-start;max-width:min(80%,560px);background:#302b38;border-radius:15px 15px 15px 5px;padding:12px 15px;font-size:15px;line-height:1.65;overflow-wrap:anywhere}
+.dd-messenger-chat #messages .bubble.agent{align-self:flex-end;background:#743052;border-radius:15px 15px 5px 15px;color:white}
+.dd-messenger-chat #messages .bubble small{display:block;color:#c8b8c5;font-size:11px;margin-top:6px}
+.dd-messenger-chat #reply{padding:14px 20px;border-top:1px solid #3a3340;background:#24202b}
+.dd-messenger-chat #reply label{display:block;margin-bottom:7px;font-size:12px;font-weight:700;color:#c8bdcb}
+.dd-messenger-chat #message{width:100%;min-height:70px;max-height:160px;resize:vertical;background:#2c2633;border:1px solid #59485c;border-radius:12px;color:white;padding:13px;font:15px/1.5 'DM Sans',sans-serif}
+.dd-messenger-chat #reply p{margin:9px 0 0;text-align:right}
+.dd-messenger-chat #statusArea,.dd-messenger-chat #assignArea{padding:9px 20px;border-top:1px solid #39323e;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dd-messenger-chat #statusArea[hidden],.dd-messenger-chat #assignArea[hidden],.dd-messenger-chat #reply[hidden]{display:none}
+.dd-messenger-chat #statusArea p,.dd-messenger-chat #assignArea p{margin:0}
+.dd-messenger.is-expanded{position:fixed;inset:18px;z-index:9999;width:auto;height:auto;grid-template-columns:300px minmax(0,1fr);box-shadow:0 0 0 100vmax rgba(0,0,0,.82)}
+.dd-messenger.is-expanded .dd-messenger-chat #messages{min-height:0}
+@media(max-width:760px){
+.dd-messenger{display:block;height:calc(100dvh - 240px);min-height:420px}
+.dd-messenger-list{height:100%;border-right:0}
+.dd-messenger-chat{display:none;height:100%}
+.dd-messenger.has-selection .dd-messenger-list{display:none}
+.dd-messenger.has-selection .dd-messenger-chat{display:flex}
+#ddBackToInbox{display:block}
+.dd-messenger.is-expanded{inset:0;border-radius:0;height:100dvh}
+.dd-messenger-chat #messages{padding:18px 13px}
+.dd-messenger-chat #messages .bubble{max-width:90%;font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){.dd-messenger *{scroll-behavior:auto!important;transition:none!important}}
+</style></head>
 
 <body>
 
@@ -601,30 +652,12 @@ body:has(#app:not([hidden])) main{max-width:none;margin:0;padding:0}
     </div>
     <div data-staff-panel="cases" hidden>
       <div class="dd-section-intro"><h2>Customer Cases & Concerns</h2><p>Search and filter support tickets. Select View / Edit to reply or update a case.</p></div>
-  <!-- EXISTING SUPPORT INBOX -->
-  <div class="layout dd-case-layout">
-
-    <section class="panel">
-      <h2>Support Tickets</h2>
-
-      <button id="reload" type="button">
-        Refresh
-      </button>
-
-      <div class="dd-case-controls">
-<label for="ddConcernFilter">Concern category</label>
-<select id="ddConcernFilter"><option value="">All concerns</option><option>Refund Request</option><option>Delivery Concern</option><option>Order Follow-up</option><option>Warranty Inquiry</option><option>General Inquiry</option><option>Affiliate Application</option><option>Store Pickup</option><option>Website Concern</option><option>Rewards Inquiry</option><option>Payment Error</option><option value="__other">Uncategorized / Older Cases</option></select>
-<label for="ddCaseSearch">Search cases</label><input id="ddCaseSearch" type="search" placeholder="Customer, reference, concern">
-</div>
-<div class="dd-case-table-wrap"><table class="dd-case-table">
-<thead><tr><th>Case ID</th><th>Customer</th><th>Concern</th><th>Status</th><th>Last Update</th><th>Action</th></tr></thead>
-<tbody id="ddCaseRows"></tbody></table></div><div id="tickets" hidden></div>
-    </section>
-
-    <section class="panel">
-      <h2 id="heading">Select a ticket</h2>
-
-      <p id="details"></p>
+<div id="ddMessenger" class="dd-messenger"><section class="dd-messenger-list">
+ <div class="dd-messenger-heading"><div><h3>Inbox</h3><p>Choose a conversation to read and reply</p></div><button id="reload" type="button" aria-label="Refresh conversations">↻</button></div>
+ <div class="dd-case-controls"><label for="ddConcernFilter">Concern</label><select id="ddConcernFilter"><option value="">All concerns</option><option>Refund Request</option><option>Delivery Concern</option><option>Order Follow-up</option><option>Warranty Inquiry</option><option>General Inquiry</option><option>Affiliate Application</option><option>Store Pickup</option><option>Website Concern</option><option>Rewards Inquiry</option><option>Payment Error</option><option value="__other">Older / Other concerns</option></select><input id="ddCaseSearch" type="search" placeholder="Search customers or concerns" aria-label="Search conversations"></div>
+ <div id="ddCaseRows" class="dd-messenger-threads" role="list"></div><div id="tickets" hidden></div>
+ </section><section class="dd-messenger-chat" aria-label="Selected conversation">
+      <div class="dd-chat-head"><button id="ddBackToInbox" type="button" aria-label="Back to inbox">← Inbox</button><div class="dd-chat-person"><h2 id="heading">Select a conversation</h2><p id="details"></p></div><button id="ddExpandChat" type="button" aria-pressed="false">Expand ↗</button></div>
 
       <div id="messages"></div>
 
@@ -669,11 +702,7 @@ body:has(#app:not([hidden])) main{max-width:none;margin:0;padding:0}
           </button>
         </p>
       </div>
-    </section>
-
-  </div>
-
-
+    </section></div>
     </div>
     <div data-staff-panel="orders" hidden>
       <div class="dd-section-intro"><h2>Order Management</h2><p>Customer orders are managed in their dedicated workspace.</p></div>
