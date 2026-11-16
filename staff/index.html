@@ -325,7 +325,79 @@ textarea{min-height:85px}
 .dd-case-table .dd-case-open:hover{background:#d23c8e}
 .dd-case-table .dd-case-empty{text-align:center;color:#a9a2ad;padding:22px}
 @media(min-width:1000px){.dd-case-table-wrap{width:100%}}
-</style></head>
+</style>
+<style id="dd-premium-staff-workspace">
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap');
+:root{--bg:#111016;--panel:#1c1a23;--field:#27242f;--border:#37313d;--text:#f7f3f8;--muted:#aaa3b3;--pink:#d53b87}
+body{font-family:'DM Sans',system-ui,sans-serif;letter-spacing:-.01em}
+body:has(#app:not([hidden]))>header{display:none}
+body:has(#app:not([hidden])) main{max-width:none;margin:0;padding:0}
+.dd-workspace{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}
+.dd-staff-sidebar{background:#17141e;border-right:1px solid #322b37;display:flex;flex-direction:column;padding:24px 14px;position:sticky;top:0;height:100vh}
+.dd-staff-brand{display:flex;align-items:center;gap:11px;padding:5px 9px 34px}
+.dd-brand-mark{display:grid;place-items:center;background:linear-gradient(145deg,#ec68a4,#a92370);color:white;width:39px;height:39px;border-radius:12px;font-size:14px;font-weight:800}
+.dd-staff-brand strong{display:block;font:800 15px 'Manrope',sans-serif;letter-spacing:-.035em}
+.dd-staff-brand small{display:block;color:#a69ba9;font-size:9px;font-weight:800;letter-spacing:.14em;margin-top:3px}
+.dd-staff-nav-label,.dd-eyebrow{font-size:10px;font-weight:800;letter-spacing:.16em;color:#c47ba1}
+.dd-staff-nav-label{padding:12px 15px}
+.dd-staff-nav{display:grid;gap:6px}
+.dd-staff-nav button{background:transparent;text-align:left;border:1px solid transparent;border-radius:10px;padding:13px 14px;font-weight:700;color:#c7bfcd;display:flex;align-items:center;gap:13px}
+.dd-staff-nav button:hover{background:#27212d}
+.dd-staff-nav button.active{background:#372332;color:#ffb3d5;border-color:#53334a}
+.dd-nav-symbol{font-size:20px;line-height:1;width:24px;text-align:center;font-weight:400}
+.dd-staff-sidebar-foot{margin-top:auto;border-top:1px solid #352b38;padding:22px 12px;color:#827a89;font-size:11px}
+.dd-staff-content{padding:30px clamp(18px,3vw,48px);max-width:1600px;width:100%;margin:0 auto;min-width:0}
+.dd-staff-top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:25px;border-bottom:1px solid var(--border);margin-bottom:27px}
+.dd-staff-top h1{font:800 clamp(25px,2.6vw,33px) 'Manrope',sans-serif;letter-spacing:-.05em;margin:5px 0 3px}
+.dd-staff-top p{color:var(--muted);font-size:13px;margin:0}
+.dd-staff-top-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dd-staff-user{font-size:13px;font-weight:700}
+.dd-staff-top-right button{font-size:12px;padding:10px 13px}
+.dd-staff-tabs-mobile{display:none}
+.dd-section-intro{margin-bottom:21px}
+.dd-section-intro h2{font:800 21px 'Manrope',sans-serif;letter-spacing:-.04em;margin:0 0 6px}
+.dd-section-intro p{color:var(--muted);font-size:13px;margin:0}
+.dd-staff-content .panel,.dd-staff-content .stat{background:#1d1a24;border:1px solid #38303e;border-radius:15px;box-shadow:none}
+.dd-staff-content .panel{padding:22px}
+.dd-staff-content h2,.dd-staff-content h3{font-family:'Manrope',sans-serif;letter-spacing:-.035em}
+.dd-staff-content .panel h2{font-size:17px}
+.dd-staff-content button{font-weight:700;font-size:13px}
+.dd-staff-content input,.dd-staff-content textarea,.dd-staff-content select{font-size:13px;border-color:#514658;border-radius:10px}
+.dd-staff-content .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.dd-staff-content .stat{padding:22px}
+.dd-staff-content .stat-number{font:800 32px 'Manrope',sans-serif;letter-spacing:-.05em}
+.dd-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.dd-overview-tile{display:flex;flex-direction:column;align-items:flex-start}
+.dd-tile-icon{width:39px;height:39px;display:grid;place-items:center;background:#382338;color:#f5a3cd;border-radius:11px;font-size:23px}
+.dd-overview-tile h3,.dd-order-entry h3{font-size:16px;margin:15px 0 5px}
+.dd-overview-tile p,.dd-order-entry p,.dd-chat-note p{font-size:13px;color:var(--muted);line-height:1.65}
+.dd-overview-tile button{margin-top:auto;padding:10px 0;background:transparent;color:#fa8dbe}
+.dd-order-launch{display:inline-block;padding:12px 17px;background:#c7377c;color:#fff;text-decoration:none;border-radius:10px;font-size:13px;font-weight:800;margin-top:10px}
+.dd-order-launch:hover{background:#e14791}
+.dd-staff-content .layout{grid-template-columns:minmax(0,1.3fr) minmax(320px,1fr);align-items:start}
+.dd-staff-content .dd-case-table{min-width:610px}
+.dd-staff-content .dd-case-controls{align-items:center}
+.dd-staff-content .dd-case-controls input{flex:1}
+.dd-staff-content .dd-case-table th{background:#27212c}
+.dd-staff-content .dd-case-table tbody tr:hover{background:#28222e}
+.dd-staff-content .dd-case-open{white-space:nowrap}
+#notice{padding:0 20px}
+@media(max-width:1050px){.dd-overview-grid{grid-template-columns:1fr}.dd-staff-content .layout{grid-template-columns:1fr}}
+@media(max-width:740px){
+ .dd-workspace{display:block}
+ .dd-staff-sidebar{display:none}
+ .dd-staff-content{padding:20px 15px}
+ .dd-staff-top{align-items:flex-start;flex-direction:column}
+ .dd-staff-tabs-mobile{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-bottom:23px}
+ .dd-staff-tabs-mobile button{background:#27212c;border:1px solid #443748;color:#bdb4c1;padding:11px 4px;border-radius:9px;font-size:11px}
+ .dd-staff-tabs-mobile button.active{background:#53283f;color:#ffc0df;border-color:#8d3c67}
+ .dd-staff-content .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .dd-staff-content .stat{padding:14px}
+ .dd-staff-content .stat-number{font-size:24px}
+}
+@media(prefers-reduced-motion:no-preference){.dd-staff-nav button,.dd-overview-tile button,.dd-staff-tabs-mobile button{transition:background .2s,color .2s,transform .2s}.dd-overview-tile button:active{transform:scale(.98)}}
+</style>
+</head>
 
 <body>
 
@@ -360,39 +432,58 @@ textarea{min-height:85px}
 </section>
 
 <section id="app" hidden>
-
-  <div class="support-header">
-    <div>
-      <h1>Customer Support Center</h1>
-      <p>Live Agent & Ticket Management</p>
+<div class="dd-workspace">
+  <aside class="dd-staff-sidebar" aria-label="Staff workspace navigation">
+    <div class="dd-staff-brand"><span class="dd-brand-mark">DD</span><span><strong>DONEDEAL</strong><small>STAFF WORKSPACE</small></span></div>
+    <div class="dd-staff-nav-label">WORKSPACE</div>
+    <nav class="dd-staff-nav" aria-label="Workspace sections">
+      <button type="button" data-staff-tab="overview" class="active"><span class="dd-nav-symbol">▦</span> Overview</button>
+      <button type="button" data-staff-tab="chats"><span class="dd-nav-symbol">◉</span> Chat Support</button>
+      <button type="button" data-staff-tab="cases"><span class="dd-nav-symbol">▤</span> Customer Cases</button>
+      <button type="button" data-staff-tab="orders"><span class="dd-nav-symbol">▣</span> Order Management</button>
+    </nav>
+    <div class="dd-staff-sidebar-foot">DONEDEAL · Customer Service</div>
+  </aside>
+  <div class="dd-staff-content">
+    <div class="dd-staff-top">
+      <div><span class="dd-eyebrow">CUSTOMER EXPERIENCE</span><h1 id="ddWorkspaceTitle">Overview</h1><p id="ddWorkspaceDescription">Your daily support activity at a glance.</p></div>
+      <div class="dd-staff-top-right"><span class="status-pill" id="agentStatus" data-state="offline"><span class="status-dot"></span><span id="agentStatusText">Offline</span></span><span class="notification-badge" id="unreadBadge" hidden>0 unread</span><span class="dd-staff-user" id="staffName"></span><button id="logout" type="button" class="secondary-button">Sign out</button></div>
+    </div>
+    <div class="dd-staff-tabs-mobile" aria-label="Sections">
+      <button type="button" data-staff-tab="overview" class="active">Overview</button>
+      <button type="button" data-staff-tab="chats">Chats</button>
+      <button type="button" data-staff-tab="cases">Cases</button>
+      <button type="button" data-staff-tab="orders">Orders</button>
+    </div>
+    <div data-staff-panel="overview">
+      <div class="dd-section-intro"><h2>Welcome to your workspace</h2><p>Monitor today's support activity. Open a section to manage conversations, customer cases or orders.</p></div>
+  <!-- PHASE 4: LIVE COUNTS -->
+  <section class="stats" id="liveStats" hidden>
+    <div class="stat">
+      <div class="stat-number" id="waitingCount">0</div>
+      <div class="stat-label">Waiting Chats</div>
     </div>
 
-    <div class="notification-row">
-      <span class="status-pill" id="agentStatus"
-            data-state="offline">
-        <span class="status-dot"></span>
-        <span id="agentStatusText">Offline</span>
-      </span>
-
-      <span class="notification-badge"
-            id="unreadBadge" hidden>0 unread</span>
+    <div class="stat">
+      <div class="stat-number" id="myChatsCount">0</div>
+      <div class="stat-label">My Active Chats</div>
     </div>
-  </div>
 
-  <p>
-    <a href="/staff/orders.html">
-      📦 Open Order Management (Phase 3)
-    </a>
-  </p>
+    <div class="stat">
+      <div class="stat-number" id="unreadCount">0</div>
+      <div class="stat-label">Unread Updates</div>
+    </div>
+  </section>
 
-  <p>
-    <span id="staffName"></span>
-    ·
-    <button id="logout" type="button">
-      Sign out
-    </button>
-  </p>
 
+      <div class="dd-overview-grid">
+        <div class="panel dd-overview-tile"><div class="dd-tile-icon">◉</div><h3>Chat Support</h3><p>Waiting customers and active conversations.</p><button type="button" data-staff-tab="chats">Open Chats →</button></div>
+        <div class="panel dd-overview-tile"><div class="dd-tile-icon">▤</div><h3>Customer Cases</h3><p>Review concerns, reply to tickets and update case statuses.</p><button type="button" data-staff-tab="cases">View Cases →</button></div>
+        <div class="panel dd-overview-tile"><div class="dd-tile-icon">▣</div><h3>Order Management</h3><p>Find customer orders and check their fulfillment.</p><button type="button" data-staff-tab="orders">View Orders →</button></div>
+      </div>
+    </div>
+    <div data-staff-panel="chats" hidden>
+      <div class="dd-section-intro"><h2>Live Chat Support</h2><p>Manage your availability and respond to incoming live conversations.</p></div>
   <!-- PHASE 4: AGENT AVAILABILITY -->
   <section class="panel" id="liveAgentPanel" hidden>
     <h2>🎧 Live Agent Availability</h2>
@@ -420,24 +511,6 @@ textarea{min-height:85px}
        role="status">
       Availability controls are loading.
     </p>
-  </section>
-
-  <!-- PHASE 4: LIVE COUNTS -->
-  <section class="stats" id="liveStats" hidden>
-    <div class="stat">
-      <div class="stat-number" id="waitingCount">0</div>
-      <div class="stat-label">Waiting Chats</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-number" id="myChatsCount">0</div>
-      <div class="stat-label">My Active Chats</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-number" id="unreadCount">0</div>
-      <div class="stat-label">Unread Updates</div>
-    </div>
   </section>
 
   <!-- PHASE 4: WAITING QUEUE -->
@@ -485,6 +558,11 @@ textarea{min-height:85px}
     </p>
   </section>
 
+
+      <div class="panel dd-chat-note"><h3>Active conversations</h3><p>Your existing Live Agent controls and conversations remain connected to the support system.</p></div>
+    </div>
+    <div data-staff-panel="cases" hidden>
+      <div class="dd-section-intro"><h2>Customer Cases & Concerns</h2><p>Search and filter support tickets. Select View / Edit to reply or update a case.</p></div>
   <!-- EXISTING SUPPORT INBOX -->
   <div class="layout dd-case-layout">
 
@@ -557,6 +635,14 @@ textarea{min-height:85px}
 
   </div>
 
+
+    </div>
+    <div data-staff-panel="orders" hidden>
+      <div class="dd-section-intro"><h2>Order Management</h2><p>Customer orders are managed in their dedicated workspace.</p></div>
+      <div class="panel dd-order-entry"><div class="dd-tile-icon">▣</div><h3>Order Management</h3><p>Open the existing staff order-management page to search orders and manage allowed actions.</p><a class="dd-order-launch" href="/staff/orders.html">Open Order Management →</a></div>
+    </div>
+  </div>
+</div>
 </section>
 
 <p id="notice" role="status"></p>
@@ -568,5 +654,34 @@ textarea{min-height:85px}
 <script src="/staff/live-agent.js" defer></script>
 <!-- Phase 4 script will be added next -->
 
+
+<script id="dd-staff-navigation">
+(()=>{
+ const titles={
+  overview:['Overview','Your daily support activity at a glance.'],
+  chats:['Chat Support','Live conversations and agent availability.'],
+  cases:['Customer Cases','Organize and resolve customer concerns.'],
+  orders:['Order Management','Look up and manage customer orders.']
+ };
+ function show(tab){
+  if(!titles[tab])tab='overview';
+  document.querySelectorAll('[data-staff-panel]').forEach(p=>p.hidden=p.dataset.staffPanel!==tab);
+  document.querySelectorAll('[data-staff-tab]').forEach(b=>{
+   const active=b.dataset.staffTab===tab;
+   b.classList.toggle('active',active);
+   b.setAttribute('aria-current',active?'page':'false');
+  });
+  document.getElementById('ddWorkspaceTitle').textContent=titles[tab][0];
+  document.getElementById('ddWorkspaceDescription').textContent=titles[tab][1];
+  try{history.replaceState(null,'','#'+tab)}catch(e){}
+ }
+ document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-staff-tab]');
+  if(b){e.preventDefault();show(b.dataset.staffTab)}
+ });
+ window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+ show(location.hash.slice(1));
+})();
+</script>
 </body>
 </html>
