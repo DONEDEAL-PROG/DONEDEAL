@@ -1,7 +1,28 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>DONEDEAL | Support Inbox</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#111116;color:#f7f7fc;font-family:system-ui,sans-serif}header{padding:20px;background:#1d1d26}header a{color:#ff7db8}main{max-width:1100px;margin:auto;padding:24px}h1{margin:0 0 12px}.layout{display:grid;grid-template-columns:320px 1fr;gap:16px}.panel{background:#1d1d26;border:1px solid #37303a;border-radius:14px;padding:16px;min-width:0}button,textarea,select{font:inherit}button{border:0;background:#e72d81;color:white;padding:11px 13px;border-radius:8px;cursor:pointer}button.ticket{width:100%;text-align:left;background:#292936;margin-bottom:8px}button.ticket:hover{background:#424154}textarea{width:100%;padding:12px;background:#292936;color:white;border:1px solid #5b5665;border-radius:8px;min-height:85px}#messages{height:400px;overflow:auto;background:#15151d;padding:12px;border-radius:8px}.bubble{white-space:pre-wrap;overflow-wrap:anywhere;background:#343441;padding:12px;border-radius:9px;margin:8px 0}.bubble.agent{background:#562b46;margin-left:12%}small{color:#b8b7c4}#status{margin:12px 0}#notice{color:#ff9ec7}@media(max-width:720px){.layout{grid-template-columns:1fr}}</style></head><body>
-<header><a href="/admin/">← Admin Dashboard</a></header><main><h1>Customer Support Inbox</h1><p>Phase 1: Admin-authenticated replies. Staff accounts and custom permissions will be added separately.</p><div class="layout">
-<section class="panel"><h2>Tickets</h2><button id="reload">Refresh inbox</button><div id="tickets" style="margin-top:14px"></div></section>
+<style>*{box-sizing:border-box}body{margin:0;background:#111116;color:#f7f7fc;font-family:system-ui,sans-serif}header{padding:20px;background:#1d1d26}header a{color:#ff7db8}main{max-width:1100px;margin:auto;padding:24px}h1{margin:0 0 12px}.layout{display:grid;grid-template-columns:320px 1fr;gap:16px}.panel{background:#1d1d26;border:1px solid #37303a;border-radius:14px;padding:16px;min-width:0}button,textarea,select{font:inherit}button{border:0;background:#e72d81;color:white;padding:11px 13px;border-radius:8px;cursor:pointer}button.ticket{width:100%;text-align:left;background:#292936;margin-bottom:8px}button.ticket:hover{background:#424154}textarea{width:100%;padding:12px;background:#292936;color:white;border:1px solid #5b5665;border-radius:8px;min-height:85px}#messages{height:400px;overflow:auto;background:#15151d;padding:12px;border-radius:8px}.bubble{white-space:pre-wrap;overflow-wrap:anywhere;background:#343441;padding:12px;border-radius:9px;margin:8px 0}.bubble.agent{background:#562b46;margin-left:12%}small{color:#b8b7c4}#status{margin:12px 0}#notice{color:#ff9ec7}@media(max-width:720px){.layout{grid-template-columns:1fr}}</style><style id="dd-case-ui">
+.dd-case-controls{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:14px 0}
+.dd-case-controls label{font-size:12px;color:var(--muted,#a8a3ae);font-weight:700}
+.dd-case-controls select,.dd-case-controls input{min-width:150px;max-width:100%;border:1px solid #504253;border-radius:9px;padding:10px;background:#27232d;color:#fff}
+.dd-case-table-wrap{overflow:auto;max-width:100%}
+.dd-case-table{width:100%;min-width:660px;border-collapse:collapse;font-size:13px}
+.dd-case-table th{text-align:left;color:#bcb5c0;font-size:11px;letter-spacing:.06em;padding:12px 10px;border-bottom:1px solid #49404d}
+.dd-case-table td{padding:12px 10px;border-bottom:1px solid #39323d;vertical-align:middle}
+.dd-case-table td:nth-child(1){font-family:ui-monospace,monospace;font-size:11px}
+.dd-case-table td:nth-child(3){font-weight:700;color:#f08abb}
+.dd-case-table .dd-case-open{padding:8px 12px;border-radius:8px;background:#b13778;color:#fff;border:0;cursor:pointer}
+.dd-case-table .dd-case-open:hover{background:#d23c8e}
+.dd-case-table .dd-case-empty{text-align:center;color:#a9a2ad;padding:22px}
+@media(min-width:1000px){.dd-case-table-wrap{width:100%}}
+.dd-case-layout{grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr)}@media(max-width:900px){.dd-case-layout{grid-template-columns:1fr}}</style></head><body>
+<header><a href="/admin/">← Admin Dashboard</a></header><main><h1>Customer Support Inbox</h1><p>Phase 1: Admin-authenticated replies. Staff accounts and custom permissions will be added separately.</p><div class="layout dd-case-layout">
+<section class="panel"><h2>Tickets</h2><button id="reload">Refresh inbox</button><div class="dd-case-controls">
+<label for="ddConcernFilter">Concern category</label>
+<select id="ddConcernFilter"><option value="">All concerns</option><option>Refund Request</option><option>Delivery Concern</option><option>Order Follow-up</option><option>Warranty Inquiry</option><option>General Inquiry</option><option>Affiliate Application</option><option>Store Pickup</option><option>Website Concern</option><option>Rewards Inquiry</option><option>Payment Error</option><option value="__other">Uncategorized / Older Cases</option></select>
+<label for="ddCaseSearch">Search cases</label><input id="ddCaseSearch" type="search" placeholder="Customer, reference, concern">
+</div>
+<div class="dd-case-table-wrap"><table class="dd-case-table">
+<thead><tr><th>Case ID</th><th>Customer</th><th>Concern</th><th>Status</th><th>Last Update</th><th>Action</th></tr></thead>
+<tbody id="ddCaseRows"></tbody></table></div><div id="tickets" hidden style="margin-top:14px"></div></section>
 <section class="panel"><h2 id="heading">Select a ticket</h2><div id="details"></div><div id="messages"></div>
 <form id="reply" hidden><label for="message">Reply</label><textarea id="message" maxlength="2000" required></textarea><p><button>Send reply</button></p></form>
 <div id="status" hidden><label for="state">Ticket status</label> <select id="state"><option value="open">Open</option><option value="pending">Pending</option><option value="closed">Closed</option></select> <button id="saveState">Save status</button></div></section></div><p id="notice" role="status"></p></main><script src="/admin/support.js" defer></script></body></html>
