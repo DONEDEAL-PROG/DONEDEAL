@@ -310,8 +310,22 @@ textarea{min-height:85px}
   .queue-item{flex-direction:column}
   .queue-item button{width:100%}
 }
-</style>
-</head>
+.dd-case-layout{grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr)}@media(max-width:900px){.dd-case-layout{grid-template-columns:1fr}}</style>
+<style id="dd-case-ui">
+.dd-case-controls{display:flex;flex-wrap:wrap;align-items:end;gap:10px;margin:14px 0}
+.dd-case-controls label{font-size:12px;color:var(--muted,#a8a3ae);font-weight:700}
+.dd-case-controls select,.dd-case-controls input{min-width:150px;max-width:100%;border:1px solid #504253;border-radius:9px;padding:10px;background:#27232d;color:#fff}
+.dd-case-table-wrap{overflow:auto;max-width:100%}
+.dd-case-table{width:100%;min-width:660px;border-collapse:collapse;font-size:13px}
+.dd-case-table th{text-align:left;color:#bcb5c0;font-size:11px;letter-spacing:.06em;padding:12px 10px;border-bottom:1px solid #49404d}
+.dd-case-table td{padding:12px 10px;border-bottom:1px solid #39323d;vertical-align:middle}
+.dd-case-table td:nth-child(1){font-family:ui-monospace,monospace;font-size:11px}
+.dd-case-table td:nth-child(3){font-weight:700;color:#f08abb}
+.dd-case-table .dd-case-open{padding:8px 12px;border-radius:8px;background:#b13778;color:#fff;border:0;cursor:pointer}
+.dd-case-table .dd-case-open:hover{background:#d23c8e}
+.dd-case-table .dd-case-empty{text-align:center;color:#a9a2ad;padding:22px}
+@media(min-width:1000px){.dd-case-table-wrap{width:100%}}
+</style></head>
 
 <body>
 
@@ -472,7 +486,7 @@ textarea{min-height:85px}
   </section>
 
   <!-- EXISTING SUPPORT INBOX -->
-  <div class="layout">
+  <div class="layout dd-case-layout">
 
     <section class="panel">
       <h2>Support Tickets</h2>
@@ -481,7 +495,14 @@ textarea{min-height:85px}
         Refresh
       </button>
 
-      <div id="tickets"></div>
+      <div class="dd-case-controls">
+<label for="ddConcernFilter">Concern category</label>
+<select id="ddConcernFilter"><option value="">All concerns</option><option>Refund Request</option><option>Delivery Concern</option><option>Order Follow-up</option><option>Warranty Inquiry</option><option>General Inquiry</option><option>Affiliate Application</option><option>Store Pickup</option><option>Website Concern</option><option>Rewards Inquiry</option><option>Payment Error</option><option value="__other">Uncategorized / Older Cases</option></select>
+<label for="ddCaseSearch">Search cases</label><input id="ddCaseSearch" type="search" placeholder="Customer, reference, concern">
+</div>
+<div class="dd-case-table-wrap"><table class="dd-case-table">
+<thead><tr><th>Case ID</th><th>Customer</th><th>Concern</th><th>Status</th><th>Last Update</th><th>Action</th></tr></thead>
+<tbody id="ddCaseRows"></tbody></table></div><div id="tickets" hidden></div>
     </section>
 
     <section class="panel">
