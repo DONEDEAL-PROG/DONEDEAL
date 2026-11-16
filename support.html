@@ -770,11 +770,7 @@ a:focus-visible {
           What can we help with?
         </label>
 
-        <input
-          id="subject"
-          maxlength="140"
-          required
-        >
+        <select id="subject" required aria-label="Concern category"><option value="" disabled selected>Select your concern</option><option value="Refund Request">Refund Request</option><option value="Delivery Concern">Delivery Concern</option><option value="Order Follow-up">Order Follow-up</option><option value="Warranty Inquiry">Warranty Inquiry</option><option value="General Inquiry">General Inquiry</option><option value="Affiliate Application">Affiliate Application</option><option value="Store Pickup">Store Pickup</option><option value="Website Concern">Website Concern</option><option value="Rewards Inquiry">Rewards Inquiry</option><option value="Payment Error">Payment Error</option></select>
 
         <label for="initial">Message</label>
 
