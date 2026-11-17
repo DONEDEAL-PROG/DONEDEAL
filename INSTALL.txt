@@ -1,29 +1,11 @@
-DONE DEAL — PREMIUM MOBILE DESIGN
+DONEDEAL SUPPORT AND SIMPLIFIED PIN RECOVERY
 
-Upload the files in this ZIP to the same paths in your website repository.
-Replace these existing root files:
-- account.html
-- brand-apple.html
-- brand-huawei.html
-- brand-oppo.html
-- brand-samsung.html
-- brand-vivo.html
-- brand-xiaomi.html
-- checkout.html
-- dd-mobile-app.js
-- index.html
-- partner.html
-- payment-status.html
-- pin-recovery.html
-- shop.html
-- support.html
-- track-order.html
-- wishlist.html
+Replace all included files at matching repository paths, then deploy together. This patch is based on DONEDEAL-main (5)(2).zip. No additional SQL migration or new secret is required; keep the existing recovery tables and PIN_RECOVERY_SECRET.
 
-Add this new root file:
-- dd-mobile-premium.css
+Flow: Forgot PIN opens customer support with a prefilled recovery message and registers a recovery request when a browser backup exists. Customer reviews/sends the ticket. Staff independently verifies identity through the existing registered channel or in person, then selects Approve reset on the PIN recovery dashboard. Customer returns to My account on the same browser: Reset PIN appears automatically (checked on page load, focus, and every 15 seconds). Customer chooses and confirms their new PIN. No recovery code is copied from chat.
 
-Commit and allow Cloudflare Pages to deploy. No SQL or database changes are needed.
-Keep all other existing files, including images and private-vault/support scripts.
-This patch styles customer-facing mobile pages up to 767px wide. Admin/staff dashboards are excluded.
-After deployment, reload the site to load the new version. Check dark/light mode, account navigation, cart and checkout.
+Staff must not ask for or select the new PIN. Approval expires after 15 minutes and can be redeemed once. Existing encrypted recovery backup and browser credentials are still required. This does not introduce recovery on another device.
+
+Support conversation bubbles and reply form now have calmer neutral surfaces, readable typography, and theme-aware colors. Pink is reserved for the Send Message button.
+
+Verification: JS syntax checks passed. Mocked API checks passed for pending, expired, wrong-browser, successful code-free redemption, and reused approval rejection. Production end-to-end recovery has not been performed.

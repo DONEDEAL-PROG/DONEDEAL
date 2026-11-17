@@ -49,7 +49,7 @@ function promptPIN({allowSkip=false,purpose="details",recoveryRecords=null}={}){
  const panel=document.createElement('div');panel.className='dd-pin-support';
  const heading=document.createElement('h3');heading.textContent='Need help with your PIN?';
  const message=document.createElement('p');message.textContent='Request recovery, then contact support to verify your identity. Only authorized staff can approve a reset.';
- const link=document.createElement('a');link.className='dd-pin-primary';link.textContent='Request PIN recovery';link.href='/pin-recovery.html';
+ const link=document.createElement('a');link.className='dd-pin-primary';link.textContent='Request PIN recovery';link.href='/support.html?intent=pin-recovery';link.onclick=async event=>{event.preventDefault();link.textContent='Opening customer support…';let id;try{id=(await recoveryAPI('request')).request?.id}catch{}location.href='/support.html?intent=pin-recovery'+(id?'&recovery_ref='+encodeURIComponent(id):'')};
  const back=document.createElement('button');back.type='button';back.className='dd-pin-secondary';back.textContent='Back to PIN';
  const controls=[dialog.querySelector('.dd-pin-dots'),dialog.querySelector('.dd-pin-count'),pad,submit,dialog.querySelector('.dd-pin-secondary'),forgot];
  controls.forEach(el=>el.hidden=true);error.textContent='';
@@ -79,4 +79,17 @@ async function installRecovered(pin,records){
 }
 async function recover(requestId,code){if(!recoveredBuffer){const result=await recoveryAPI('redeem',{request_id:requestId,code});recoveredBuffer=result.records}const result=await promptPIN({recoveryRecords:recoveredBuffer});if(result)recoveredBuffer=null;return !!result}
 window.DDPrivateVault={storage,has,summary,prompt:options=>promptPIN({allowSkip:options?.allowSkip,purpose:options?.purpose}),lock,flush:()=>pending,isUnlocked:()=>active,recoveryRequest:()=>recoveryAPI('request'),recoveryStatus:()=>recoveryAPI('status'),recover};
+
+// Approval is checked with this browser's secret; no chat code is required.
+function installResetStatus(){
+ if(!/\/account(?:\.html)?\/?$/.test(location.pathname)||!device())return;
+ const host=document.querySelector('main');if(!host)return;
+ const panel=document.createElement('section');panel.className='panel dd-recovery-status';panel.hidden=true;panel.setAttribute('aria-live','polite');
+ const text=document.createElement('p'),reset=document.createElement('button');reset.type='button';reset.className='primary';reset.textContent='Reset PIN';reset.hidden=true;panel.append(text,reset);host.prepend(panel);
+ let requestId,busy=false;
+ reset.onclick=async()=>{if(busy)return;busy=true;reset.disabled=true;try{const ok=await recover(requestId);text.textContent=ok?'Your new PIN is saved.': 'PIN creation was cancelled. Tap Reset PIN to continue.';if(ok){reset.hidden=true;location.reload()}}catch(e){text.textContent=e.message}finally{busy=false;reset.disabled=false}};
+ async function check(){if(busy||document.hidden)return;try{const r=(await recoveryAPI('status')).request;if(!r){panel.hidden=true;return}requestId=r.id;const approved=r.status==='approved'&&r.expires_at>Date.now()/1000;panel.hidden=!['pending','approved'].includes(r.status);reset.hidden=!approved&&!recoveredBuffer;text.textContent=approved?'Identity verified. Your PIN reset is approved.':r.status==='pending'?'PIN recovery: customer support is reviewing your identity.':'Your reset approval expired. Contact customer support again.';}catch{}}
+ check();setInterval(check,15000);window.addEventListener('focus',check);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installResetStatus);else installResetStatus();
 })();
