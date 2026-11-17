@@ -7,7 +7,7 @@ export async function onRequestGet({request,env}){
  const result=await env.DB.prepare('SELECT r.*,p.encrypted_data FROM dd_pin_recovery_requests r JOIN dd_pin_profiles p ON p.id=r.profile_id ORDER BY r.created_at DESC,r.rowid DESC LIMIT 100').all();const requests=[];
  for(const row of result.results||[]){let contact={},orders=[];try{const records=await open(row.encrypted_data,env,row.profile_id);contact=JSON.parse(records.doneDealCheckoutDetailsV1||'{}').contact||{};orders=JSON.parse(records.doneDealOrderHistoryV1||'[]')}catch{}
  requests.push({id:row.id,profile_id:row.profile_id,status:row.status,created_at:row.created_at,reviewed_at:row.reviewed_at,expires_at:row.expires_at,attempts:row.attempts,verification_method:row.verification_method,verification_note:row.verification_note,actor_id:row.actor_id,contact:{name:contact.name||'',phone:contact.phone||'',email:contact.email||''},order_references:Array.isArray(orders)?orders.map(o=>o.id).filter(x=>typeof x==='string').slice(0,10):[]})}
- const audit=await env.DB.prepare('SELECT request_id,actor_type,actor_id,action,created_at,details FROM dd_pin_recovery_audit ORDER BY created_at DESC,rowid DESC LIMIT 100').all();return json({actor_type:user.type,requests,audit:audit.results||[]});
+ const audit=await env.DB.prepare('SELECT request_id,actor_type,actor_id,action,created_at,details FROM dd_pin_recovery_audit ORDER BY created_at DESC,rowid DESC LIMIT 100').all();return json({requests,audit:audit.results||[]});
  }catch{return json({error:'PIN recovery tools are unavailable'},503)}
 }
 export async function onRequestPost({request,env}){
@@ -21,6 +21,6 @@ export async function onRequestPost({request,env}){
  const code=b.action==='approve'?hex(crypto.getRandomValues(new Uint8Array(16))):null,expires=now()+900;
  const result=await env.DB.prepare(`UPDATE dd_pin_recovery_requests SET status=?,reviewed_at=?,actor_type=?,actor_id=?,verification_method=?,verification_note=?,code_hash=?,expires_at=?,attempts=0 WHERE id=? AND ${mutable} RETURNING id`).bind(b.action==='approve'?'approved':'rejected',now(),user.type,user.id,b.action==='approve'?b.method:null,note,code?await hash(code):null,code?expires:null,row.id,now()).first();if(!result)return json({error:'This request was already reviewed. Refresh the list.'},409);
  
- return json({ok:true,recovery_code:code,expires_at:code?expires:null,message:code?'Share this single-use code only through the independently verified customer contact channel. It is shown once.':'Recovery request rejected.'});
+ return json({ok:true,expires_at:code?expires:null,message:code?'Approved. The customer can now select Reset PIN in My account on their registered browser. Approval expires in 15 minutes.':'Recovery request rejected.'});
  }catch{return json({error:'Recovery review could not be completed'},503)}
 }
