@@ -11,7 +11,7 @@
  function start(){
   if(/^\/(admin|staff|partner)(\/|$)/.test(location.pathname))return;
   document.documentElement.classList.add('dd-premium-mobile');
-  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-3';document.head.append(sheet)}
+  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-4';document.head.append(sheet)}
   if(!document.querySelector('.dd-mobile-premium-header')){
    const header=document.createElement('div');header.className='dd-mobile-premium-header';header.setAttribute('role','banner');
    const brand=document.createElement('a');brand.href='/';brand.className='dd-mobile-premium-brand';brand.setAttribute('aria-label','Done Deal home');brand.innerHTML='<img src="/done-deal-mark.png" alt=""><span>DONE<span>DEAL</span></span>';
@@ -22,7 +22,7 @@
    new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['data-dd-store-theme']});paint();header.append(brand,toggle);document.body.prepend(header);
   }
 
-  if(!document.getElementById('ddDesktopPremiumStyle')){const sheet=document.createElement('link');sheet.id='ddDesktopPremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-desktop-premium.css?v=20261117-2';document.head.append(sheet)}
+  if(!document.getElementById('ddDesktopPremiumStyle')){const sheet=document.createElement('link');sheet.id='ddDesktopPremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-desktop-premium.css?v=20261117-3';document.head.append(sheet)}
   const premiumHeader=document.querySelector('.dd-mobile-premium-header');
   if(premiumHeader&&!premiumHeader.querySelector('.dd-desktop-actions')){
    const search=document.createElement('form');search.className='dd-desktop-search';search.setAttribute('role','search');search.innerHTML='<input aria-label="Search gadgets" placeholder="Search phones, gadgets, accessories…" type="search"><button type="submit" aria-label="Search">⌕</button>';
@@ -82,7 +82,7 @@
     hero.innerHTML='<img src="hero-unified.webp" alt="DONEDEAL featured smartphone collection"><div class="dd-mobile-hero-content"><div><span class="dd-hero-eyebrow">✦ &nbsp; Premium Smartphones</span><strong>Explore the <em>collection</em></strong><small>Shop your favorite smartphone brands</small></div><div class="dd-hero-benefits"><span>♧ &nbsp; Free Shipping<br>Worldwide</span><span>◇ &nbsp; Secure<br>Payments</span><span>◎ &nbsp; 24/7 Support</span></div><button type="button">Shop now →</button></div>';
     hero.querySelector('button').addEventListener('click',()=>{location.href='/shop.html'});
     document.querySelector('main#home>.hero').before(hero);
-    const search=document.createElement('a');search.className='dd-mobile-search';search.href='/#shop';search.innerHTML='⌕ &nbsp; Search phones, gadgets, accessories…';
+    const search=document.createElement('a');search.className='dd-mobile-search';search.href='/#shop';search.innerHTML='<span class="dd-mobile-search-label">Search phones, gadgets, accessories…</span>';
     hero.before(search);
   }
  }

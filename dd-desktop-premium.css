@@ -220,29 +220,10 @@ html.dd-premium-mobile .dd-support-dock-window{bottom:90px}
  html.dd-premium-mobile .dd-mobile-hero-content strong {font-size:36px!important;letter-spacing:-1.5px!important}
 }
 
-
-/* FIX: restore DONEDEAL story and menu sidebar trigger */
-@media (min-width: 1101px) {
-  html.dd-premium-mobile .dd-story {
-    display: block !important;
-  }
-  html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger {
-    display: flex !important;
-  }
-}
-@media (min-width: 768px) and (max-width: 1100px) {
-  html.dd-premium-mobile .dd-story {
-    display: block !important;
-  }
-  html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger {
-    display: flex !important;
-  }
-}
-@media (max-width: 767px) {
-  html.dd-premium-mobile .dd-story {
-    display: block !important;
-  }
-  html.dd-premium-mobile .dd-mobile-premium-header .dd-menu-trigger {
-    display: flex !important;
-  }
+/* Align desktop menu trigger and Home link on the same navigation baseline */
+@media (min-width:1101px){
+ html.dd-premium-mobile .dd-desktop-links{align-items:center!important}
+ html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger{display:flex!important;align-items:center!important;justify-content:center!important;align-self:center!important;height:64px!important;min-height:64px!important;padding:0!important;margin:0!important;line-height:1!important;transform:none!important}
+ html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger svg{display:block!important;width:17px!important;height:17px!important}
+ html.dd-premium-mobile .dd-desktop-links a{display:flex!important;align-items:center!important;height:64px!important;box-sizing:border-box!important;padding:0 0 1px!important;line-height:1!important}
 }
