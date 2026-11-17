@@ -224,6 +224,7 @@ async function loadLiveVariants() {
     Object.assign(phVariants, liveVariants);
     catalogStockLoaded = true;
     render();
+    if(document.getElementById("cartOverlay")?.classList.contains("open"))openCart();
 
     console.log("Done Deal catalog loaded from D1");
   } catch (error) {
@@ -470,7 +471,29 @@ function showCartSuccess(label,qty){const badge=document.getElementById('cartCou
 
 function changeQty(key,d){cart[key]=(cart[key]||0)+d;if(cart[key]<=0)delete cart[key];save();openCart();}
 function closeOverlay(){document.querySelectorAll('.overlay').forEach(e=>e.classList.remove('open'))}
-function openCart(){closeOverlay();document.getElementById('cartOverlay').classList.add('open');let keys=Object.keys(cart).filter(k=>cartEntry(k));let total=0,hasUnknown=false;document.getElementById('cartItems').innerHTML=keys.length?keys.map(key=>{const e=cartEntry(key);if(e.price==null)hasUnknown=true;else total+=e.price*cart[key];return `<div class="cartitem"><div><strong>${e.p.brand} ${e.p.name}</strong><div style="color:#aeb7ca;margin-top:5px">${e.storage||'Storage to confirm'} · ${money(e.price)}</div></div><div><button onclick="changeQty('${key}',-1)">−</button> ${cart[key]} <button onclick="changeQty('${key}',1)">+</button></div></div>`}).join(''):'<div class="empty">Your cart is empty.</div>';document.getElementById('cartTotal').textContent=!keys.length?'Add a phone to get started.':hasUnknown?'Known SRP subtotal: '+money(total)+' · Other items require a quote':'Catalog subtotal: '+money(total);}
+function openCart(){
+ closeOverlay();const overlay=document.getElementById('cartOverlay');overlay.classList.add('open');
+ const drawer=overlay.querySelector('.drawer');drawer.classList.add('dd-premium-cart');
+ const keys=Object.keys(cart).filter(k=>cartEntry(k));let total=0,hasUnknown=false;
+ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ drawer.querySelector('h2').textContent='Your cart';
+ let intro=drawer.querySelector('.dd-cart-intro');if(!intro){intro=document.createElement('div');intro.className='dd-cart-intro';drawer.querySelector('h2').after(intro)}
+ intro.replaceChildren();const count=document.createElement('span');count.textContent=Object.values(cart).reduce((n,q)=>n+Number(q||0),0)+' items';const back=document.createElement('button');back.type='button';back.textContent='Continue shopping';back.onclick=closeOverlay;intro.append(count,back);
+ const items=document.getElementById('cartItems');items.replaceChildren();
+ for(const key of keys){const e=cartEntry(key);if(e.price==null)hasUnknown=true;else total+=e.price*cart[key];
+  const row=document.createElement('div');row.className='cartitem dd-cart-product';
+  row.innerHTML='<div class="dd-cart-photo"></div><div class="dd-cart-details"><strong>'+esc(e.p.brand+' '+e.p.name)+'</strong><div class="dd-cart-storage">'+esc(e.storage||'Storage to confirm')+'</div><b class="dd-cart-price">'+esc(money(e.price))+'</b><div class="dd-cart-actions"><div class="dd-cart-stepper"></div></div></div>';
+  const photo=row.querySelector('.dd-cart-photo');const src=productImages[e.p.id];
+  if(src){const img=document.createElement('img');img.src=src;img.alt=e.p.brand+' '+e.p.name;img.onerror=()=>{photo.textContent='Photo unavailable'};photo.append(img)}else photo.textContent='Photo unavailable';
+  const stepper=row.querySelector('.dd-cart-stepper');for(const [text,delta,label] of [['−',-1,'Decrease quantity'],['+',1,'Increase quantity']]){const b=document.createElement('button');b.type='button';b.textContent=text;b.setAttribute('aria-label',label+' for '+e.p.name);b.onclick=()=>changeQty(key,delta);if(delta===1){const q=document.createElement('span');q.textContent=cart[key];q.setAttribute('aria-label','Quantity');stepper.append(q)}stepper.append(b)}
+  const remove=document.createElement('button');remove.type='button';remove.className='dd-cart-remove';remove.setAttribute('aria-label','Remove '+e.p.name);remove.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg>';remove.onclick=()=>{delete cart[key];save();openCart()};row.querySelector('.dd-cart-actions').append(remove);items.append(row);
+ }
+ if(!keys.length){const empty=document.createElement('p');empty.className='empty';empty.textContent='Your cart is empty. Find your next favorite gadget.';items.append(empty)}
+ const summary=document.getElementById('cartTotal');summary.className='dd-cart-summary';summary.innerHTML=keys.length?'<h3>Order summary</h3><div><span>Subtotal</span><span>'+esc(money(total))+'</span></div><div><span>Shipping</span><span>Confirmed at checkout</span></div><div class="dd-cart-total"><strong>'+(hasUnknown?'Known product total':'Product total')+'</strong><strong>'+esc(money(total))+'</strong></div>'+(hasUnknown?'<p>Some items require a quote. Final prices are confirmed at checkout.</p>':''):'';summary.hidden=!keys.length;
+ const checkout=drawer.querySelector('[onclick="openCheckout()"]');checkout.textContent='Continue to checkout →';checkout.disabled=!keys.length;
+ let note=drawer.querySelector('.dd-cart-privacy');if(!note){note=document.createElement('p');note.className='dd-cart-privacy';note.textContent='Your details stay private';checkout.after(note)}note.hidden=!keys.length;
+}
+
 function detail(id){
  window.DDExtras?.view(id);
  const p=products.find(x=>x.id===id);if(!p)return;

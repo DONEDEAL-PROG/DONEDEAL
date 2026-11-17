@@ -11,7 +11,7 @@
  function start(){
   if(/^\/(admin|staff|partner)(\/|$)/.test(location.pathname))return;
   document.documentElement.classList.add('dd-premium-mobile');
-  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-2';document.head.append(sheet)}
+  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-3';document.head.append(sheet)}
   if(!document.querySelector('.dd-mobile-premium-header')){
    const header=document.createElement('div');header.className='dd-mobile-premium-header';header.setAttribute('role','banner');
    const brand=document.createElement('a');brand.href='/';brand.className='dd-mobile-premium-brand';brand.setAttribute('aria-label','Done Deal home');brand.innerHTML='<img src="/done-deal-mark.png" alt=""><span>DONE<span>DEAL</span></span>';
@@ -50,6 +50,9 @@
     nav.appendChild(el);
   });
   document.body.appendChild(nav);
+  const cartOverlay=document.getElementById('cartOverlay');
+  if(cartOverlay){const sync=()=>{const cartOpen=cartOverlay.classList.contains('open');nav.querySelectorAll('a,button').forEach((el,i)=>{const selected=cartOpen?i===3:['home','shop','heart','cart','account'][i]===active;el.classList.toggle('dd-active',selected);if(selected)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current')})};new MutationObserver(sync).observe(cartOverlay,{attributes:true,attributeFilter:['class']});sync()}
+
   if(document.querySelector('main#home>.hero')){
     const hero=document.createElement('section');
     hero.className='dd-mobile-hero';
