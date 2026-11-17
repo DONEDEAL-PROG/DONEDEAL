@@ -24,7 +24,6 @@ window.addEventListener('pagehide',()=>{key=null;data={};active=false});
 window.addEventListener('pageshow',e=>{if(e.persisted)location.reload()});
 window.addEventListener('storage',e=>{if(e.key===KEY&&active)lock()});
 function summary(){try{if(has())return JSON.parse(localStorage.getItem(PUBLIC)||'{}');data=legacy();const value=publicSummary();data={};return value}catch{return {}}}
-function reset(){localStorage.removeItem(KEY);localStorage.removeItem(PUBLIC);for(const name of PRIVATE)localStorage.removeItem(name);data={};key=null;active=false}
 function promptPIN({allowSkip=false,purpose="details"}={}){return new Promise(resolve=>{
  const creating=!has(),dialog=document.createElement('dialog');dialog.className='dd-pin-dialog';dialog.setAttribute('aria-labelledby','dd-pin-title');dialog.setAttribute('aria-describedby','dd-pin-description');
  dialog.innerHTML='<form><div class="dd-pin-lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="12" rx="3"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg></div><p class="dd-pin-eyebrow">PRIVATE ACCESS</p><h2 id="dd-pin-title">'+(creating?'Create your PIN':purpose==='cancel'?'Confirm cancellation':'Welcome back')+'</h2><p id="dd-pin-description" class="dd-pin-description">'+(creating?'Choose a 6-digit PIN for your saved details.':purpose==='cancel'?'Enter your 6-digit PIN to cancel this order.':'Enter your 6-digit PIN to view your details.')+'</p><div class="dd-pin-dots" role="group" aria-label="6-digit PIN"><span></span><span></span><span></span><span></span><span></span><span></span></div><span class="dd-pin-count" role="status" aria-live="polite">0 of 6 digits entered</span><div class="dd-pin-keypad" role="group" aria-label="PIN number pad"></div><p class="dd-pin-error" role="alert"></p><button class="dd-pin-primary" type="submit" disabled>'+(creating?'Continue':purpose==='cancel'?'Confirm cancellation':'Unlock details')+'</button><button class="dd-pin-secondary" type="button">'+(allowSkip?'Continue without saved details':'Cancel')+'</button>'+(!creating?'<button class="dd-pin-forgot" type="button">Forgot PIN?</button>':'<p class="dd-pin-note">This PIN works on this browser and device. Keep it safe.</p>')+'</form>';
@@ -44,7 +43,19 @@ function promptPIN({allowSkip=false,purpose="details"}={}){return new Promise(re
  dialog.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;if(/^[0-9]$/.test(e.key)){e.preventDefault();enter(e.key)}else if(e.key==='Backspace'){e.preventDefault();backspace()}});
  dialog.addEventListener('cancel',e=>{e.preventDefault();if(!busy)finish(null)});
  dialog.querySelector('.dd-pin-secondary').onclick=()=>{if(!busy)finish(null)};
- const forgot=dialog.querySelector('.dd-pin-forgot');if(forgot)forgot.onclick=()=>{error.replaceChildren();const message=document.createElement('p');message.textContent='Resetting removes this browser’s saved details and order history. Existing store orders remain unchanged.';const yes=document.createElement('button');yes.type='button';yes.className='dd-pin-secondary';yes.textContent='Reset PIN and remove saved data';yes.onclick=()=>{reset();finish(null);location.reload()};error.append(message,yes)};
+ const forgot=dialog.querySelector('.dd-pin-forgot');if(forgot)forgot.onclick=()=>{
+ if(busy)return;
+ value=first='';paint();
+ const panel=document.createElement('div');panel.className='dd-pin-support';
+ const heading=document.createElement('h3');heading.textContent='Need help with your PIN?';
+ const message=document.createElement('p');message.textContent='Contact customer support for identity verification and recovery assistance. Your PIN cannot be changed from this screen.';
+ const link=document.createElement('a');link.className='dd-pin-primary';link.textContent='Contact customer support';link.href='/support.html';
+ const back=document.createElement('button');back.type='button';back.className='dd-pin-secondary';back.textContent='Back to PIN';
+ const controls=[dialog.querySelector('.dd-pin-dots'),dialog.querySelector('.dd-pin-count'),pad,submit,dialog.querySelector('.dd-pin-secondary'),forgot];
+ controls.forEach(el=>el.hidden=true);error.textContent='';
+ back.onclick=()=>{panel.remove();controls.forEach(el=>el.hidden=false);pad.querySelector('button').focus()};
+ panel.append(heading,message,link,back);form.append(panel);back.focus();
+ };
  form.onsubmit=async e=>{
   e.preventDefault();if(busy||value.length!==6)return;
   if(creating&&!confirming){first=value;value='';confirming=true;dialog.querySelector('h2').textContent='Confirm your PIN';dialog.querySelector('.dd-pin-description').textContent='Enter the same 6 digits again.';submit.textContent='Save PIN & unlock';paint();pad.querySelector('button').focus();return}
