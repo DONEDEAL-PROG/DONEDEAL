@@ -1,0 +1,153 @@
+/* DoneDeal site-wide theme and readable typography layer.
+   Loaded after page styles so shared theme tokens win over page-specific hard-coded colors. */
+:root {
+  --dd-page-bg: #141419;
+  --dd-page-surface: #222129;
+  --dd-page-surface-raised: #2c2932;
+  --dd-page-text: #f7f3f7;
+  --dd-page-muted: #c1b9c5;
+  --dd-page-border: #47404b;
+  --dd-page-field: #292630;
+  --dd-page-placeholder: #aaa1ae;
+  --dd-page-accent: #f065a1;
+  --dd-page-accent-contrast: #ffffff;
+  color-scheme: dark;
+}
+:root[data-dd-store-theme="light"] {
+  --dd-page-bg: #f7f5f8;
+  --dd-page-surface: #ffffff;
+  --dd-page-surface-raised: #f1edf2;
+  --dd-page-text: #29212b;
+  --dd-page-muted: #625866;
+  --dd-page-border: #ded6e0;
+  --dd-page-field: #ffffff;
+  --dd-page-placeholder: #817786;
+  --dd-page-accent: #b72b6a;
+  --dd-page-accent-contrast: #ffffff;
+  color-scheme: light;
+}
+:root[data-dd-store-theme] {
+  background: var(--dd-page-bg);
+  color: var(--dd-page-text);
+}
+html[data-dd-store-theme] body {
+  background-color: var(--dd-page-bg) !important;
+  color: var(--dd-page-text) !important;
+  font-family: Inter, "DM Sans", Manrope, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+html[data-dd-store-theme] :is(h1,h2,h3,h4,h5,h6,strong,b,legend) {
+  color: var(--dd-page-text);
+}
+html[data-dd-store-theme] :is(p,li,dt,dd,small,.muted,.fine,.helper,.description,.desc,.spec,.eyebrow) {
+  color: var(--dd-page-muted);
+}
+html[data-dd-store-theme] :is(a:not(.btn):not(.primary):not(.secondary-action):not(.continue-link)) {
+  text-decoration-color: currentColor;
+}
+html[data-dd-store-theme] :is(input:not([type=checkbox]):not([type=radio]),select,textarea) {
+  background: var(--dd-page-field) !important;
+  color: var(--dd-page-text) !important;
+  border-color: var(--dd-page-border) !important;
+  font: inherit;
+}
+html[data-dd-store-theme] :is(input,textarea,select)::placeholder {
+  color: var(--dd-page-placeholder) !important;
+  opacity: 1;
+}
+html[data-dd-store-theme] :is(button,a,[role=button]) { -webkit-tap-highlight-color: transparent; }
+html[data-dd-store-theme] :is(button,a,input,textarea,select):focus-visible {
+  outline: 2px solid var(--dd-page-accent);
+  outline-offset: 3px;
+}
+html[data-dd-store-theme] :is(.panel,.card,.product,.product-card,.result,.filter-panel,.filter-bar,.search-wrap,.modal,.drawer,.cartitem,.address-card,.recovery-card,.benefit,.dd-compact-profile,.dd-privacy-premium,.dd-extra-card) {
+  background-color: var(--dd-page-surface) !important;
+  color: var(--dd-page-text) !important;
+  border-color: var(--dd-page-border) !important;
+}
+html[data-dd-store-theme] :is(.panel,.card,.product,.product-card,.result,.filter-panel,.filter-bar,.search-wrap,.modal,.drawer,.cartitem,.address-card,.recovery-card,.benefit,.dd-compact-profile,.dd-privacy-premium,.dd-extra-card) :is(h1,h2,h3,h4,strong,b,label) {
+  color: var(--dd-page-text) !important;
+}
+html[data-dd-store-theme] :is(.panel,.card,.product,.product-card,.result,.filter-panel,.filter-bar,.search-wrap,.modal,.drawer,.cartitem,.address-card,.recovery-card,.benefit,.dd-compact-profile,.dd-privacy-premium,.dd-extra-card) :is(p,small,.muted,.fine,.helper,.desc,.spec) {
+  color: var(--dd-page-muted) !important;
+}
+html[data-dd-store-theme] :is(.visual,.order-item img,.product-image,.product-media) {
+  background-color: var(--dd-page-surface-raised);
+}
+html[data-dd-store-theme] :is(.chip,.secondaryAction,.secondary-action,.outline,.close) {
+  background-color: var(--dd-page-surface-raised);
+  color: var(--dd-page-text);
+  border-color: var(--dd-page-border);
+}
+html[data-dd-store-theme] :is(.primary,.btn,.primary button) {
+  color: var(--dd-page-accent-contrast) !important;
+}
+/* The storefront navigation must follow the selected theme, rather than stay dark in light mode. */
+html[data-dd-store-theme] header.nav,
+html[data-dd-store-theme] body > header:not(.dd-mobile-premium-header) {
+  background: var(--dd-page-surface) !important;
+  color: var(--dd-page-text) !important;
+  border-color: var(--dd-page-border) !important;
+}
+html[data-dd-store-theme] header.nav :is(.navlinks,a,button,.logo,.logoLink) {
+  color: var(--dd-page-text);
+}
+html[data-dd-store-theme] header.nav .logo span,
+html[data-dd-store-theme] header.nav .navlinks a[aria-current],
+html[data-dd-store-theme] header.nav .navlinks a.active {
+  color: var(--dd-page-accent) !important;
+}
+html[data-dd-store-theme] header.nav :is(svg,.icon) { color: currentColor; }
+html[data-dd-store-theme] .dd-unified-theme-toggle,
+html[data-dd-store-theme] [data-dd-global-theme],
+html[data-dd-store-theme] [data-dd-theme-toggle] {
+  background: var(--dd-page-surface-raised);
+  color: var(--dd-page-text);
+  border: 1px solid var(--dd-page-border);
+}
+html[data-dd-store-theme] .footer {
+  background: #17131b !important;
+  color: #fff !important;
+}
+html[data-dd-store-theme] .footer :is(p,small,a,span) { color: #e3d9e2 !important; }
+/* Keep the cinematic product hero intentionally dark in both themes; its text is designed for contrast. */
+html[data-dd-store-theme] :is(.hero,.heroInner,.dd-mobile-hero,.dd-mobile-hero-content) {
+  color: #fff;
+}
+html[data-dd-store-theme] :is(.hero,.heroInner) :is(h1,h2,h3,p,small,.eyebrow) { color: inherit; }
+html[data-dd-store-theme="light"] :is(.hero,.heroInner) p { color: #e5ddeb !important; }
+/* Customer support inbox: fix dark headings and message content that were inheriting near-black text. */
+html[data-dd-store-theme] body.dd-support-premium :is(.history-details strong,#myConversationsPanel h2,#conversation h2,.dd-support-inbox-actions button) {
+  color: var(--dd-page-text) !important;
+}
+html[data-dd-store-theme] body.dd-support-premium .history-item.current {
+  background: var(--dd-page-surface-raised) !important;
+}
+html[data-dd-store-theme] body.dd-support-premium .history-details small,
+html[data-dd-store-theme] body.dd-support-premium #ticketInfo,
+html[data-dd-store-theme] body.dd-support-premium #messages .bubble small {
+  color: var(--dd-page-muted) !important;
+}
+html[data-dd-store-theme] body.dd-support-premium #messages .bubble {
+  background: var(--dd-page-surface-raised) !important;
+  color: var(--dd-page-text) !important;
+}
+/* Keep product labels, badges and status pills legible without overriding their semantic colors. */
+html[data-dd-store-theme] :is(.empty,.empty-state,.dd-empty,.no-results) {
+  color: var(--dd-page-muted) !important;
+}
+html[data-dd-store-theme] :is(.notice,.info,.saved,.summary-line) {
+  color: var(--dd-page-text);
+}
+html[data-dd-store-theme] hr,
+html[data-dd-store-theme] :is(.history-item,.settings a,.order-item) {
+  border-color: var(--dd-page-border) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-dd-store-theme] *, html[data-dd-store-theme] *::before, html[data-dd-store-theme] *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
