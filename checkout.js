@@ -1,3 +1,4 @@
+async function startPrivateCheckout(vaultStorage){
 const productCatalog={"Huawei-0":{"name":"Huawei Pura 80 Ultra","brand":"Huawei"},"Huawei-1":{"name":"Huawei Pura 80 Pro","brand":"Huawei"},"Huawei-2":{"name":"Huawei Mate X6","brand":"Huawei"},"Huawei-3":{"name":"Huawei Pura 70 Pro","brand":"Huawei"},"Huawei-4":{"name":"Huawei nova 13 Pro","brand":"Huawei"},"Samsung-0":{"name":"Samsung Galaxy S25 Ultra","brand":"Samsung"},"Samsung-1":{"name":"Samsung Galaxy S25+","brand":"Samsung"},"Samsung-2":{"name":"Samsung Galaxy S25","brand":"Samsung"},"Samsung-3":{"name":"Samsung Galaxy Z Fold7","brand":"Samsung"},"Samsung-4":{"name":"Samsung Galaxy Z Flip7","brand":"Samsung"},"OPPO-0":{"name":"OPPO Find X9 Pro","brand":"OPPO"},"OPPO-1":{"name":"OPPO Find X9","brand":"OPPO"},"OPPO-2":{"name":"OPPO Find X8 Pro","brand":"OPPO"},"OPPO-3":{"name":"OPPO Find N5","brand":"OPPO"},"OPPO-4":{"name":"OPPO Reno13 Pro","brand":"OPPO"},"vivo-0":{"name":"vivo X300 Pro","brand":"vivo"},"vivo-1":{"name":"vivo X300","brand":"vivo"},"vivo-2":{"name":"vivo X200 Pro","brand":"vivo"},"vivo-3":{"name":"vivo X200","brand":"vivo"},"vivo-4":{"name":"vivo V60","brand":"vivo"},"Xiaomi-0":{"name":"Xiaomi 17 Ultra","brand":"Xiaomi"},"Xiaomi-1":{"name":"Xiaomi 17 Pro Max","brand":"Xiaomi"},"Xiaomi-2":{"name":"Xiaomi 15 Ultra","brand":"Xiaomi"},"Xiaomi-3":{"name":"Xiaomi 15","brand":"Xiaomi"},"Xiaomi-4":{"name":"Xiaomi 14T Pro","brand":"Xiaomi"},"Apple-0":{"name":"Apple iPhone 17 Pro Max","brand":"Apple"},"Apple-1":{"name":"Apple iPhone 17 Pro","brand":"Apple"},"Apple-2":{"name":"Apple iPhone Air","brand":"Apple"},"Apple-3":{"name":"Apple iPhone 17","brand":"Apple"},"Apple-4":{"name":"Apple iPhone 16 Pro Max","brand":"Apple"},"Apple-5":{"name":"Apple iPhone 16 Pro","brand":"Apple"},"Apple-6":{"name":"Apple iPhone 16 Plus","brand":"Apple"},"Apple-7":{"name":"Apple iPhone 16","brand":"Apple"},"Apple-8":{"name":"Apple iPhone 16e","brand":"Apple"},"Apple-9":{"name":"Apple iPhone 15","brand":"Apple"}};
 'use strict';
 const $=id=>document.getElementById(id);
@@ -5,11 +6,11 @@ const money=n=>'₱'+(n/100).toLocaleString('en-PH',{minimumFractionDigits:2,max
 const savedKey='doneDealCheckoutDetailsV1',contactKeys=['name','phone','email'],addressKeys=['address','city','province','postal'];
 let cart={},saved=null,quote=null,requestNumber=0,submitting=false,completed=false,catalogLoaded=false;
 const catalog=new Map();
-try{const value=JSON.parse(localStorage.getItem('doneDealCart')||'{}');if(value&&typeof value==='object'&&!Array.isArray(value))cart=value}catch{}
+try{const value=JSON.parse(vaultStorage.getItem('doneDealCart')||'{}');if(value&&typeof value==='object'&&!Array.isArray(value))cart=value}catch{}
 for(const [sku,q] of Object.entries(cart))if(!Number.isInteger(Number(q))||Number(q)<1||Number(q)>99)delete cart[sku];
 let selected=new Set(Object.keys(cart));
 function node(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!=null)el.textContent=text;return el}
-function storeCart(){try{localStorage.setItem('doneDealCart',JSON.stringify(cart))}catch{}}
+function storeCart(){try{vaultStorage.setItem('doneDealCart',JSON.stringify(cart))}catch{}}
 function items(){return Object.entries(cart).filter(([sku])=>selected.has(sku)).map(([sku,q])=>({sku,quantity:Number(q)}))}
 function fulfillment(){return document.querySelector('input[name="fulfillment"]:checked').value}
 function fields(keys){return Object.fromEntries(keys.map(k=>[k,$(k).value.trim()]))}
@@ -21,9 +22,9 @@ function showAddress(){summary($('addressSummary'),[$('name').value,$('address')
 function editContact(){ $('contactFields').hidden=false;$('contactSummary').hidden=true;$('editContact').hidden=true;$('name').focus() }
 function editAddress(clear=false){$('addressFields').hidden=false;$('addressSummary').hidden=true;$('editAddress').hidden=true;$('differentAddress').hidden=true;if(clear)addressKeys.forEach(k=>$(k).value='');$('address').focus()}
 function updateFulfillment(){const delivery=fulfillment()==='delivery';$('deliverySection').hidden=!delivery;$('pickupNote').hidden=delivery;addressKeys.forEach(k=>{$(k).required=delivery;$(k).disabled=!delivery});$('feeLabel').textContent=delivery?'Delivery fee':'Pickup';$('feeValue').textContent=delivery?'To be confirmed':'To be arranged';$('shippingNote').textContent=delivery?'Shipping is not included. Our team will confirm the delivery fee before dispatch.':'Pickup time and location will be confirmed by our team.';$('paymentMethod').options[0].textContent=delivery?'Cash on delivery':'Pay at pickup'}
-function restoreDetails(){try{const value=JSON.parse(localStorage.getItem(savedKey)||'null');if(!validSaved(value))return;saved=value;contactKeys.forEach(k=>$(k).value=value.contact[k]);if(addressValid(value.address)){addressKeys.forEach(k=>$(k).value=value.address[k]);showAddress()}if(['pickup','delivery'].includes(value.fulfillment))document.querySelector(`input[name="fulfillment"][value="${value.fulfillment}"]`).checked=true;$('paymentMethod').value='cod';$('remember').checked=true;$('forget').hidden=false;showContact();$('welcome').textContent='Your details are ready. Review your order below.'}catch{}}
-function saveDetails(){if(!$('remember').checked)return;const address=fields(addressKeys);const value={version:1,contact:fields(contactKeys),address:addressValid(address)?address:(saved?.address||null),fulfillment:fulfillment(),payment:$('paymentMethod').value};try{localStorage.setItem(savedKey,JSON.stringify(value));saved=value;$('saveStatus').textContent='Your details are saved on this browser and device.';$('forget').hidden=false}catch{$('saveStatus').textContent='This browser could not save your details. Your order can still be placed.'}}
-function forgetDetails(){try{localStorage.removeItem(savedKey)}catch{$('saveStatus').textContent='Unable to remove saved details. Please clear this site’s browser data.';return}saved=null;$('remember').checked=false;$('forget').hidden=true;$('saveStatus').textContent='Saved details removed from this browser.'}
+function restoreDetails(){try{const value=JSON.parse(vaultStorage.getItem(savedKey)||'null');if(!validSaved(value))return;saved=value;contactKeys.forEach(k=>$(k).value=value.contact[k]);if(addressValid(value.address)){addressKeys.forEach(k=>$(k).value=value.address[k]);showAddress()}if(['pickup','delivery'].includes(value.fulfillment))document.querySelector(`input[name="fulfillment"][value="${value.fulfillment}"]`).checked=true;$('paymentMethod').value='cod';$('remember').checked=true;$('forget').hidden=false;showContact();$('welcome').textContent='Your details are ready. Review your order below.'}catch{}}
+function saveDetails(){if(!$('remember').checked)return;const address=fields(addressKeys);const value={version:1,contact:fields(contactKeys),address:addressValid(address)?address:(saved?.address||null),fulfillment:fulfillment(),payment:$('paymentMethod').value};try{vaultStorage.setItem(savedKey,JSON.stringify(value));saved=value;$('saveStatus').textContent='Your details are saved on this browser and device.';$('forget').hidden=false}catch{$('saveStatus').textContent='This browser could not save your details. Your order can still be placed.'}}
+function forgetDetails(){try{vaultStorage.removeItem(savedKey)}catch{$('saveStatus').textContent='Unable to remove saved details. Please clear this site’s browser data.';return}saved=null;$('remember').checked=false;$('forget').hidden=true;$('saveStatus').textContent='Saved details removed from this browser.'}
 function updateSubmit(){ $('pay').disabled=!quote||submitting||completed; }
 function renderCart(){const list=$('cartList');list.replaceChildren();const keys=Object.keys(cart);$('cartCountLabel').textContent=`${keys.length} gadget${keys.length===1?'':'s'}`;$('selectAll').checked=keys.length>0&&keys.every(k=>selected.has(k));$('selectAll').indeterminate=keys.some(k=>selected.has(k))&&!keys.every(k=>selected.has(k));if(!keys.length){list.append(node('p','muted','Your cart is empty. Add a gadget to get started.'));return}
 for(const sku of keys){const [id,variant='']=sku.split('::'),p=catalog.get(sku),verified=quote?.items.find(i=>i.sku===sku);const name=p?.name||productCatalog[id]?.name||id;
@@ -35,9 +36,10 @@ function change(sku,d){if(submitting)return;const next=Number(cart[sku])+d,p=cat
 async function loadQuote(){const request=++requestNumber;quote=null;updateSubmit();$('total').textContent=$('mobileTotal').textContent='—';$('quoteStatus').className='muted';const chosen=items();if(!chosen.length){$('quoteStatus').textContent='Select at least one gadget to place an order.';return}$('quoteStatus').textContent='Checking prices and availability…';try{const r=await fetch('/api/quote',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:chosen})}),d=await r.json();if(!r.ok)throw Error(d.error||'Unable to check prices and stock.');if(request!==requestNumber||completed)return;quote=d;$('total').textContent=$('mobileTotal').textContent=money(d.total);$('quoteStatus').textContent='Prices and availability checked.';renderCart();updateSubmit()}catch(e){if(request!==requestNumber)return;$('quoteStatus').textContent=e.message;$('quoteStatus').className='error';updateSubmit()}}
 function refresh(){if(submitting||completed)return;quote=null;renderCart();loadQuote()}
 async function submitOrder(e){e.preventDefault();if(submitting||completed||!quote)return;if(!$('checkoutForm').checkValidity()){if(contactKeys.some(k=>!$(k).checkValidity()))editContact();if(fulfillment()==='delivery'&&addressKeys.some(k=>!$(k).checkValidity()))editAddress();$('checkoutForm').reportValidity();return}
+if($('remember').checked&&!DDPrivateVault.isUnlocked()){const unlocked=await DDPrivateVault.prompt();if(!unlocked)return;}
 if($('paymentMethod').value!=='cod'){$('status').textContent='Online payments are coming soon. Please choose cash on delivery or pay at pickup.';return}
 const submittedItems=items(),customer=fields([...contactKeys,...addressKeys]);if(fulfillment()==='pickup')addressKeys.forEach(k=>customer[k]='');submitting=true;updateSubmit();$('checkoutForm').setAttribute('aria-busy','true');$('status').className='muted';$('status').textContent='Submitting your order request…';$('pay').textContent='Submitting…';const controls=[...$('checkoutForm').querySelectorAll('input,select,textarea,button')],disabled=controls.map(el=>el.disabled);controls.forEach(el=>el.disabled=true);
-try{const r=await fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:submittedItems,customer,fulfillment:fulfillment(),payment_method:$('paymentMethod').value})}),d=await r.json();if(!r.ok)throw Error(d.error||'Your order could not be saved.');saveDetails();recordOrder(d,submittedItems,customer);for(const item of submittedItems)delete cart[item.sku];storeCart();completed=true;$('checkoutForm').hidden=true;$('success').hidden=false;renderConfirmation(d,customer);$('trackOrder').href='track-order.html?order='+encodeURIComponent(d.order_id||'');$('success').focus();window.scrollTo({top:0,behavior:'smooth'})}catch(e){$('status').textContent=e.message;$('status').className='error'}finally{submitting=false;controls.forEach((el,i)=>el.disabled=disabled[i]);$('checkoutForm').removeAttribute('aria-busy');$('pay').textContent='Place order request';if(!completed){updateFulfillment();refresh()}updateSubmit()}}
+try{const r=await fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:submittedItems,customer,fulfillment:fulfillment(),payment_method:$('paymentMethod').value})}),d=await r.json();if(!r.ok)throw Error(d.error||'Your order could not be saved.');saveDetails();recordOrder(d,submittedItems,customer);try{await DDPrivateVault.flush()}catch{ /* The server order is saved even if local privacy storage is full. */ }for(const item of submittedItems)delete cart[item.sku];storeCart();completed=true;$('checkoutForm').hidden=true;$('success').hidden=false;renderConfirmation(d,customer);$('trackOrder').href='track-order.html?order='+encodeURIComponent(d.order_id||'');$('success').focus();window.scrollTo({top:0,behavior:'smooth'})}catch(e){$('status').textContent=e.message;$('status').className='error'}finally{submitting=false;controls.forEach((el,i)=>el.disabled=disabled[i]);$('checkoutForm').removeAttribute('aria-busy');$('pay').textContent='Place order request';if(!completed){updateFulfillment();refresh()}updateSubmit()}}
 $('checkoutForm').addEventListener('submit',submitOrder);
 // Reveal collapsed details before native validation focuses an invalid field.
 $('checkoutForm').addEventListener('invalid',e=>{if(contactKeys.includes(e.target.id)){$('contactFields').hidden=false;$('contactSummary').hidden=true;$('editContact').hidden=true}if(addressKeys.includes(e.target.id)){$('addressFields').hidden=false;$('addressSummary').hidden=true;$('editAddress').hidden=true}},true);
@@ -45,9 +47,9 @@ $('selectAll').onchange=e=>{selected=e.target.checked?new Set(Object.keys(cart))
 document.querySelectorAll('input[name="fulfillment"]').forEach(el=>el.onchange=updateFulfillment);
 $('editContact').onclick=editContact;$('editAddress').onclick=()=>editAddress();$('differentAddress').onclick=()=>editAddress(true);$('forget').onclick=forgetDetails;
 $('remember').onchange=()=>{if(!$('remember').checked&&saved)forgetDetails()};
-function applyTheme(theme){document.documentElement.dataset.theme=theme;$('theme').textContent=theme==='light'?'Dark mode':'Light mode'}
-try{applyTheme(localStorage.getItem('dd-store-theme')==='light'?'light':'dark')}catch{applyTheme('dark')}
-$('theme').onclick=()=>{const theme=document.documentElement.dataset.theme==='light'?'dark':'light';applyTheme(theme);try{localStorage.setItem('dd-store-theme',theme)}catch{}};
+function applyTheme(theme){document.documentElement.dataset.theme=theme;document.documentElement.dataset.ddStoreTheme=theme;$('theme').textContent=theme==='light'?'Dark mode':'Light mode'}
+try{applyTheme(vaultStorage.getItem('dd_store_theme_v1')==='light'?'light':'dark')}catch{applyTheme('dark')}
+$('theme').onclick=()=>{const theme=document.documentElement.dataset.theme==='light'?'dark':'light';applyTheme(theme);try{vaultStorage.setItem('dd_store_theme_v1',theme)}catch{}};
 restoreDetails();updateFulfillment();refresh();
 async function loadCatalog(){try{const r=await fetch('/api/catalog',{cache:'no-store'});if(!r.ok)throw Error('Catalog unavailable');const d=await r.json();for(const p of d.products||[])catalog.set(p.sku,p);catalogLoaded=true;if(!submitting&&!completed)renderCart()}catch{ /* Quote and order APIs remain authoritative if the photo catalog fails. */ }}
 loadCatalog();
@@ -57,10 +59,10 @@ function recordOrder(result,ordered,customer){
  if(!result.order_id)return;
  try{
   const key='doneDealOrderHistoryV1';
-  let history=JSON.parse(localStorage.getItem(key)||'[]');
+  let history=JSON.parse(vaultStorage.getItem(key)||'[]');
   if(!Array.isArray(history))history=[];
   const entry={id:result.order_id,created_at:new Date().toISOString(),phone:customer.phone,fulfillment:fulfillment(),total:quote.total,items:quote.items.map(item=>({name:item.name,variant:item.variant,quantity:item.quantity,subtotal:item.subtotal,image_key:catalog.get(item.sku)?.image_key||''}))};
-  localStorage.setItem(key,JSON.stringify([entry,...history.filter(o=>o&&o.id!==entry.id)].slice(0,50)));
+  vaultStorage.setItem(key,JSON.stringify([entry,...history.filter(o=>o&&o.id!==entry.id)].slice(0,50)));
  }catch{}
 }
 
@@ -87,3 +89,15 @@ function renderConfirmation(result,customer){
  for(const value of delivery?[customer.address,`${customer.city}, ${customer.province} ${customer.postal}`]:['Pickup time and location to be confirmed.'])$('confirmedAddress').append(node('p',null,value));
  $('copyOrder').onclick=async()=>{try{await navigator.clipboard.writeText(result.order_id||'');$('copyStatus').textContent='Order reference copied.'}catch{$('copyStatus').textContent='Select and copy the order reference shown above.'}};
 }
+
+}
+
+(async function(){
+ const vault=window.DDPrivateVault;
+ if(vault.has())await vault.prompt({allowSkip:true});
+ await startPrivateCheckout(vault.storage);
+ if(!vault.isUnlocked()){
+  const note=document.createElement('p');note.className='muted';note.textContent='Select Save my details to protect saved contact details and order history with a 6-digit PIN.';
+  document.getElementById('remember').closest('label').after(note);
+ }
+})();
