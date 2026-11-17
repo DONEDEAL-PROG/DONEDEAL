@@ -7,7 +7,7 @@ export async function onRequestGet({request,env}){
  const result=await env.DB.prepare('SELECT r.*,p.encrypted_data FROM dd_pin_recovery_requests r JOIN dd_pin_profiles p ON p.id=r.profile_id ORDER BY r.created_at DESC,r.rowid DESC LIMIT 100').all();const requests=[];
  for(const row of result.results||[]){let contact={},orders=[];try{const records=await open(row.encrypted_data,env,row.profile_id);contact=JSON.parse(records.doneDealCheckoutDetailsV1||'{}').contact||{};orders=JSON.parse(records.doneDealOrderHistoryV1||'[]')}catch{}
  requests.push({id:row.id,profile_id:row.profile_id,status:row.status,created_at:row.created_at,reviewed_at:row.reviewed_at,expires_at:row.expires_at,attempts:row.attempts,verification_method:row.verification_method,verification_note:row.verification_note,actor_id:row.actor_id,contact:{name:contact.name||'',phone:contact.phone||'',email:contact.email||''},order_references:Array.isArray(orders)?orders.map(o=>o.id).filter(x=>typeof x==='string').slice(0,10):[]})}
- const audit=await env.DB.prepare('SELECT request_id,actor_type,actor_id,action,created_at,details FROM dd_pin_recovery_audit ORDER BY created_at DESC,rowid DESC LIMIT 100').all();return json({requests,audit:audit.results||[]});
+ const audit=await env.DB.prepare('SELECT request_id,actor_type,actor_id,action,created_at,details FROM dd_pin_recovery_audit ORDER BY created_at DESC,rowid DESC LIMIT 100').all();return json({actor_type:user.type,requests,audit:audit.results||[]});
  }catch{return json({error:'PIN recovery tools are unavailable'},503)}
 }
 export async function onRequestPost({request,env}){
