@@ -11,7 +11,7 @@
  function start(){
   if(document.querySelector('.dd-mobile-bottom-nav'))return;
   const path=location.pathname.toLowerCase();
-  const active=path.includes('account.html')?'account':path.includes('wishlist')?'heart':path.includes('shop')||path.includes('brand-')?'shop':path.includes('checkout')?'cart':'home';
+  const active=/\/account(?:\.html)?\/?$/.test(path)?'account':path.includes('wishlist')?'heart':path.includes('shop')||path.includes('brand-')?'shop':path.includes('checkout')?'cart':'home';
   const nav=document.createElement('nav');nav.className='dd-mobile-bottom-nav';nav.setAttribute('aria-label','Mobile shopping navigation');
   [['home','Home','/'],['shop','Shop','/shop.html'],['heart','Wishlist','/wishlist.html'],['cart','Cart','#'],['account','Account','#']].forEach(([key,label,url])=>{
     const el=document.createElement(key==='cart'||key==='account'?'button':'a');
