@@ -29,13 +29,11 @@ export async function onRequestPost({request,env}){
   if(b.action==='status'){const row=await env.DB.prepare('SELECT id,status,created_at,expires_at FROM dd_pin_recovery_requests WHERE profile_id=? ORDER BY created_at DESC,rowid DESC LIMIT 1').bind(p.id).first();return json({request:row||null})}
   if(b.action==='redeem'){
    if(!await rate(request,env,'redeem',60,3600))return json({error:'Too many recovery attempts. Please try later.'},429);
-   if(!uuid(b.request_id)||typeof b.code!=='string'||!/^[a-f0-9]{32}$/i.test(b.code.trim()))return json({error:'Enter the recovery code supplied by verified customer support.'},400);
+   if(!uuid(b.request_id))return json({error:'Invalid recovery request.'},400);
    const row=await env.DB.prepare('SELECT * FROM dd_pin_recovery_requests WHERE id=? AND profile_id=?').bind(b.request_id,p.id).first();if(!row||row.status!=='approved'||row.expires_at<=now()||row.attempts>=5)return json({error:'This recovery approval is unavailable or expired. Ask support to review your request again.'},409);
-   const digest=await hash(b.code.trim().toLowerCase());
-   if(digest!==row.code_hash){await env.DB.prepare("UPDATE dd_pin_recovery_requests SET attempts=attempts+1 WHERE id=? AND status='approved'").bind(row.id).run();return json({error:'Incorrect recovery code.'},403)}
    const records=await open(p.encrypted_data,env,p.id);
    // RETURNING prevents simultaneous requests from redeeming the same approval twice.
-   const used=await env.DB.prepare("UPDATE dd_pin_recovery_requests SET status='used',used_at=?,code_hash=NULL WHERE id=? AND profile_id=? AND status='approved' AND expires_at>? AND attempts<5 AND code_hash=? RETURNING id").bind(now(),row.id,p.id,now(),digest).first();if(!used)return json({error:'This code has already been used or expired.'},409);
+   const used=await env.DB.prepare("UPDATE dd_pin_recovery_requests SET status='used',used_at=?,code_hash=NULL WHERE id=? AND profile_id=? AND status='approved' AND expires_at>? AND attempts<5 RETURNING id").bind(now(),row.id,p.id,now()).first();if(!used)return json({error:'This code has already been used or expired.'},409);
    return json({ok:true,records});
   }
   return json({error:'Unknown action'},400);
