@@ -392,7 +392,135 @@ html[data-dd-store-theme="light"] .brandBar .brandApple {
 }
 </style><link rel="stylesheet" href="/dd-mobile-app.css?v=1"><link rel="stylesheet" href="/dd-shopping-motion.css">
 <script defer src="/dd-shopping-sounds.js"></script>
-<script src="/dd-unified-theme.js"></script></head><body data-dd-recent="yes"><div class="top">PREMIUM SMARTPHONE COLLECTION • 35 CURATED MODELS</div><header class="nav"><a aria-label="Done Deal homepage" class="logoLink" href="index.html"><div class="logo"><img alt="Done Deal emblem" class="ddBrandMark" src="done-deal-mark.png"/> DONE DEAL<span> GADGETS &amp; SUPPLIES.</span></div></a><nav class="navlinks"><a data-nav="home" href="#home">Home</a><a data-nav="shop" href="#shop">Shop Phones</a><a data-nav="about" href="#about">About</a></nav><button onclick="openCart()">Cart <span id="cartCount">(0)</span></button></header><main id="home"><section class="hero"><div class="heroInner"><div aria-label="Promotional model holding a silver smartphone" class="heroPhoto" role="img"></div><div class="heroCopy"><div class="eyebrow">EXPLORE THE APPLE COLLECTION <span class="eyebrowLine"></span></div><h1><img alt="Apple" class="appleLogo heroApple" onerror="this.style.display='none'" src="apple-logo.svg"/> Explore Apple iPhones</h1><h2>Discover more. <em>A new level ahead.</em></h2><p>Explore the next generation of premium smartphones, advanced cameras and powerful performance at Done Deal Phone &amp; Gadgets.</p><div class="heroFeatures"><span><b>◎</b> Pro Camera<br/>System</span><span><b>▣</b> Next-Gen<br/>Performance</span><span><b>▤</b> All-Day<br/>Battery Life</span></div><button class="btn" onclick="selectBrand('Apple')">Shop Apple Phones →</button><p class="heroFine">Concept promotional image · Confirm model specifications and availability before purchase</p></div><div aria-label="Silver concept smartphone product close-up" class="heroProduct" role="img"></div></div></section><div aria-label="Shop by brand" class="brandBar"><button class="brandTile apple" onclick="selectBrand('Apple')"><img alt="" class="appleLogo brandApple" onerror="this.style.display='none'" src="apple-logo.svg"/> Apple</button><button class="brandTile samsung" onclick="selectBrand('Samsung')"><span class="samsungWord">SAMSUNG</span></button><button class="brandTile huawei" onclick="selectBrand('Huawei')"><img alt="" class="brandIcon huaweiIcon" src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/huawei.svg"/> HUAWEI</button><button class="brandTile xiaomi" onclick="selectBrand('Xiaomi')"><span class="miMark">mi</span> Xiaomi</button><button class="brandTile oppo" onclick="selectBrand('OPPO')">oppo</button><button class="brandTile vivo" onclick="selectBrand('vivo')">vivo</button></div>
+<script src="/dd-unified-theme.js"></script>
+<style id="dd-desktop-hero-layout-fix">
+/* Desktop hero: full-width Apple + Samsung artwork with a readable content panel */
+@media (min-width: 761px) {
+  main#home > .hero {
+    background: #0b0910 !important;
+    padding: 0 !important;
+  }
+  main#home > .hero .heroInner {
+    display: block !important;
+    position: relative !important;
+    isolation: isolate !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: clamp(470px, 37vw, 650px) !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background-color: #09070d !important;
+    background-image: url('hero-unified.webp') !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center 52% !important;
+    border-radius: 0 !important;
+  }
+  main#home > .hero .heroPhoto,
+  main#home > .hero .heroProduct {
+    display: none !important;
+  }
+  main#home > .hero .heroInner::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+    background:
+      linear-gradient(90deg,
+        rgba(8,6,12,0) 0%,
+        rgba(8,6,12,0.02) 43%,
+        rgba(8,6,12,0.40) 55%,
+        rgba(8,6,12,0.82) 100%) !important;
+  }
+  main#home > .hero .heroCopy {
+    position: absolute !important;
+    z-index: 2 !important;
+    left: auto !important;
+    right: clamp(28px, 6vw, 110px) !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    width: min(41%, 650px) !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: clamp(28px, 3.2vw, 52px) !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    background: rgba(12, 9, 17, 0.70) !important;
+    border: 1px solid rgba(255, 65, 151, 0.30) !important;
+    border-radius: 22px !important;
+    box-shadow: 0 24px 70px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    text-shadow: 0 2px 14px rgba(0,0,0,.55) !important;
+  }
+  main#home > .hero .heroCopy .eyebrow {
+    color: #ff5ca6 !important;
+    font-size: 12px !important;
+    letter-spacing: 2px !important;
+    font-weight: 800 !important;
+  }
+  main#home > .hero .heroCopy h1 {
+    white-space: normal !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: clamp(32px, 3.1vw, 56px) !important;
+    line-height: 1.08 !important;
+    letter-spacing: -1.8px !important;
+    margin: 18px 0 10px !important;
+  }
+  main#home > .hero .heroCopy h2 {
+    white-space: normal !important;
+    font-size: clamp(21px, 1.8vw, 31px) !important;
+    line-height: 1.2 !important;
+    margin: 0 0 10px !important;
+  }
+  main#home > .hero .heroCopy p {
+    max-width: 520px !important;
+    font-size: clamp(13px, .95vw, 16px) !important;
+    line-height: 1.65 !important;
+  }
+  main#home > .hero .heroFeatures {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    gap: 18px !important;
+    margin: 18px 0 22px !important;
+  }
+  main#home > .hero .heroFeatures span {
+    font-size: 12px !important;
+    padding: 0 12px 0 0 !important;
+    border: 0 !important;
+  }
+  main#home > .hero .heroFeatures b {
+    color: #ff4c9b !important;
+  }
+  main#home > .hero .hero .btn,
+  main#home > .hero .btn {
+    padding: 14px 25px !important;
+    border-radius: 12px !important;
+    background: linear-gradient(110deg, #f23889, #d91c76) !important;
+    box-shadow: 0 10px 30px rgba(238, 28, 126, .30) !important;
+    font-weight: 800 !important;
+  }
+  main#home > .hero .heroFine {
+    margin-top: 14px !important;
+    font-size: 10px !important;
+    opacity: .78 !important;
+  }
+}
+</style>
+
+</head><body data-dd-recent="yes"><div class="top">PREMIUM SMARTPHONE COLLECTION • 35 CURATED MODELS</div><header class="nav"><a aria-label="Done Deal homepage" class="logoLink" href="index.html"><div class="logo"><img alt="Done Deal emblem" class="ddBrandMark" src="done-deal-mark.png"/> DONE DEAL<span> GADGETS &amp; SUPPLIES.</span></div></a><nav class="navlinks"><a data-nav="home" href="#home">Home</a><a data-nav="shop" href="#shop">Shop Phones</a><a data-nav="about" href="#about">About</a></nav><button onclick="openCart()">Cart <span id="cartCount">(0)</span></button></header><main id="home"><section class="hero"><div class="heroInner"><div aria-label="Promotional model holding a silver smartphone" class="heroPhoto" role="img"></div><div class="heroCopy"><div class="eyebrow">EXPLORE THE APPLE COLLECTION <span class="eyebrowLine"></span></div><h1><img alt="Apple" class="appleLogo heroApple" onerror="this.style.display='none'" src="apple-logo.svg"/> Explore Apple iPhones</h1><h2>Discover more. <em>A new level ahead.</em></h2><p>Explore the next generation of premium smartphones, advanced cameras and powerful performance at Done Deal Phone &amp; Gadgets.</p><div class="heroFeatures"><span><b>◎</b> Pro Camera<br/>System</span><span><b>▣</b> Next-Gen<br/>Performance</span><span><b>▤</b> All-Day<br/>Battery Life</span></div><button class="btn" onclick="selectBrand('Apple')">Shop Apple Phones →</button><p class="heroFine">Concept promotional image · Confirm model specifications and availability before purchase</p></div><div aria-label="Silver concept smartphone product close-up" class="heroProduct" role="img"></div></div></section><div aria-label="Shop by brand" class="brandBar"><button class="brandTile apple" onclick="selectBrand('Apple')"><img alt="" class="appleLogo brandApple" onerror="this.style.display='none'" src="apple-logo.svg"/> Apple</button><button class="brandTile samsung" onclick="selectBrand('Samsung')"><span class="samsungWord">SAMSUNG</span></button><button class="brandTile huawei" onclick="selectBrand('Huawei')"><img alt="" class="brandIcon huaweiIcon" src="https://cdn.jsdelivr.net/npm/simple-icons@v15/icons/huawei.svg"/> HUAWEI</button><button class="brandTile xiaomi" onclick="selectBrand('Xiaomi')"><span class="miMark">mi</span> Xiaomi</button><button class="brandTile oppo" onclick="selectBrand('OPPO')">oppo</button><button class="brandTile vivo" onclick="selectBrand('vivo')">vivo</button></div>
 <section class="dd-story" id="dd-story" aria-label="The DONEDEAL story">
  <div class="dd-story-intro"><span class="dd-story-kicker">THE DONEDEAL STORY</span><h2>Beyond the Device.</h2><p>Innovation. Connection. Possibility.</p></div>
  <article class="dd-story-chapter">
