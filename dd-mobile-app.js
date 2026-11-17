@@ -11,7 +11,7 @@
  function start(){
   if(document.querySelector('.dd-mobile-bottom-nav'))return;
   const path=location.pathname.toLowerCase();
-  const active=path.includes('wishlist')?'heart':path.includes('shop')||path.includes('brand-')?'shop':path.includes('checkout')?'cart':'home';
+  const active=path.includes('account.html')?'account':path.includes('wishlist')?'heart':path.includes('shop')||path.includes('brand-')?'shop':path.includes('checkout')?'cart':'home';
   const nav=document.createElement('nav');nav.className='dd-mobile-bottom-nav';nav.setAttribute('aria-label','Mobile shopping navigation');
   [['home','Home','/'],['shop','Shop','/shop.html'],['heart','Wishlist','/wishlist.html'],['cart','Cart','#'],['account','Account','#']].forEach(([key,label,url])=>{
     const el=document.createElement(key==='cart'||key==='account'?'button':'a');
@@ -23,8 +23,7 @@
       else location.href='/checkout.html';
     });
     if(key==='account')el.addEventListener('click',()=>{
-      const menu=document.querySelector('.dd-menu-trigger');
-      if(menu)menu.click();else location.href='/support.html';
+      location.href='/account.html';
     });
     nav.appendChild(el);
   });

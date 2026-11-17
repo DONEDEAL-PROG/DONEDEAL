@@ -36,7 +36,7 @@ async function loadQuote(){const request=++requestNumber;quote=null;updateSubmit
 function refresh(){if(submitting||completed)return;quote=null;renderCart();loadQuote()}
 async function submitOrder(e){e.preventDefault();if(submitting||completed||!quote)return;if(!$('checkoutForm').checkValidity()){if(contactKeys.some(k=>!$(k).checkValidity()))editContact();if(fulfillment()==='delivery'&&addressKeys.some(k=>!$(k).checkValidity()))editAddress();$('checkoutForm').reportValidity();return}
 const submittedItems=items(),customer=fields([...contactKeys,...addressKeys]);if(fulfillment()==='pickup')addressKeys.forEach(k=>customer[k]='');submitting=true;updateSubmit();$('checkoutForm').setAttribute('aria-busy','true');$('status').className='muted';$('status').textContent='Submitting your order request…';$('pay').textContent='Submitting…';const controls=[...$('checkoutForm').querySelectorAll('input,select,textarea,button')],disabled=controls.map(el=>el.disabled);controls.forEach(el=>el.disabled=true);
-try{const r=await fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:submittedItems,customer,fulfillment:fulfillment(),payment_method:$('paymentMethod').value})}),d=await r.json();if(!r.ok)throw Error(d.error||'Your order could not be saved.');saveDetails();for(const item of submittedItems)delete cart[item.sku];storeCart();completed=true;$('checkoutForm').hidden=true;$('success').hidden=false;$('orderReference').textContent='Order reference: '+(d.order_id||'Pending');$('orderMessage').textContent=d.message||'';$('trackOrder').href='track-order.html?order='+encodeURIComponent(d.order_id||'');$('success').focus();window.scrollTo({top:0,behavior:'smooth'})}catch(e){$('status').textContent=e.message;$('status').className='error'}finally{submitting=false;controls.forEach((el,i)=>el.disabled=disabled[i]);$('checkoutForm').removeAttribute('aria-busy');$('pay').textContent='Place order request';if(!completed){updateFulfillment();refresh()}updateSubmit()}}
+try{const r=await fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:submittedItems,customer,fulfillment:fulfillment(),payment_method:$('paymentMethod').value})}),d=await r.json();if(!r.ok)throw Error(d.error||'Your order could not be saved.');saveDetails();recordOrder(d,submittedItems,customer);for(const item of submittedItems)delete cart[item.sku];storeCart();completed=true;$('checkoutForm').hidden=true;$('success').hidden=false;$('orderReference').textContent='Order reference: '+(d.order_id||'Pending');$('orderMessage').textContent=d.message||'';$('trackOrder').href='track-order.html?order='+encodeURIComponent(d.order_id||'');$('success').focus();window.scrollTo({top:0,behavior:'smooth'})}catch(e){$('status').textContent=e.message;$('status').className='error'}finally{submitting=false;controls.forEach((el,i)=>el.disabled=disabled[i]);$('checkoutForm').removeAttribute('aria-busy');$('pay').textContent='Place order request';if(!completed){updateFulfillment();refresh()}updateSubmit()}}
 $('checkoutForm').addEventListener('submit',submitOrder);
 // Reveal collapsed details before native validation focuses an invalid field.
 $('checkoutForm').addEventListener('invalid',e=>{if(contactKeys.includes(e.target.id)){$('contactFields').hidden=false;$('contactSummary').hidden=true;$('editContact').hidden=true}if(addressKeys.includes(e.target.id)){$('addressFields').hidden=false;$('addressSummary').hidden=true;$('editAddress').hidden=true}},true);
@@ -50,3 +50,15 @@ $('theme').onclick=()=>{const theme=document.documentElement.dataset.theme==='li
 restoreDetails();updateFulfillment();refresh();
 async function loadCatalog(){try{const r=await fetch('/api/catalog',{cache:'no-store'});if(!r.ok)throw Error('Catalog unavailable');const d=await r.json();for(const p of d.products||[])catalog.set(p.sku,p);catalogLoaded=true;if(!submitting&&!completed)renderCart()}catch{ /* Quote and order APIs remain authoritative if the photo catalog fails. */ }}
 loadCatalog();
+
+// Record only successful orders created on this browser. No sample history.
+function recordOrder(result,ordered,customer){
+ if(!result.order_id)return;
+ try{
+  const key='doneDealOrderHistoryV1';
+  let history=JSON.parse(localStorage.getItem(key)||'[]');
+  if(!Array.isArray(history))history=[];
+  const entry={id:result.order_id,created_at:new Date().toISOString(),phone:customer.phone,fulfillment:fulfillment(),total:quote.total,items:quote.items.map(item=>({name:item.name,variant:item.variant,quantity:item.quantity,subtotal:item.subtotal,image_key:catalog.get(item.sku)?.image_key||''}))};
+  localStorage.setItem(key,JSON.stringify([entry,...history.filter(o=>o&&o.id!==entry.id)].slice(0,50)));
+ }catch{}
+}
