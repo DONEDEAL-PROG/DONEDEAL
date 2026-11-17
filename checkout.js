@@ -50,7 +50,14 @@ $('remember').onchange=()=>{if(!$('remember').checked&&saved)forgetDetails()};
 function applyTheme(theme){document.documentElement.dataset.theme=theme;document.documentElement.dataset.ddStoreTheme=theme;$('theme').textContent=theme==='light'?'Dark mode':'Light mode'}
 try{applyTheme(vaultStorage.getItem('dd_store_theme_v1')==='light'?'light':'dark')}catch{applyTheme('dark')}
 $('theme').onclick=()=>{const theme=document.documentElement.dataset.theme==='light'?'dark':'light';applyTheme(theme);try{vaultStorage.setItem('dd_store_theme_v1',theme)}catch{}};
-restoreDetails();updateFulfillment();refresh();
+// Saved details are only decrypted after an explicit customer choice.
+if(window.DDPrivateVault.has()){
+ const useSaved=document.createElement('button');useSaved.type='button';useSaved.className='secondary-action';useSaved.id='useDefaultDetails';useSaved.textContent='Use my default information';
+ const hint=document.createElement('p');hint.className='muted';hint.textContent='Enter details below, or unlock your saved contact and delivery information.';
+ $('checkoutForm').prepend(useSaved,hint);
+ useSaved.onclick=async()=>{useSaved.disabled=true;try{const ok=await DDPrivateVault.prompt();if(!ok)return;restoreDetails();updateFulfillment();refresh();useSaved.textContent=saved?'Default information applied':'No default information saved';}finally{useSaved.disabled=false}};
+}
+updateFulfillment();refresh();
 async function loadCatalog(){try{const r=await fetch('/api/catalog',{cache:'no-store'});if(!r.ok)throw Error('Catalog unavailable');const d=await r.json();for(const p of d.products||[])catalog.set(p.sku,p);catalogLoaded=true;if(!submitting&&!completed)renderCart()}catch{ /* Quote and order APIs remain authoritative if the photo catalog fails. */ }}
 loadCatalog();
 
@@ -94,7 +101,7 @@ function renderConfirmation(result,customer){
 
 (async function(){
  const vault=window.DDPrivateVault;
- if(vault.has())await vault.prompt({allowSkip:true});
+
  await startPrivateCheckout(vault.storage);
  if(!vault.isUnlocked()){
   const note=document.createElement('p');note.className='muted';note.textContent='Select Save my details to protect saved contact details and order history with a 6-digit PIN.';

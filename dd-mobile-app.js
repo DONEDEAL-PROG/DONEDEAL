@@ -11,7 +11,7 @@
  function start(){
   if(/^\/(admin|staff|partner)(\/|$)/.test(location.pathname))return;
   document.documentElement.classList.add('dd-premium-mobile');
-  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-1';document.head.append(sheet)}
+  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-2';document.head.append(sheet)}
   if(!document.querySelector('.dd-mobile-premium-header')){
    const header=document.createElement('div');header.className='dd-mobile-premium-header';header.setAttribute('role','banner');
    const brand=document.createElement('a');brand.href='/';brand.className='dd-mobile-premium-brand';brand.setAttribute('aria-label','Done Deal home');brand.innerHTML='<img src="/done-deal-mark.png" alt=""><span>DONE<span>DEAL</span></span>';
@@ -22,6 +22,15 @@
    new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['data-dd-store-theme']});paint();header.append(brand,toggle);document.body.prepend(header);
   }
 
+  // Keep the existing sidebar and its event handlers; expose its trigger in the mobile header.
+  function placeMenu(){
+   const trigger=document.querySelector('.dd-menu-trigger'),header=document.querySelector('.dd-mobile-premium-header');
+   if(!trigger||!header)return;
+   if(!trigger.ddOriginalParent){trigger.ddOriginalParent=trigger.parentNode;trigger.ddOriginalNext=trigger.nextSibling;}
+   if(matchMedia('(max-width:767px)').matches){if(trigger.parentNode!==header)header.prepend(trigger);}
+   else if(trigger.parentNode!==trigger.ddOriginalParent)trigger.ddOriginalParent.insertBefore(trigger,trigger.ddOriginalNext);
+  }
+  placeMenu();new MutationObserver(placeMenu).observe(document.body,{childList:true,subtree:true});window.addEventListener('resize',placeMenu);
   if(document.querySelector('.dd-mobile-bottom-nav'))return;
   const path=location.pathname.toLowerCase();
   const active=/\/(account|pin-recovery)(?:\.html)?\/?$/.test(path)?'account':path.includes('wishlist')?'heart':/\/(shop|brand-[^/]+)(?:\.html)?\/?$/.test(path)?'shop':path.includes('checkout')?'cart':/^\/(?:index(?:\.html)?)?$/.test(path)?'home':null;

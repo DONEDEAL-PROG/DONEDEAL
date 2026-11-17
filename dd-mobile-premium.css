@@ -61,3 +61,17 @@ html.dd-premium-mobile .dd-support-float{bottom:calc(138px + env(safe-area-inset
 html.dd-premium-mobile :focus-visible{outline:2px solid var(--mp-pink);outline-offset:3px}
 }
 @media(max-width:350px){html.dd-premium-mobile .catalog{gap:8px!important}html.dd-premium-mobile .product{padding:9px!important}html.dd-premium-mobile .dd-mobile-premium-brand{font-size:18px!important}}
+
+@media(max-width:767px){
+html.dd-premium-mobile .dd-mobile-premium-header{gap:9px;padding-left:13px;padding-right:13px}
+html.dd-premium-mobile .dd-mobile-premium-header .dd-menu-trigger{display:flex!important;align-items:center;justify-content:center;flex:0 0 36px;width:36px;min-height:40px;padding:8px!important;font-size:0!important;background:transparent!important;color:var(--mp-ink)!important;border:0!important;box-shadow:none!important}
+html.dd-premium-mobile .dd-menu-trigger svg{width:23px;height:23px}
+html.dd-premium-mobile .dd-mobile-premium-brand{margin-right:auto;font-size:18px}
+html.dd-premium-mobile .dd-mobile-premium-brand>img{width:29px;height:29px}
+html.dd-premium-mobile .brandBar{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;padding:0!important;margin:22px 17px 30px!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+html.dd-premium-mobile .brandBar .brandTile{display:flex!important;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:76px;height:auto!important;padding:14px 7px!important;border-radius:12px!important;background:var(--mp-card)!important;border:1px solid var(--mp-line)!important;box-shadow:none!important;font-size:12px!important;letter-spacing:.15px}
+html.dd-premium-mobile .brandBar .brandTile img{max-width:23px!important;max-height:25px!important;width:auto!important;height:auto!important;object-fit:contain}
+html.dd-premium-mobile .brandBar .miMark{width:26px!important;height:26px!important;font-size:18px!important;line-height:26px!important;border-radius:7px!important}
+html.dd-premium-mobile .brandBar .samsungWord{font-size:11px!important;letter-spacing:.7px!important}
+html.dd-premium-mobile #useDefaultDetails{display:block;width:100%;padding:13px;margin:0 0 8px;border:1px solid var(--mp-pink);border-radius:10px;background:var(--mp-soft);color:var(--mp-pink);font-weight:700}
+}
