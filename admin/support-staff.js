@@ -10,7 +10,8 @@
     ['orders_cancel', 'Cancel orders (Phase 3)'],
     ['orders_edit', 'Edit customer/order details (Phase 3)'],
     ['refund_request', 'Handle refund requests (Phase 3)'],
-    ['ticket_assign', 'Assign conversations']
+    ['ticket_assign', 'Assign conversations'],
+    ['pin_recovery', 'Approve customer PIN recovery']
   ];
 
   const notice = s => {

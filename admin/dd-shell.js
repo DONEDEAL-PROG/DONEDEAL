@@ -27,7 +27,7 @@ const groups=[
 ['SALES',[['orders','Orders','/admin/operations.html#orders'],['customers','Customers','/admin/customers.html'],['payments','Payments / Transactions','/admin/payments.html'],['analytics','Sales Analytics','/admin/operations.html#analytics']]],
 ['CATALOG',[['products','Products','/admin/'],
     ['ledger','Master Price Ledger','/admin/master-ledger.html'],['plus','Add Gadget','/admin/operations.html#gadgets'],['inventory','Inventory / Stock','/admin/#inventory']]],
-['CUSTOMER SERVICE',[['staff','Staff Management','/admin/support-staff.html'],['refunds','Refund Approvals','/admin/staff-refunds.html'],['activity','Staff Activity Logs','/admin/staff-activity.html']]],
+['CUSTOMER SERVICE',[['staff','Staff Management','/admin/support-staff.html'],['refunds','Refund Approvals','/admin/staff-refunds.html'],['activity','Staff Activity Logs','/admin/staff-activity.html'],['pin','Customer PIN Recovery','/staff/pin-recovery.html']]],
 ['PARTNERS',[['partners','Affiliate Partners','/admin/partners.html']]],
 ['OPERATIONS',[['shipping','Track Orders / Shipping','/admin/operations.html#shipping'],['settings','Store Settings','/admin/operations.html#settings']]]
 ];
