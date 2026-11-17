@@ -8,7 +8,8 @@ export const permissions = [
   'orders_cancel',
   'orders_edit',
   'refund_request',
-  'ticket_assign'
+  'ticket_assign',
+  'pin_recovery'
 ];
 
 export const result = (data, status = 200, headers = {}) =>
