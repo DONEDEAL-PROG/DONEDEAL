@@ -8,7 +8,7 @@ export async function onRequestPost({request,env}){
   if(c.email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c.email))return err('Invalid email');
   if(!['delivery','pickup'].includes(b.fulfillment))return err('Choose delivery or pickup');
   if(b.fulfillment==='delivery'&&(!c.address||!c.city||!c.province||!c.postal))return err('Complete the delivery address');
-  if(!['cod','gcash','bank_transfer'].includes(b.payment_method))return err('Choose an available payment method. Card payments coming soon');
+  if(b.payment_method!=='cod')return err('Online payments are coming soon. Please choose cash on delivery or pay at pickup.',400);
   const quote=await priceCart(env.DB,b.items);
   const id='DD-'+crypto.randomUUID();
   const refCode=(request.headers.get('Cookie')||'').split(';').map(x=>x.trim()).find(x=>x.startsWith('dd_ref='))?.slice(7)||'';
