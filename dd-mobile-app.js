@@ -11,18 +11,14 @@
  function start(){
   if(/^\/(admin|staff|partner)(\/|$)/.test(location.pathname))return;
   document.documentElement.classList.add('dd-premium-mobile');
-  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-4';document.head.append(sheet)}
+  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-5';document.head.append(sheet)}
   if(!document.querySelector('.dd-mobile-premium-header')){
    const header=document.createElement('div');header.className='dd-mobile-premium-header';header.setAttribute('role','banner');
    const brand=document.createElement('a');brand.href='/';brand.className='dd-mobile-premium-brand';brand.setAttribute('aria-label','Done Deal home');brand.innerHTML='<img src="/done-deal-mark.png" alt=""><span>DONE<span>DEAL</span></span>';
-   const toggle=document.createElement('button');toggle.type='button';toggle.className='dd-mobile-premium-theme';
-   function current(){return document.documentElement.dataset.ddStoreTheme==='light'?'light':'dark'}
-   function paint(){toggle.textContent=current()==='dark'?'☀ Light':'☾ Dark';toggle.setAttribute('aria-label','Switch to '+(current()==='dark'?'light':'dark')+' mode')}
-   toggle.onclick=()=>{const next=current()==='dark'?'light':'dark';try{localStorage.setItem('dd_store_theme_v1',next)}catch{}document.documentElement.dataset.ddStoreTheme=next;document.documentElement.dataset.theme=next;document.documentElement.style.colorScheme=next;window.DDTheme?.apply(next);paint()};
-   new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['data-dd-store-theme']});paint();header.append(brand,toggle);document.body.prepend(header);
+   header.append(brand);document.body.prepend(header);
   }
 
-  if(!document.getElementById('ddDesktopPremiumStyle')){const sheet=document.createElement('link');sheet.id='ddDesktopPremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-desktop-premium.css?v=20261117-3';document.head.append(sheet)}
+  if(!document.getElementById('ddDesktopPremiumStyle')){const sheet=document.createElement('link');sheet.id='ddDesktopPremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-desktop-premium.css?v=20261117-4';document.head.append(sheet)}
   const premiumHeader=document.querySelector('.dd-mobile-premium-header');
   if(premiumHeader&&!premiumHeader.querySelector('.dd-desktop-actions')){
    const search=document.createElement('form');search.className='dd-desktop-search';search.setAttribute('role','search');search.innerHTML='<input aria-label="Search gadgets" placeholder="Search phones, gadgets, accessories…" type="search"><button type="submit" aria-label="Search">⌕</button>';
@@ -30,7 +26,7 @@
    const actions=document.createElement('nav');actions.className='dd-desktop-actions';actions.setAttribute('aria-label','Shopping tools');
    for(const [key,label,href] of [['heart','Wishlist','/wishlist.html'],['cart','Cart','#'],['account','Account','/account.html']]){const el=document.createElement(key==='cart'?'button':'a');el.innerHTML=icons[key]+'<span>'+label+'</span>';if(key==='cart'){el.type='button';el.onclick=()=>{if(typeof window.openCart==='function')window.openCart();else location.href='/checkout.html'}}else el.href=href;actions.append(el)}
    const links=document.createElement('nav');links.className='dd-desktop-links';links.setAttribute('aria-label','Store navigation');for(const [label,href] of [['Home','/'],['Shop all gadgets','/shop.html'],['Shop by brand','/shop.html#home'],['Track order','/track-order.html'],['Customer support','/support.html']]){const a=document.createElement('a');a.textContent=label;a.href=href;const path=location.pathname.replace(/\.html$/,'');if((href==='/'&&/^\/(index)?$/.test(path))||(href!=='/'&&href.split('#')[0].replace(/\.html$/,'')===path&&!href.includes('#'))){a.setAttribute('aria-current','page')}links.append(a)}
-   premiumHeader.insertBefore(search,premiumHeader.querySelector('.dd-mobile-premium-theme'));premiumHeader.append(actions,links);
+   premiumHeader.append(search,actions,links);
    const query=new URLSearchParams(location.search).get('search'),field=document.getElementById('search');if(query&&field){field.value=query;field.dispatchEvent(new Event('input',{bubbles:true}));search.querySelector('input').value=query}
   }
 
@@ -79,7 +75,7 @@
     const hero=document.createElement('section');
     hero.className='dd-mobile-hero';
     hero.setAttribute('aria-label','DONEDEAL featured banner');
-    hero.innerHTML='<img src="hero-unified.webp" alt="DONEDEAL featured smartphone collection"><div class="dd-mobile-hero-content"><div><span class="dd-hero-eyebrow">✦ &nbsp; Premium Smartphones</span><strong>Explore the <em>collection</em></strong><small>Shop your favorite smartphone brands</small></div><div class="dd-hero-benefits"><span>♧ &nbsp; Free Shipping<br>Worldwide</span><span>◇ &nbsp; Secure<br>Payments</span><span>◎ &nbsp; 24/7 Support</span></div><button type="button">Shop now →</button></div>';
+    hero.innerHTML='<img src="hero-unified.webp" alt="DONEDEAL featured smartphone collection"><div class="dd-mobile-hero-content"><div><strong>Explore the <em>collection</em></strong><small>Shop your favorite smartphone brands</small></div><div class="dd-hero-benefits"><span>♧ &nbsp; Free Shipping<br>Worldwide</span><span>◇ &nbsp; Secure<br>Payments</span><span>◎ &nbsp; 24/7 Support</span></div><button type="button">Shop now →</button></div>';
     hero.querySelector('button').addEventListener('click',()=>{location.href='/shop.html'});
     document.querySelector('main#home>.hero').before(hero);
     const search=document.createElement('a');search.className='dd-mobile-search';search.href='/#shop';search.innerHTML='<span class="dd-mobile-search-label">Search phones, gadgets, accessories…</span>';
