@@ -9,9 +9,22 @@
  account:icon('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>')
  };
  function start(){
+  if(/^\/(admin|staff|partner)(\/|$)/.test(location.pathname))return;
+  document.documentElement.classList.add('dd-premium-mobile');
+  if(!document.getElementById('ddMobilePremiumStyle')){const sheet=document.createElement('link');sheet.id='ddMobilePremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-mobile-premium.css?v=20261117-1';document.head.append(sheet)}
+  if(!document.querySelector('.dd-mobile-premium-header')){
+   const header=document.createElement('div');header.className='dd-mobile-premium-header';header.setAttribute('role','banner');
+   const brand=document.createElement('a');brand.href='/';brand.className='dd-mobile-premium-brand';brand.setAttribute('aria-label','Done Deal home');brand.innerHTML='<img src="/done-deal-mark.png" alt=""><span>DONE<span>DEAL</span></span>';
+   const toggle=document.createElement('button');toggle.type='button';toggle.className='dd-mobile-premium-theme';
+   function current(){return document.documentElement.dataset.ddStoreTheme==='light'?'light':'dark'}
+   function paint(){toggle.textContent=current()==='dark'?'☀ Light':'☾ Dark';toggle.setAttribute('aria-label','Switch to '+(current()==='dark'?'light':'dark')+' mode')}
+   toggle.onclick=()=>{const next=current()==='dark'?'light':'dark';try{localStorage.setItem('dd_store_theme_v1',next)}catch{}document.documentElement.dataset.ddStoreTheme=next;document.documentElement.dataset.theme=next;document.documentElement.style.colorScheme=next;window.DDTheme?.apply(next);paint()};
+   new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['data-dd-store-theme']});paint();header.append(brand,toggle);document.body.prepend(header);
+  }
+
   if(document.querySelector('.dd-mobile-bottom-nav'))return;
   const path=location.pathname.toLowerCase();
-  const active=/\/account(?:\.html)?\/?$/.test(path)?'account':path.includes('wishlist')?'heart':path.includes('shop')||path.includes('brand-')?'shop':path.includes('checkout')?'cart':'home';
+  const active=/\/(account|pin-recovery)(?:\.html)?\/?$/.test(path)?'account':path.includes('wishlist')?'heart':/\/(shop|brand-[^/]+)(?:\.html)?\/?$/.test(path)?'shop':path.includes('checkout')?'cart':/^\/(?:index(?:\.html)?)?$/.test(path)?'home':null;
   const nav=document.createElement('nav');nav.className='dd-mobile-bottom-nav';nav.setAttribute('aria-label','Mobile shopping navigation');
   [['home','Home','/'],['shop','Shop','/shop.html'],['heart','Wishlist','/wishlist.html'],['cart','Cart','#'],['account','Account','#']].forEach(([key,label,url])=>{
     const el=document.createElement(key==='cart'||key==='account'?'button':'a');

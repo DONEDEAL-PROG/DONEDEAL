@@ -1,9 +1,29 @@
-DONEDEAL shopping motion + optional soft sounds
-Upload every file to the same relative path in the ROOT of your GitHub repository.
-Existing files: replace them. New files: add them.
-Do not place these files inside admin/.
-Sound is OFF by default; customers enable it from the shopping sidebar.
-Sounds play only for confirmed add-to-cart, wishlist additions, accepted checkout requests, and handled cart/checkout errors.
-Browsers may restrict audio until a customer interacts with the page.
-Existing app/cart/checkout business logic is preserved; admin pages are unchanged.
-Test on a preview deployment before publishing.
+DONE DEAL — PREMIUM MOBILE DESIGN
+
+Upload the files in this ZIP to the same paths in your website repository.
+Replace these existing root files:
+- account.html
+- brand-apple.html
+- brand-huawei.html
+- brand-oppo.html
+- brand-samsung.html
+- brand-vivo.html
+- brand-xiaomi.html
+- checkout.html
+- dd-mobile-app.js
+- index.html
+- partner.html
+- payment-status.html
+- pin-recovery.html
+- shop.html
+- support.html
+- track-order.html
+- wishlist.html
+
+Add this new root file:
+- dd-mobile-premium.css
+
+Commit and allow Cloudflare Pages to deploy. No SQL or database changes are needed.
+Keep all other existing files, including images and private-vault/support scripts.
+This patch styles customer-facing mobile pages up to 767px wide. Admin/staff dashboards are excluded.
+After deployment, reload the site to load the new version. Check dark/light mode, account navigation, cart and checkout.
