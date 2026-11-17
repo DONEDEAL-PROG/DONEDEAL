@@ -1,6 +1,13 @@
 (()=>{'use strict';const $=id=>document.getElementById(id),vault=window.DDPrivateVault;let requestId=null;
 function show(request){if(!request){$('requestState').textContent='No recovery request yet.';return}requestId=request.id;$('reference').hidden=false;$('reference').textContent='Request reference: '+request.id;const expired=request.status==='approved'&&request.expires_at<=Date.now()/1000;const labels={pending:'Pending staff verification and approval.',approved:expired?'Approval expired. Contact support for a new review.':'Approved. Enter the single-use code supplied by support.',rejected:'Request rejected. Contact support for help.',used:'Recovery code used. If you cancelled PIN creation, retry the Create new PIN button on this page.'};$('requestState').textContent=labels[request.status]||request.status}
 async function refresh(){try{show((await vault.recoveryStatus()).request)}catch(e){$('status').className='error';$('status').textContent=e.message}}
-$('request').onclick=async()=>{$('request').disabled=true;try{$('status').textContent='';show((await vault.recoveryRequest()).request)}catch(e){$('status').className='error';$('status').textContent=e.message}finally{$('request').disabled=false}};
+$('request').onclick=async event=>{
+ event.preventDefault();if($('request').getAttribute('aria-busy')==='true')return;
+ $('request').setAttribute('aria-busy','true');$('request').textContent='Opening customer support…';
+ let id=requestId,timer;
+ try{const data=await Promise.race([vault.recoveryRequest(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Recovery request timed out')),6000)})]);if(data.request?.id){id=data.request.id;show(data.request)}}catch{ /* Support remains available when recovery is not registered or configured. */ }finally{
+ clearTimeout(timer);const target=new URL('/support.html',location.origin);target.searchParams.set('intent','pin-recovery');if(id&&/^[0-9a-f-]{36}$/i.test(id))target.searchParams.set('recovery_ref',id);location.assign(target.pathname+target.search);
+ }
+};
 $('refresh').onclick=refresh;
 $('recoverForm').onsubmit=async e=>{e.preventDefault();if(!requestId){$('status').textContent='Request recovery or refresh the approval status first.';return}$('redeem').disabled=true;try{const ok=await vault.recover(requestId,$('code').value.trim());if(ok){$('code').value='';$('status').className='muted';$('status').textContent='Your new PIN is saved. You can return to My account.';const a=document.createElement('a');a.href='/account.html';a.textContent='Open My account';$('status').append(document.createElement('br'),a)}else $('status').textContent='PIN creation was cancelled. Keep this page open and retry to finish setting your new PIN.'}catch(e){$('status').className='error';$('status').textContent=e.message}finally{$('redeem').disabled=false}};refresh();})();

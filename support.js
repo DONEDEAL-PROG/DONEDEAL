@@ -828,4 +828,18 @@ document.addEventListener(
   }
 );
 
+// A recovery link opens a fresh, unsent ticket draft; existing conversations stay in history.
+(function prefillPinRecovery(){
+ const params=new URLSearchParams(location.search);if(params.get('intent')!=='pin-recovery')return;
+ startNewConversation('ticket');
+ const reference=params.get('recovery_ref')||'';
+ const validReference=/^[0-9a-f-]{36}$/i.test(reference)?reference:'';
+ $('subject').value='Website Concern';
+ $('initial').value='PIN RECOVERY REQUEST\n\nHello Done Deal Customer Support, I forgot my 6-digit customer PIN and would like assistance with a staff-approved reset.\n\n'+(validReference?'Recovery request reference: '+validReference+'\n\n':'A recovery reference is not available yet. Please help me check whether this browser has a registered recovery backup.\n\n')+'Please verify my identity through my previously registered contact details before approving recovery. I understand I should not share my PIN or password in this ticket.';
+ try{const summary=JSON.parse(localStorage.getItem('ddPrivateSummaryV1')||'{}');if(!$('name').value&&typeof summary.name==='string')$('name').value=summary.name.slice(0,120)}catch{}
+ const banner=document.createElement('div');banner.className='panel';banner.setAttribute('role','status');const title=document.createElement('strong');title.textContent='PIN recovery message prepared';const text=document.createElement('p');text.textContent='Review the message, enter your contact email, and select Submit to send your support ticket. Your PIN has not been reset.';const back=document.createElement('a');back.href='/pin-recovery.html';back.textContent='Return to PIN recovery / enter approved code';banner.append(title,text,back);$('start').before(banner);
+ note('Your PIN recovery ticket is ready to review. Nothing has been sent yet.');
+ $('start').scrollIntoView({behavior:'smooth',block:'start'});
+})();
+
 })();
