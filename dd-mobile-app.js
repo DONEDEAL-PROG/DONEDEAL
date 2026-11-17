@@ -22,13 +22,25 @@
    new MutationObserver(paint).observe(document.documentElement,{attributes:true,attributeFilter:['data-dd-store-theme']});paint();header.append(brand,toggle);document.body.prepend(header);
   }
 
+  if(!document.getElementById('ddDesktopPremiumStyle')){const sheet=document.createElement('link');sheet.id='ddDesktopPremiumStyle';sheet.rel='stylesheet';sheet.href='/dd-desktop-premium.css?v=20261117-1';document.head.append(sheet)}
+  const premiumHeader=document.querySelector('.dd-mobile-premium-header');
+  if(premiumHeader&&!premiumHeader.querySelector('.dd-desktop-actions')){
+   const search=document.createElement('form');search.className='dd-desktop-search';search.setAttribute('role','search');search.innerHTML='<input aria-label="Search gadgets" placeholder="Search phones, gadgets, accessories…" type="search"><button type="submit" aria-label="Search">⌕</button>';
+   search.onsubmit=event=>{event.preventDefault();const value=search.querySelector('input').value.trim(),field=document.getElementById('search');if(field){field.value=value;field.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('shop')?.scrollIntoView({behavior:'smooth'})}else location.href='/shop.html?search='+encodeURIComponent(value)+'#shop'};
+   const actions=document.createElement('nav');actions.className='dd-desktop-actions';actions.setAttribute('aria-label','Shopping tools');
+   for(const [key,label,href] of [['heart','Wishlist','/wishlist.html'],['cart','Cart','#'],['account','Account','/account.html']]){const el=document.createElement(key==='cart'?'button':'a');el.innerHTML=icons[key]+'<span>'+label+'</span>';if(key==='cart'){el.type='button';el.onclick=()=>{if(typeof window.openCart==='function')window.openCart();else location.href='/checkout.html'}}else el.href=href;actions.append(el)}
+   const links=document.createElement('nav');links.className='dd-desktop-links';links.setAttribute('aria-label','Store navigation');for(const [label,href] of [['Home','/'],['Shop all gadgets','/shop.html'],['Shop by brand','/shop.html#home'],['Track order','/track-order.html'],['Customer support','/support.html']]){const a=document.createElement('a');a.textContent=label;a.href=href;const path=location.pathname.replace(/\.html$/,'');if((href==='/'&&/^\/(index)?$/.test(path))||(href!=='/'&&href.split('#')[0].replace(/\.html$/,'')===path&&!href.includes('#'))){a.setAttribute('aria-current','page')}links.append(a)}
+   premiumHeader.insertBefore(search,premiumHeader.querySelector('.dd-mobile-premium-theme'));premiumHeader.append(actions,links);
+   const query=new URLSearchParams(location.search).get('search'),field=document.getElementById('search');if(query&&field){field.value=query;field.dispatchEvent(new Event('input',{bubbles:true}));search.querySelector('input').value=query}
+  }
+
   // Keep the existing sidebar and its event handlers; expose its trigger in the mobile header.
   function placeMenu(){
    const trigger=document.querySelector('.dd-menu-trigger'),header=document.querySelector('.dd-mobile-premium-header');
    if(!trigger||!header)return;
    if(!trigger.ddOriginalParent){trigger.ddOriginalParent=trigger.parentNode;trigger.ddOriginalNext=trigger.nextSibling;}
    if(matchMedia('(max-width:767px)').matches){if(trigger.parentNode!==header)header.prepend(trigger);}
-   else if(trigger.parentNode!==trigger.ddOriginalParent)trigger.ddOriginalParent.insertBefore(trigger,trigger.ddOriginalNext);
+   else {const links=header.querySelector('.dd-desktop-links');if(links&&trigger.parentNode!==links)links.prepend(trigger);}
   }
   placeMenu();new MutationObserver(placeMenu).observe(document.body,{childList:true,subtree:true});window.addEventListener('resize',placeMenu);
   if(new URLSearchParams(location.search).get('widget')!=='1'){
