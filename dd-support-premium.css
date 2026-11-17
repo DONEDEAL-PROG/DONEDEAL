@@ -1,0 +1,68 @@
+body.dd-support-premium{--sp-bg:#15161b;--sp-card:#202127;--sp-field:#292a32;--sp-text:#f6f5f8;--sp-muted:#b6b3c0;--sp-line:#393a45;--sp-pink:#ed4082;--sp-tint:#35222f;background:var(--sp-bg)!important;color:var(--sp-text)!important;font:400 14px/1.55 system-ui,-apple-system,sans-serif!important}
+html[data-dd-store-theme=light] body.dd-support-premium{--sp-bg:#f7f6f9;--sp-card:#fff;--sp-field:#eeedf2;--sp-text:#24222c;--sp-muted:#716b7a;--sp-line:#dedbe5;--sp-tint:#fce8f1}
+.dd-sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+html body.dd-support-premium main{max-width:780px;margin:0 auto;padding:26px 18px 100px!important}
+html body.dd-support-premium main>h1{font-size:27px!important;letter-spacing:-.7px;margin:0 0 7px}
+html body.dd-support-premium main>p{color:var(--sp-muted);font-size:14px;margin:0 0 22px}
+html body.dd-support-premium .dd-support-inbox-actions{display:flex;gap:10px;margin:20px 0 24px}
+html body.dd-support-premium .dd-support-inbox-actions button{flex:1;background:var(--sp-card);color:var(--sp-text);border:1px solid var(--sp-line);border-radius:10px;padding:12px;font:650 13px system-ui;cursor:pointer}
+html body.dd-support-premium .dd-support-inbox-actions button:first-child{border-color:var(--sp-pink);background:var(--sp-tint)}
+html body.dd-support-premium #myConversationsPanel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 24px!important}
+html body.dd-support-premium #myConversationsPanel h2{font-size:19px!important;margin:0!important}
+html body.dd-support-premium #myConversationsPanel>.section-top{justify-content:flex-start;gap:9px;margin-bottom:12px}
+html body.dd-support-premium #conversationCount{font-size:11px;padding:3px 8px;border-radius:20px;color:var(--sp-muted);background:var(--sp-field)}
+html body.dd-support-premium #myConversationsPanel>p{display:none}
+html body.dd-support-premium #conversationHistory{display:block}
+html body.dd-support-premium .history-item{position:relative;display:flex!important;align-items:center;gap:12px;padding:15px 12px!important;margin:0!important;min-height:76px;box-sizing:border-box;border:0!important;border-bottom:1px solid var(--sp-line)!important;border-radius:0!important;background:transparent!important;color:var(--sp-text)!important;box-shadow:none!important}
+html body.dd-support-premium .history-item:before{content:'D';display:grid;place-items:center;flex:0 0 40px;height:40px;border-radius:50%;background:var(--sp-field);color:var(--sp-text);font-weight:700}
+html body.dd-support-premium .history-item.current{background:var(--sp-tint)!important;border-radius:10px!important}
+html body.dd-support-premium .history-details{flex:1;min-width:0;padding-right:50px}
+html body.dd-support-premium .history-details strong{font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body.dd-support-premium .history-details small{display:block;color:var(--sp-muted)!important;font:400 12px/1.6 system-ui}
+html body.dd-support-premium .history-details small:last-child{position:absolute;right:12px;top:17px;font-size:10px}
+html body.dd-support-premium button.history-open{position:absolute;inset:0;width:100%;height:100%;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important;border-radius:10px!important;cursor:pointer}
+html body.dd-support-premium #supportChoices{display:none!important}
+html body.dd-support-premium #start{background:var(--sp-card)!important;border:1px solid var(--sp-line)!important;border-radius:14px!important;padding:20px!important}
+html body.dd-support-premium #start input,html body.dd-support-premium #start textarea,html body.dd-support-premium #start select{background:var(--sp-field)!important;color:var(--sp-text)!important;border-color:var(--sp-line)!important;font-size:16px!important}
+html body.dd-support-premium #conversation{padding:0!important;border:1px solid var(--sp-line)!important;border-radius:15px!important;background:var(--sp-bg)!important;box-shadow:none!important;overflow:hidden}
+html body.dd-support-premium:not(.dd-support-chat) #conversation{display:none!important}
+html body.dd-support-chat main>h1,html body.dd-support-chat main>p,html body.dd-support-chat #myConversationsPanel,html body.dd-support-chat .dd-support-inbox-actions,html body.dd-support-chat #start,html body.dd-support-chat #supportChoices{display:none!important}
+html body.dd-support-premium #conversation>.section-top{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:10px;padding:15px 16px;margin:0;border-bottom:1px solid var(--sp-line)}
+html body.dd-support-premium #conversation h2{font-size:16px!important;margin:0!important;flex:1}
+html body.dd-support-premium #backToInbox{width:30px;height:35px;padding:0;background:none;border:0;color:var(--sp-text);font-size:25px;cursor:pointer}
+html body.dd-support-premium .dd-support-avatar{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--sp-field);font-weight:700}
+html body.dd-support-premium #conversationMode{font-size:10px;padding:3px 7px;background:var(--sp-field);color:var(--sp-muted);border:0}
+html body.dd-support-premium #ticketInfo{font-size:10px!important;color:var(--sp-muted)!important;overflow-wrap:anywhere;margin:0;padding:8px 16px;border-bottom:1px solid var(--sp-line)}
+html body.dd-support-premium #messages{display:flex!important;flex-direction:column;gap:10px;background:var(--sp-bg)!important;border:0!important;border-radius:0!important;padding:20px 14px!important;margin:0!important;height:420px;overflow-y:auto;overscroll-behavior:contain;box-sizing:border-box}
+html body.dd-support-premium #messages .bubble{align-self:flex-start;max-width:82%;width:fit-content;box-sizing:border-box;margin:0!important;padding:10px 13px!important;background:var(--sp-field)!important;color:var(--sp-text)!important;border:0!important;border-radius:17px 17px 17px 5px!important;font:400 14px/1.55 system-ui!important;overflow-wrap:anywhere;white-space:pre-wrap}
+html body.dd-support-premium #messages .bubble.mine{align-self:flex-end;background:var(--sp-pink)!important;color:white!important;border-radius:17px 17px 5px 17px!important}
+html body.dd-support-premium #messages .bubble small{color:var(--sp-muted)!important;font-size:10px!important;line-height:1.5!important;margin-top:6px;display:block}
+html body.dd-support-premium #messages .bubble.mine small{color:#fff!important;opacity:.8}
+html body.dd-support-premium form#send{display:flex;align-items:center;gap:8px;position:relative;padding:12px 13px 33px!important;background:var(--sp-bg)!important;border:0!important;border-top:1px solid var(--sp-line)!important;border-radius:0!important;margin:0;box-shadow:none!important}
+html body.dd-support-premium #send.hidden{display:none!important}
+html body.dd-support-premium #send>label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+html body.dd-support-premium #send textarea{flex:1;width:100%;min-height:43px!important;height:43px;max-height:110px;resize:none;background:var(--sp-field)!important;color:var(--sp-text)!important;border:1px solid var(--sp-line)!important;border-radius:24px!important;padding:11px 15px!important;font:400 16px/1.35 system-ui!important;margin:0!important;box-sizing:border-box}
+html body.dd-support-premium #send .row{display:block;margin:0;flex:0 0 43px}
+html body.dd-support-premium #send button{width:43px;height:43px;min-height:43px;padding:0!important;border-radius:50%!important;background:var(--sp-pink)!important;color:white!important;border:0!important;font-size:19px!important;cursor:pointer}
+html body.dd-support-premium #send small{position:absolute;bottom:9px;left:14px;right:14px;text-align:center;color:var(--sp-muted)!important;font:400 10px/1.4 system-ui!important}
+html body.dd-support-premium #conversation>p:not(#ticketInfo){display:none}
+html body.dd-support-premium #newConversation{display:none}
+html body.dd-support-premium :focus-visible{outline:2px solid var(--sp-pink);outline-offset:2px}
+@media(max-width:767px){
+html body.dd-support-chat main{padding:0!important;margin:0!important;max-width:none}
+html body.dd-support-chat #conversation{position:fixed;top:73px;bottom:calc(64px + env(safe-area-inset-bottom));left:0;right:0;z-index:1001;display:flex!important;flex-direction:column;border:0!important;border-radius:0!important}
+html body.dd-support-chat #messages{height:auto;flex:1;min-height:0}
+html body.dd-support-chat #conversation>.section-top,html body.dd-support-chat #ticketInfo,html body.dd-support-chat #send{flex-shrink:0}
+html body.dd-support-chat #liveWaitingPanel:not(.hidden){position:relative;z-index:1002;margin:0 12px!important;padding:8px 12px!important;font-size:12px;max-height:130px;overflow:auto}
+}
+html body.dd-support-premium .dd-support-inbox-actions button{background:var(--sp-card)!important;color:var(--sp-text)!important;border:1px solid var(--sp-line)!important;box-shadow:none!important}
+html body.dd-support-premium .dd-support-inbox-actions button:first-child{background:var(--sp-tint)!important;border-color:var(--sp-pink)!important;color:var(--sp-text)!important}
+html body.dd-support-premium .hidden{display:none!important}
+html body.dd-support-premium #minimizeSupport,html body.dd-support-premium #closeSupport{flex:0 0 30px;width:30px;min-height:32px;padding:0!important;background:transparent!important;border:0!important;color:var(--sp-muted)!important;font-size:23px!important;cursor:pointer}
+html.dd-support-embedded body{padding-bottom:0!important}
+html.dd-support-embedded .dd-mobile-premium-header,html.dd-support-embedded .dd-mobile-bottom-nav,html.dd-support-embedded body>header{display:none!important}
+html.dd-support-embedded body.dd-support-chat #conversation{top:0!important;bottom:0!important}
+html.dd-support-embedded #conversation>.section-top{gap:6px!important;padding:12px!important}
+html.dd-support-embedded #conversation h2{font-size:14px!important}
+html body.dd-support-premium #send textarea{overflow-y:auto;scrollbar-width:none}
+html body.dd-support-premium #send textarea::-webkit-scrollbar{display:none}

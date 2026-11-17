@@ -623,7 +623,7 @@ html body #send textarea{width:100%;box-sizing:border-box;min-height:110px;backg
 html body #send button{background:#dc2c75!important;color:white!important;border:0!important;border-radius:10px!important;font:650 14px/1.4 system-ui!important;min-height:44px;padding:12px 20px!important}
 html body #send .muted,html body #send p{color:var(--mp-muted,#b5b4c2)!important;font:400 12px/1.5 system-ui!important}
 html[data-dd-store-theme=light]{--mp-bg:#f7f6f9;--mp-card:#fff;--mp-ink:#24222c;--mp-muted:#6e6877;--mp-line:#dedbe5;--mp-field:#faf9fc;--mp-soft:#fce8f1}
-</style></head>
+</style><link rel="stylesheet" href="/dd-support-premium.css?v=20261117-1"></head>
 
 <body>
 
@@ -634,11 +634,10 @@ html[data-dd-store-theme=light]{--mp-bg:#f7f6f9;--mp-card:#fff;--mp-ink:#24222c;
 
   <main>
 
-    <h1>How can we help you?</h1>
+    <h1>Customer support</h1>
 
     <p>
-      Connect with our support team or create a ticket.
-      Your messages stay in your secure support conversation.
+      We’re here to help.
     </p>
 
     <!-- Support method selection -->
@@ -682,7 +681,7 @@ html[data-dd-store-theme=light]{--mp-bg:#f7f6f9;--mp-card:#fff;--mp-ink:#24222c;
     <section class="panel" id="myConversationsPanel">
 
       <div class="section-top">
-        <h2>📂 My Conversations</h2>
+        <h2>Conversations</h2>
 
         <span class="status ended" id="conversationCount">
           0 Saved
@@ -879,7 +878,7 @@ html[data-dd-store-theme=light]{--mp-bg:#f7f6f9;--mp-card:#fff;--mp-ink:#24222c;
     <section class="panel hidden" id="conversation">
 
       <div class="section-top">
-        <h2>Your Support Conversation</h2>
+        <button type="button" id="backToInbox" aria-label="Back to conversations">←</button><span class="dd-support-avatar" aria-hidden="true">D</span><h2>DONEDEAL Support</h2><button id="minimizeSupport" type="button" aria-label="Minimize customer support">−</button><button id="closeSupport" type="button" aria-label="Close customer support">×</button>
 
         <span id="conversationMode" class="status ended">
           Support Ticket
@@ -901,7 +900,7 @@ html[data-dd-store-theme=light]{--mp-bg:#f7f6f9;--mp-card:#fff;--mp-ink:#24222c;
         </label>
 
         <textarea
-          id="message"
+          id="message" placeholder="Message support…" rows="1"
           maxlength="2000"
           required
         ></textarea>
@@ -909,11 +908,11 @@ html[data-dd-store-theme=light]{--mp-bg:#f7f6f9;--mp-card:#fff;--mp-ink:#24222c;
         <div class="row">
 
           <button type="submit">
-            Send Message
+            <span aria-hidden="true">➤</span><span class="dd-sr-only">Send message</span>
           </button>
 
           <small>
-            Messages refresh about every 5 seconds.
+            Never share your PIN or password.
           </small>
 
         </div>
@@ -942,7 +941,7 @@ html[data-dd-store-theme=light]{--mp-bg:#f7f6f9;--mp-card:#fff;--mp-ink:#24222c;
 
   </main>
 
-  <script src="/support.js?v=pin-prefill-20261117-1" defer></script>
+  <script src="/support.js?v=messenger-20261117-1" defer></script>
 
 <script src="/dd-mobile-app.js?v=premium-mobile-20261117-1"></script></body>
 </html>

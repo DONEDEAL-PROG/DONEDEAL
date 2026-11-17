@@ -31,6 +31,16 @@
    else if(trigger.parentNode!==trigger.ddOriginalParent)trigger.ddOriginalParent.insertBefore(trigger,trigger.ddOriginalNext);
   }
   placeMenu();new MutationObserver(placeMenu).observe(document.body,{childList:true,subtree:true});window.addEventListener('resize',placeMenu);
+  if(new URLSearchParams(location.search).get('widget')!=='1'){
+   const dock=document.createElement('div');dock.className='dd-support-dock';
+   const bubble=document.createElement('button');bubble.type='button';bubble.className='dd-support-dock-bubble';bubble.setAttribute('aria-label','Resume customer support');bubble.textContent='Support';
+   const box=document.createElement('div');box.className='dd-support-dock-window';box.hidden=true;
+   const frame=document.createElement('iframe');frame.title='Customer support conversation';box.append(frame);dock.append(box,bubble);document.body.append(dock);
+   let loaded=false;function paint(){let enabled=false;try{enabled=!!sessionStorage.getItem('ddSupportDock')}catch{}dock.hidden=!enabled;if(!enabled)box.hidden=true;}
+   bubble.onclick=()=>{box.hidden=!box.hidden;if(!box.hidden&&!loaded){frame.src='/support.html?widget=1';loaded=true}bubble.setAttribute('aria-expanded',String(!box.hidden))};
+   function apply(action){try{if(action==='close')sessionStorage.removeItem('ddSupportDock');else sessionStorage.setItem('ddSupportDock','minimized')}catch{}box.hidden=true;paint()}
+   window.addEventListener('dd-support-dock',e=>apply(e.detail));window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===frame.contentWindow&&e.data?.type==='dd-support-dock'&&['minimize','close'].includes(e.data.action))apply(e.data.action)});paint();
+  }
   if(document.querySelector('.dd-mobile-bottom-nav'))return;
   const path=location.pathname.toLowerCase();
   const active=/\/(account|pin-recovery)(?:\.html)?\/?$/.test(path)?'account':path.includes('wishlist')?'heart':/\/(shop|brand-[^/]+)(?:\.html)?\/?$/.test(path)?'shop':path.includes('checkout')?'cart':/^\/(?:index(?:\.html)?)?$/.test(path)?'home':null;

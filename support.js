@@ -143,7 +143,7 @@ function renderHistory(){
   }
 
   count.textContent=
-    history.length+' Saved';
+    String(history.length);
 
   container.replaceChildren();
 
@@ -176,20 +176,18 @@ function renderHistory(){
       ?'💬 Live Agent'
       :'🎫 Support Ticket';
 
-    title.textContent=item.subject
-      ?type+' — '+item.subject
-      :type;
+    title.textContent=item.subject|| (item.mode==='live'?'Live support':'Support ticket');
 
     const reference=document.createElement('small');
-    reference.textContent=item.id;
+    reference.textContent=item.mode==='live'?'Live support conversation':'Support ticket';
 
     const date=document.createElement('small');
 
     const parsed=new Date(item.savedAt);
 
     date.textContent=Number.isNaN(parsed.getTime())
-      ?'Saved conversation'
-      :'Saved: '+parsed.toLocaleString();
+      ?'Saved'
+      :parsed.toLocaleDateString('en-PH',{month:'short',day:'numeric'});
 
     details.append(title,reference,date);
 
@@ -199,14 +197,10 @@ function renderHistory(){
 
     const isCurrent=ticket?.id===item.id;
 
-    button.textContent=isCurrent
-      ?'Current Chat'
-      :'Open Conversation';
-
-    button.disabled=isCurrent;
+    button.textContent='';button.setAttribute('aria-label','Open '+title.textContent);card.classList.toggle('current',isCurrent);
 
     button.addEventListener('click',()=>{
-      openSavedConversation(item);
+      document.body.classList.add('dd-support-chat');if(isCurrent){show();return}openSavedConversation(item);
     });
 
     card.append(details,button);
@@ -266,7 +260,7 @@ function setMode(next){
 }
 
 function show(){
-  const hasTicket=!!ticket;
+  const hasTicket=!!ticket;document.body.classList.toggle('dd-support-chat',hasTicket);
   const isLive=hasTicket&&ticket.mode==='live';
 
   $('supportChoices').classList.toggle(
@@ -763,6 +757,16 @@ $('newConversation').addEventListener(
   }
 );
 
+const embedded=new URLSearchParams(location.search).get('widget')==='1';
+if(embedded)document.documentElement.classList.add('dd-support-embedded');
+function dock(action){try{if(action==='close')sessionStorage.removeItem('ddSupportDock');else sessionStorage.setItem('ddSupportDock','minimized')}catch{}if(embedded){parent.postMessage({type:'dd-support-dock',action},location.origin)}else{document.body.classList.remove('dd-support-chat');window.dispatchEvent(new CustomEvent('dd-support-dock',{detail:action}))}}
+$('minimizeSupport').onclick=()=>dock('minimize');$('closeSupport').onclick=()=>dock('close');
+$('backToInbox').onclick=()=>{document.body.classList.remove('dd-support-chat');$('myConversationsPanel').scrollIntoView({block:'start'});};
+document.body.classList.add('dd-support-premium');
+$('message').addEventListener('input',()=>{const field=$('message');field.style.height='43px';field.style.height=Math.min(110,Math.max(43,field.scrollHeight))+'px';});
+const inboxActions=document.createElement('div');inboxActions.className='dd-support-inbox-actions';
+for(const [label,next] of [['＋ New ticket','ticket'],['Live support','live']]){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{startNewConversation(next);document.body.classList.remove('dd-support-chat');$('start').scrollIntoView({block:'start',behavior:'smooth'})};inboxActions.append(b)}
+$('myConversationsPanel').before(inboxActions);
 // Restore current conversation.
 try{
   const saved=JSON.parse(
@@ -837,7 +841,7 @@ document.addEventListener(
  $('subject').value='Website Concern';
  $('initial').value='PIN RECOVERY REQUEST\n\nHello Done Deal Customer Support, I forgot my 6-digit customer PIN and would like assistance with a staff-approved reset.\n\n'+(validReference?'Recovery request reference: '+validReference+'\n\n':'A recovery reference is not available yet. Please help me check whether this browser has a registered recovery backup.\n\n')+'Please verify my identity through my previously registered contact details before approving recovery. I understand I should not share my PIN or password in this ticket.';
  try{const summary=JSON.parse(localStorage.getItem('ddPrivateSummaryV1')||'{}');if(!$('name').value&&typeof summary.name==='string')$('name').value=summary.name.slice(0,120)}catch{}
- const banner=document.createElement('div');banner.className='panel';banner.setAttribute('role','status');const title=document.createElement('strong');title.textContent='PIN recovery message prepared';const text=document.createElement('p');text.textContent='Review the message, enter your contact email, and select Submit to send your support ticket. Your PIN has not been reset.';const back=document.createElement('a');back.href='/pin-recovery.html';back.textContent='Return to PIN recovery / enter approved code';banner.append(title,text,back);$('start').before(banner);
+ const banner=document.createElement('div');banner.className='panel';banner.setAttribute('role','status');const title=document.createElement('strong');title.textContent='PIN recovery message prepared';const text=document.createElement('p');text.textContent='Review the message, enter your contact email, and select Submit to send your support ticket. Your PIN has not been reset.';const back=document.createElement('a');back.href='/pin-recovery.html';back.textContent='View recovery request';banner.append(title,text,back);$('start').before(banner);
  note('Your PIN recovery ticket is ready to review. Nothing has been sent yet.');
  $('start').scrollIntoView({behavior:'smooth',block:'start'});
 })();
