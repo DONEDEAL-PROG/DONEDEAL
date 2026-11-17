@@ -21,6 +21,7 @@ menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
 ledger:'<path d="M4 3h14a2 2 0 0 1 2 2v16H6a2 2 0 0 1-2-2zM8 7h8M8 11h8M8 15h5"/>',
 plus:'<path d="M12 5v14M5 12h14"/>'
 };
+icons.pin='<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/>';
 function svg(name){return '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+icons[name]+'</svg>'}
 const groups=[
 ['OVERVIEW',[['dashboard','Dashboard','/admin/operations.html#dashboard']]],
@@ -32,7 +33,8 @@ const groups=[
 ['OPERATIONS',[['shipping','Track Orders / Shipping','/admin/operations.html#shipping'],['settings','Store Settings','/admin/operations.html#settings']]]
 ];
 let theme;try{theme=localStorage.getItem('dd-admin-theme')}catch(e){}
-document.documentElement.dataset.ddTheme=theme==='dark'?'dark':'light';
+function applyAdminTheme(value){const next=value==='dark'?'dark':'light';document.documentElement.dataset.ddTheme=next;document.documentElement.style.colorScheme=next;const button=document.getElementById('ddTheme');if(button){button.setAttribute('aria-label','Switch to '+(next==='dark'?'light':'dark')+' mode');button.setAttribute('aria-pressed',String(next==='dark'))}}
+applyAdminTheme(theme);
 const aside=document.createElement('aside');aside.className='dd-sidebar';aside.setAttribute('aria-label','Admin navigation');
 const brand=document.createElement('div');brand.className='dd-brand';brand.innerHTML='<span class="dd-brand-mark">DD</span><span class="dd-brand-copy">DONEDEAL<small>ADMIN CONTROL CENTER</small></span>';aside.append(brand);
 const nav=document.createElement('nav');nav.className='dd-nav';nav.setAttribute('aria-label','Admin sections');
@@ -64,7 +66,10 @@ readability.href='/admin/dd-readability-fix.css';
 document.head.appendChild(readability);
 const header=document.querySelector('body>header');
 if(header){const b=document.createElement('button');b.type='button';b.className='dd-menu-toggle';b.innerHTML=svg('menu')+'<span>Menu</span>';b.setAttribute('aria-label','Open admin navigation');b.onclick=()=>document.body.classList.toggle('dd-open');header.prepend(b)}
-document.getElementById('ddTheme').onclick=()=>{const next=document.documentElement.dataset.ddTheme==='dark'?'light':'dark';document.documentElement.dataset.ddTheme=next;try{localStorage.setItem('dd-admin-theme',next)}catch(e){}};
+document.getElementById('ddTheme').onclick=()=>{const next=document.documentElement.dataset.ddTheme==='dark'?'light':'dark';applyAdminTheme(next);try{localStorage.setItem('dd-admin-theme',next)}catch(e){}};
+applyAdminTheme(document.documentElement.dataset.ddTheme);
+window.addEventListener('storage',e=>{if(e.key==='dd-admin-theme')applyAdminTheme(e.newValue)});
+const themeConsistency=document.createElement('link');themeConsistency.rel='stylesheet';themeConsistency.href='/admin/dd-theme-consistency.css?v=20261117-1';document.head.append(themeConsistency);
 document.getElementById('ddCollapse').onclick=()=>{document.body.classList.toggle('dd-collapsed');const collapsed=document.body.classList.contains('dd-collapsed');document.getElementById('ddCollapse').title=collapsed?'Expand sidebar':'Collapse sidebar'};
 function navigate(){
  document.body.classList.remove('dd-collapsed');

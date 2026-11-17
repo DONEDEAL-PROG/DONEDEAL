@@ -1,0 +1,33 @@
+/* Load after page-specific admin styles so one theme controls the entire shell. */
+html[data-dd-theme="light"]{--dd-bg:#f6f5f8;--dd-card:#fff;--dd-field:#faf9fc;--dd-ink:#28232e;--dd-muted:#6d6575;--dd-line:#e1dce6;--dd-accent:#c52d76;--dd-nav:#fff;--dd-nav-ink:#39313f;--dd-nav-hover:#fceaf3;--dd-soft:#f3eef6}
+html[data-dd-theme="dark"]{--dd-bg:#131219;--dd-card:#24212b;--dd-field:#1b1822;--dd-ink:#f7f2fa;--dd-muted:#beb3c6;--dd-line:#49404f;--dd-accent:#ff83ba;--dd-nav:#1d1923;--dd-nav-ink:#efe8f3;--dd-nav-hover:#443044;--dd-soft:#302837}
+html[data-dd-theme] {--shell-bg:var(--dd-bg);--shell-ink:var(--dd-ink);--shell-card:var(--dd-card);--shell-line:var(--dd-line);--shell-muted:var(--dd-muted);--shell-accent:var(--dd-accent);--admin-ink:var(--dd-ink);--admin-muted:var(--dd-muted);--admin-line:var(--dd-line)}
+html[data-dd-theme] body{background:var(--dd-bg)!important;color:var(--dd-ink)!important}
+html[data-dd-theme] body>header{background:var(--dd-card)!important;color:var(--dd-ink)!important;border-color:var(--dd-line)!important}
+html[data-dd-theme] body>header h1,html[data-dd-theme] body>header strong,html[data-dd-theme] body>header .logo{color:var(--dd-ink)!important}
+html[data-dd-theme] body main,html[data-dd-theme] body>main{color:var(--dd-ink)!important}
+html[data-dd-theme] body #dashboard>.panel,html[data-dd-theme] body #loginPanel,html[data-dd-theme] body #products .product,html[data-dd-theme] body .panel,html[data-dd-theme] body .tile,html[data-dd-theme] body .product,html[data-dd-theme] body .gadgetControls,html[data-dd-theme] body .pickupPanel,html[data-dd-theme] body .orderDetails{background:var(--dd-card)!important;color:var(--dd-ink)!important;border-color:var(--dd-line)!important}
+html[data-dd-theme] body #dashboard h2,html[data-dd-theme] body main h1,html[data-dd-theme] body main h2,html[data-dd-theme] body main h3,html[data-dd-theme] body main h4,html[data-dd-theme] body main strong{color:var(--dd-ink)!important}
+html[data-dd-theme] body main label,html[data-dd-theme] body main small,html[data-dd-theme] body main .muted,html[data-dd-theme] body main #status,html[data-dd-theme] body main #emptyState,html[data-dd-theme] body .panel small{color:var(--dd-muted)!important}
+html[data-dd-theme] body .subtitle,html[data-dd-theme] body #dashboard>.panel .subtitle{color:var(--dd-accent)!important}
+html[data-dd-theme] body .toolbar input,html[data-dd-theme] body input,html[data-dd-theme] body select,html[data-dd-theme] body textarea{background:var(--dd-field)!important;color:var(--dd-ink)!important;border-color:var(--dd-line)!important}
+html[data-dd-theme] body input::placeholder,html[data-dd-theme] body textarea::placeholder{color:var(--dd-muted)!important}
+html[data-dd-theme] body #brandTabs .dd-brand-tile,html[data-dd-theme] body .dd-brand-tile{background:var(--dd-field)!important;color:var(--dd-ink)!important;border-color:var(--dd-line)!important;box-shadow:none!important}
+html[data-dd-theme] body .dd-brand-tile strong{color:var(--dd-ink)!important}
+html[data-dd-theme] body .dd-brand-tile span{color:var(--dd-muted)!important}
+html[data-dd-theme] body .dd-brand-tile:hover{border-color:var(--dd-accent)!important}
+html[data-dd-theme] body button.secondary,html[data-dd-theme] body button.secondary-button,html[data-dd-theme] body .brandBtn{background:var(--dd-soft)!important;color:var(--dd-ink)!important;border-color:var(--dd-line)!important}
+html[data-dd-theme] body .brandBtn.active{background:#d73583!important;color:#fff!important}
+html[data-dd-theme] body .dd-sidebar{background:var(--dd-nav)!important;color:var(--dd-nav-ink)!important;border-right:1px solid var(--dd-line)!important}
+html[data-dd-theme] body .dd-sidebar .dd-brand,html[data-dd-theme] body .dd-sidebar .dd-brand-copy{color:var(--dd-nav-ink)!important;border-color:var(--dd-line)!important}
+html[data-dd-theme] body .dd-sidebar .dd-brand-copy small,html[data-dd-theme] body .dd-sidebar .dd-group{color:var(--dd-muted)!important}
+html[data-dd-theme] body .dd-sidebar .dd-link{color:var(--dd-nav-ink)!important}
+html[data-dd-theme] body .dd-sidebar .dd-link:hover,html[data-dd-theme] body .dd-sidebar .dd-link.dd-active{background:var(--dd-nav-hover)!important;color:var(--dd-accent)!important}
+html[data-dd-theme] body .dd-sidebar .dd-footer{border-color:var(--dd-line)!important}
+html[data-dd-theme] body .dd-sidebar .dd-theme{background:var(--dd-soft)!important;color:var(--dd-nav-ink)!important;border-color:var(--dd-line)!important}
+html[data-dd-theme] body .dd-orders-table,html[data-dd-theme] body .dd-orders-table tbody,html[data-dd-theme] body .dd-orders-table tbody tr,html[data-dd-theme] body .dd-orders-table tbody td,html[data-dd-theme] body .dd-table-wrap table tbody tr,html[data-dd-theme] body .dd-table-wrap table tbody td{background:var(--dd-card)!important;color:var(--dd-ink)!important;border-color:var(--dd-line)!important}
+html[data-dd-theme] body .dd-orders-table thead th,html[data-dd-theme] body .dd-table-wrap table thead th{background:var(--dd-soft)!important;color:var(--dd-ink)!important;border-color:var(--dd-line)!important}
+html[data-dd-theme] body main a:not([class]):not([style]){color:var(--dd-accent)}
+html[data-dd-theme] body main>div:first-child a{color:#fff!important}
+html[data-dd-theme] body .dd-sidebar .dd-icon,html[data-dd-theme] body .dd-sidebar .dd-icon svg{color:inherit!important}
+html[data-dd-theme] body .dd-sidebar .dd-footer{background:var(--dd-nav)!important}
