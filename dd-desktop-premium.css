@@ -125,8 +125,8 @@ html.dd-premium-mobile .dd-support-dock-window{bottom:90px}
  html.dd-premium-mobile .dd-desktop-search {display:flex!important;grid-column:3!important;grid-row:1!important;width:25px!important;height:30px!important;margin:0!important;position:absolute!important;right:190px!important}
  html.dd-premium-mobile .dd-desktop-search input {display:none!important}
  html.dd-premium-mobile .dd-desktop-search button {position:static!important;padding:0!important;color:#fff!important;font-size:0!important;width:25px!important;height:28px!important}
- html.dd-premium-mobile .dd-desktop-search button:before {content:"";display:block;width:17px;height:17px;border:1.7px solid currentColor;border-radius:50%;margin:auto}
- html.dd-premium-mobile .dd-desktop-search button:after {content:"";position:absolute;width:8px;height:1.7px;background:currentColor;transform:rotate(48deg);margin:14px 0 0 13px}
+ html.dd-premium-mobile .dd-desktop-search button:before,html.dd-premium-mobile .dd-desktop-search button:after {content:none!important;display:none!important}
+ html.dd-premium-mobile .dd-desktop-search button svg {display:block!important;width:22px!important;height:22px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
  html.dd-premium-mobile .dd-desktop-links {grid-column:2!important;grid-row:1!important;border:0!important;padding:0!important;margin:0!important;gap:clamp(18px,2.6vw,42px)!important;justify-content:center!important;min-width:0!important}
  html.dd-premium-mobile .dd-desktop-links a {font:600 13px/1 DM Sans,Arial,sans-serif!important;color:#e7e0e9!important;padding:24px 0 21px!important;white-space:nowrap!important}
  html.dd-premium-mobile .dd-desktop-links a:hover,html.dd-premium-mobile .dd-desktop-links a[aria-current] {color:#f21b91!important;border-bottom-color:#f21b91!important}
@@ -227,3 +227,7 @@ html.dd-premium-mobile .dd-support-dock-window{bottom:90px}
  html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger svg{display:block!important;width:17px!important;height:17px!important}
  html.dd-premium-mobile .dd-desktop-links a{display:flex!important;align-items:center!important;height:64px!important;box-sizing:border-box!important;padding:0 0 1px!important;line-height:1!important}
 }
+
+/* Center the empty search state across the full product grid. */
+html.dd-premium-mobile #catalog:has(>.empty){min-height:320px!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
+html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!important;min-height:320px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;box-sizing:border-box!important;margin:0!important;padding:32px!important}
