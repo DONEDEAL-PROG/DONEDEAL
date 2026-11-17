@@ -25,19 +25,19 @@ window.addEventListener('pageshow',e=>{if(e.persisted)location.reload()});
 window.addEventListener('storage',e=>{if(e.key===KEY&&active)lock()});
 function summary(){try{if(has())return JSON.parse(localStorage.getItem(PUBLIC)||'{}');data=legacy();const value=publicSummary();data={};return value}catch{return {}}}
 function promptPIN({allowSkip=false,purpose="details",recoveryRecords=null}={}){return new Promise(resolve=>{
- const creating=!!recoveryRecords||!has(),dialog=document.createElement('dialog');dialog.className='dd-pin-dialog';dialog.setAttribute('aria-labelledby','dd-pin-title');dialog.setAttribute('aria-describedby','dd-pin-description');
+ const creating=!!recoveryRecords||!has(),dialog=document.createElement('dialog');dialog.className='dd-pin-dialog dd-pin-ios';dialog.setAttribute('aria-labelledby','dd-pin-title');dialog.setAttribute('aria-describedby','dd-pin-description');
  dialog.innerHTML='<form><div class="dd-pin-lock" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="12" rx="3"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg></div><p class="dd-pin-eyebrow">PRIVATE ACCESS</p><h2 id="dd-pin-title">'+(creating?'Create your PIN':purpose==='cancel'?'Confirm cancellation':'Welcome back')+'</h2><p id="dd-pin-description" class="dd-pin-description">'+(creating?'Choose a 6-digit PIN for your saved details.':purpose==='cancel'?'Enter your 6-digit PIN to cancel this order.':'Enter your 6-digit PIN to view your details.')+'</p><div class="dd-pin-dots" role="group" aria-label="6-digit PIN"><span></span><span></span><span></span><span></span><span></span><span></span></div><span class="dd-pin-count" role="status" aria-live="polite">0 of 6 digits entered</span><div class="dd-pin-keypad" role="group" aria-label="PIN number pad"></div><p class="dd-pin-error" role="alert"></p><button class="dd-pin-primary" type="submit" disabled>'+(creating?'Continue':purpose==='cancel'?'Confirm cancellation':'Unlock details')+'</button><button class="dd-pin-secondary" type="button">'+(allowSkip?'Continue without saved details':'Cancel')+'</button>'+(!creating?'<button class="dd-pin-forgot" type="button">Forgot PIN?</button>':'<p class="dd-pin-note">This PIN works on this browser and device. Keep it safe.</p>')+'</form>';
  document.body.append(dialog);
  const form=dialog.querySelector('form'),error=dialog.querySelector('[role=alert]'),pad=dialog.querySelector('.dd-pin-keypad'),submit=dialog.querySelector('[type=submit]'),dots=[...dialog.querySelectorAll('.dd-pin-dots span')];
  let busy=false,value='',first='',confirming=false;
  const paint=()=>{dots.forEach((dot,i)=>{dot.classList.toggle('filled',i<value.length);dot.textContent=i<value.length?'•':''});dialog.querySelector('.dd-pin-count').textContent=value.length+' of 6 digits entered';submit.disabled=busy||value.length!==6};
  const finish=result=>{value=first='';dialog.close();dialog.remove();resolve(result)};
- function enter(digit){if(busy||value.length>=6)return;value+=digit;error.textContent='';paint()}
+ function enter(digit){if(busy||value.length>=6)return;value+=digit;error.textContent='';paint();if(value.length===6)form.requestSubmit()}
  function backspace(){if(busy)return;value=value.slice(0,-1);paint()}
  for(const digit of ['1','2','3','4','5','6','7','8','9','blank','0','back']){
   if(digit==='blank'){const spacer=document.createElement('span');spacer.setAttribute('aria-hidden','true');pad.append(spacer);continue}
   const button=document.createElement('button');button.type='button';button.className='dd-pin-key';button.setAttribute('aria-label',digit==='back'?'Delete last digit':digit);
-  if(digit==='back')button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h12v16H9L2 12zM12 9l6 6m0-6-6 6"/></svg>';else button.textContent=digit;
+  if(digit==='back')button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h12v16H9L2 12zM12 9l6 6m0-6-6 6"/></svg>';else{const numeral=document.createElement('span');numeral.className='dd-ios-numeral';numeral.textContent=digit;const letters=document.createElement('small');letters.setAttribute('aria-hidden','true');letters.textContent=({2:'ABC',3:'DEF',4:'GHI',5:'JKL',6:'MNO',7:'PQRS',8:'TUV',9:'WXYZ'})[digit]||' ';button.append(numeral,letters);}
   button.onclick=()=>digit==='back'?backspace():enter(digit);pad.append(button);
  }
  dialog.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;if(/^[0-9]$/.test(e.key)){e.preventDefault();enter(e.key)}else if(e.key==='Backspace'){e.preventDefault();backspace()}});
@@ -60,8 +60,8 @@ function promptPIN({allowSkip=false,purpose="details",recoveryRecords=null}={}){
   e.preventDefault();if(busy||value.length!==6)return;
   if(creating&&!confirming){first=value;value='';confirming=true;dialog.querySelector('h2').textContent='Confirm your PIN';dialog.querySelector('.dd-pin-description').textContent='Enter the same 6 digits again.';submit.textContent='Save PIN & unlock';paint();pad.querySelector('button').focus();return}
   if(creating&&first!==value){value=first='';confirming=false;dialog.querySelector('h2').textContent='Create your PIN';dialog.querySelector('.dd-pin-description').textContent='Choose a 6-digit PIN for your saved details.';submit.textContent='Continue';error.textContent='PINs did not match. Choose your PIN again.';paint();return}
-  busy=true;const buttons=[...dialog.querySelectorAll('button')];buttons.forEach(button=>button.disabled=true);error.textContent='';
-  try{const result=recoveryRecords?await installRecovered(value,recoveryRecords):creating?await setup(value):await unlock(value);finish(result)}catch(e){error.textContent=e.message;value='';pad.querySelector('button').focus()}finally{busy=false;buttons.forEach(button=>button.disabled=false);paint()}
+  busy=true;dialog.classList.add('dd-pin-verifying');dialog.querySelector('.dd-pin-count').textContent='Verifying PIN';const buttons=[...dialog.querySelectorAll('button')];buttons.forEach(button=>button.disabled=true);error.textContent='';
+  try{const result=recoveryRecords?await installRecovered(value,recoveryRecords):creating?await setup(value):await unlock(value);finish(result)}catch(e){error.textContent=e.message;value='';pad.querySelector('button').focus()}finally{busy=false;dialog.classList.remove('dd-pin-verifying');buttons.forEach(button=>button.disabled=false);paint()}
  };
  dialog.showModal();pad.querySelector('button').focus();
 })}
