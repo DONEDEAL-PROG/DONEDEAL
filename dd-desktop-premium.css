@@ -219,3 +219,30 @@ html.dd-premium-mobile .dd-support-dock-window{bottom:90px}
  html.dd-premium-mobile .dd-mobile-hero-content {position:relative!important;left:auto!important;top:auto!important;transform:none!important;width:auto!important;padding:24px!important}
  html.dd-premium-mobile .dd-mobile-hero-content strong {font-size:36px!important;letter-spacing:-1.5px!important}
 }
+
+
+/* FIX: restore DONEDEAL story and menu sidebar trigger */
+@media (min-width: 1101px) {
+  html.dd-premium-mobile .dd-story {
+    display: block !important;
+  }
+  html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger {
+    display: flex !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 1100px) {
+  html.dd-premium-mobile .dd-story {
+    display: block !important;
+  }
+  html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger {
+    display: flex !important;
+  }
+}
+@media (max-width: 767px) {
+  html.dd-premium-mobile .dd-story {
+    display: block !important;
+  }
+  html.dd-premium-mobile .dd-mobile-premium-header .dd-menu-trigger {
+    display: flex !important;
+  }
+}
