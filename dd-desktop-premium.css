@@ -380,3 +380,46 @@ html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!imp
   color:#322c36!important;
  }
 }
+
+/* Desktop header: give search, wishlist, cart and account independent slots. */
+@media(min-width:1101px){
+ html.dd-premium-mobile .dd-mobile-premium-header{
+  grid-template-columns:minmax(190px,220px) minmax(0,1fr) 186px!important;
+  column-gap:clamp(12px,1.5vw,24px)!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search{
+  grid-column:3!important;grid-row:1!important;
+  position:relative!important;right:auto!important;left:auto!important;
+  justify-self:start!important;align-self:center!important;
+  width:32px!important;min-width:32px!important;height:40px!important;
+  z-index:1!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions{
+  grid-column:3!important;grid-row:1!important;
+  justify-self:end!important;align-self:center!important;
+  width:126px!important;min-width:126px!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:10px!important;z-index:1!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions a:first-child{
+  display:flex!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions :is(a,button),
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button{
+  flex:0 0 30px!important;width:30px!important;min-width:30px!important;
+  height:40px!important;min-height:40px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  border:0!important;border-radius:8px!important;
+  background:transparent!important;box-shadow:none!important;
+  padding:0!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions svg,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search svg{
+  width:23px!important;height:23px!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions :is(a,button):hover,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button:hover{
+  color:#e52d83!important;background:rgba(229,45,131,.08)!important;
+ }
+}
