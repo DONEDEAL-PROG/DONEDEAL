@@ -68,6 +68,7 @@
     nav.appendChild(el);
   });
   document.body.appendChild(nav);
+  nav.addEventListener('click', e => { const item=e.target.closest('a,button'); if(item && !matchMedia('(prefers-reduced-motion: reduce)').matches){item.classList.remove('dd-motion-reveal');void item.offsetWidth;item.classList.add('dd-motion-reveal');} });
   const cartOverlay=document.getElementById('cartOverlay');
   if(cartOverlay){const sync=()=>{const cartOpen=cartOverlay.classList.contains('open');nav.querySelectorAll('a,button').forEach((el,i)=>{const selected=cartOpen?i===3:['home','shop','heart','cart','account'][i]===active;el.classList.toggle('dd-active',selected);if(selected)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current')})};new MutationObserver(sync).observe(cartOverlay,{attributes:true,attributeFilter:['class']});sync()}
 
@@ -79,7 +80,8 @@
     hero.querySelector('button').addEventListener('click',()=>{location.href='/shop.html'});
     document.querySelector('main#home>.hero').before(hero);
     const search=document.createElement('a');search.className='dd-mobile-search';search.href='/#shop';search.innerHTML='<span class="dd-mobile-search-label">Search phones, gadgets, accessories…</span>';
-    hero.before(search);
+    /* Mobile uses the existing shopping search destination; do not render a second top search bar. */
+    search.remove();
   }
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
