@@ -285,3 +285,36 @@ html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!imp
   filter:none!important
  }
 }
+
+/* Keep search, cart and account controls together in the desktop header. */
+@media(min-width:1101px){
+ html.dd-premium-mobile .dd-mobile-premium-header{
+  grid-template-columns:minmax(190px,220px) minmax(0,1fr) 116px!important;
+  column-gap:clamp(16px,2vw,30px)!important
+ }
+ html.dd-premium-mobile .dd-desktop-search{
+  position:relative!important;right:auto!important;left:auto!important;
+  grid-column:3!important;grid-row:1!important;justify-self:start!important;
+  width:26px!important;z-index:2!important
+ }
+ html.dd-premium-mobile .dd-desktop-actions{
+  grid-column:3!important;grid-row:1!important;justify-self:end!important;
+  gap:14px!important;min-width:70px!important
+ }
+ html.dd-premium-mobile .dd-desktop-search button{color:inherit!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand img{
+  content:url("/done-deal-mark-light.png")!important;
+  filter:drop-shadow(0 2px 3px rgba(71,38,59,.12))!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand>span{
+  color:#27212b!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand>span>span{
+  color:#c52a76!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search button,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search button svg,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-actions svg{
+  color:#35303b!important;stroke:currentColor!important
+ }
+}
