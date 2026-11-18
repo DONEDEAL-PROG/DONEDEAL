@@ -318,3 +318,128 @@ html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!imp
   color:#35303b!important;stroke:currentColor!important
  }
 }
+
+/* Subtle polish: restore readable contrast on light-theme product browsing CTA. */
+@media(min-width:768px){
+ html.dd-premium-mobile[data-dd-store-theme="light"] .featuredHeading a{
+  color:#982052!important;
+  background:#fff!important;
+  border-color:#d52679!important;
+  font-weight:700!important;
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .featuredHeading a:hover,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .featuredHeading a:focus-visible{
+  color:#fff!important;
+  background:#bd246b!important;
+  border-color:#bd246b!important;
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] #shop #resultCount{
+  color:#595264!important;
+  font-weight:600!important;
+ }
+}
+
+/* Subtle polish: consistent unfilled desktop shopping tools.
+   Override generic button styling without affecting icon actions. */
+@media(min-width:1101px){
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions a,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions button{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  outline-offset:3px;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions a,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions button{
+  width:30px!important;height:36px!important;min-width:30px!important;min-height:36px!important;
+  padding:0!important;margin:0!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;
+  line-height:1!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button svg,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions svg{
+  width:23px!important;height:23px!important;display:block!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button:hover,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions :is(a,button):hover{
+  color:#e62b83!important;
+ }
+ html.dd-premium-mobile[data-dd-store-theme="dark"] .dd-mobile-premium-header .dd-desktop-search button,
+ html.dd-premium-mobile[data-dd-store-theme="dark"] .dd-mobile-premium-header .dd-desktop-actions :is(a,button){
+  color:#f1edf3!important;
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-header .dd-desktop-search button,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-header .dd-desktop-actions :is(a,button){
+  color:#322c36!important;
+ }
+}
+
+/* Desktop header: give search, wishlist, cart and account independent slots. */
+@media(min-width:1101px){
+ html.dd-premium-mobile .dd-mobile-premium-header{
+  grid-template-columns:minmax(190px,220px) minmax(0,1fr) 186px!important;
+  column-gap:clamp(12px,1.5vw,24px)!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search{
+  grid-column:3!important;grid-row:1!important;
+  position:relative!important;right:auto!important;left:auto!important;
+  justify-self:start!important;align-self:center!important;
+  width:32px!important;min-width:32px!important;height:40px!important;
+  z-index:1!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions{
+  grid-column:3!important;grid-row:1!important;
+  justify-self:end!important;align-self:center!important;
+  width:126px!important;min-width:126px!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:10px!important;z-index:1!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions a:first-child{
+  display:flex!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions :is(a,button),
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button{
+  flex:0 0 30px!important;width:30px!important;min-width:30px!important;
+  height:40px!important;min-height:40px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  border:0!important;border-radius:8px!important;
+  background:transparent!important;box-shadow:none!important;
+  padding:0!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions svg,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search svg{
+  width:23px!important;height:23px!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.7!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions :is(a,button):hover,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button:hover{
+  color:#e52d83!important;background:rgba(229,45,131,.08)!important;
+ }
+}
+
+/* Final desktop toolbar: wishlist remains available elsewhere, not in the header. */
+@media(min-width:1101px){
+ html.dd-premium-mobile .dd-mobile-premium-header{
+  grid-template-columns:minmax(190px,220px) minmax(0,1fr) 138px!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions a:first-child{
+  display:none!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search{
+  grid-column:3!important;grid-row:1!important;position:relative!important;
+  right:auto!important;left:auto!important;justify-self:start!important;
+  width:32px!important;min-width:32px!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions{
+  grid-column:3!important;grid-row:1!important;justify-self:end!important;
+  width:80px!important;min-width:80px!important;gap:12px!important;
+  justify-content:space-between!important;
+ }
+}

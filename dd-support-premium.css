@@ -66,3 +66,59 @@ html.dd-support-embedded #conversation>.section-top{gap:6px!important;padding:12
 html.dd-support-embedded #conversation h2{font-size:14px!important}
 html body.dd-support-premium #send textarea{overflow-y:auto;scrollbar-width:none}
 html body.dd-support-premium #send textarea::-webkit-scrollbar{display:none}
+
+/* Support readability: use the support theme tokens consistently. */
+html body.dd-support-premium :is(main>h1,main h2,main h3,.panel h2,.panel h3,#conversation h2,#myConversationsPanel h2){
+ color:var(--sp-text)!important;
+}
+html body.dd-support-premium :is(main>p,.panel>p,.helper,.info-box p){
+ color:var(--sp-muted)!important;
+}
+html body.dd-support-premium :is(label,.history-details strong,.info-box strong,#ticketInfo){
+ color:var(--sp-text)!important;
+}
+html body.dd-support-premium .history-details small{
+ color:var(--sp-muted)!important;
+}
+html body.dd-support-premium .bubble,
+html body.dd-support-premium #messages .bubble{
+ color:var(--sp-text)!important;
+}
+html body.dd-support-premium #messages .bubble small{
+ color:var(--sp-muted)!important;
+ opacity:1!important;
+}
+html body.dd-support-premium #messages .bubble.mine small{
+ color:#fff!important;
+ opacity:.9!important;
+}
+html body.dd-support-premium :is(input,textarea,select)::placeholder{
+ color:var(--sp-muted)!important;
+ opacity:1!important;
+}
+html body.dd-support-premium #start :is(input,textarea,select){
+ color:var(--sp-text)!important;
+}
+html[data-dd-store-theme="light"] body.dd-support-premium{
+ --sp-muted:#57505f;
+ --sp-line:#d6d1dc;
+}
+html[data-dd-store-theme="light"] body.dd-support-premium .bubble.mine{
+ color:#fff!important;
+}
+
+/* Empty conversation state must use the current theme, not the legacy white card. */
+html body.dd-support-premium #emptyConversationHistory{
+ background:var(--sp-card)!important;
+ border:1px solid var(--sp-line)!important;
+ color:var(--sp-text)!important;
+ border-radius:14px!important;
+}
+html body.dd-support-premium #emptyConversationHistory strong{
+ color:var(--sp-text)!important;
+ font-weight:700!important;
+}
+html body.dd-support-premium #emptyConversationHistory p{
+ color:var(--sp-muted)!important;
+ opacity:1!important;
+}
