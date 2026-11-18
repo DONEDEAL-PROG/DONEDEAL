@@ -151,3 +151,71 @@ html[data-dd-store-theme] :is(.history-item,.settings a,.order-item) {
     animation-duration: .01ms !important;
   }
 }
+
+/* DONE DEAL subtle polish, 2026-11-19.
+   Presentation-only: preserve brand palette, page structure and interactions. */
+html[data-dd-store-theme]{
+  --dd-polish-radius:14px;
+  --dd-polish-ease:cubic-bezier(.22,.8,.24,1);
+}
+html[data-dd-store-theme] body{
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+html[data-dd-store-theme] :is(h1,h2,h3){
+  text-wrap:balance;
+}
+html[data-dd-store-theme] :is(p,.muted,.subtitle,.description){
+  overflow-wrap:break-word;
+}
+html[data-dd-store-theme] :is(button,[role="button"],input,select,textarea,a){
+  -webkit-tap-highlight-color:transparent;
+}
+html[data-dd-store-theme] :is(button,[role="button"],a,input,select,textarea):focus-visible{
+  outline:2px solid #d32c7e!important;
+  outline-offset:3px!important;
+}
+html[data-dd-store-theme] :is(button,[role="button"]):not(:disabled){
+  cursor:pointer;
+}
+html[data-dd-store-theme] :is(.product,.product-card,.dd-extra-card,.dd-story-cta){
+  backface-visibility:hidden;
+}
+html[data-dd-store-theme] :is(.product,.product-card,.dd-extra-card) img{
+  object-position:center;
+}
+html[data-dd-store-theme] :is(.product,.product-card,.dd-extra-card) :is(h3,h4){
+  line-height:1.28;
+  letter-spacing:-.015em;
+}
+html[data-dd-store-theme] :is(.product,.product-card,.dd-extra-card) :is(p,small){
+  line-height:1.5;
+}
+html[data-dd-store-theme] :is(input,select,textarea){
+  min-width:0;
+  transition:border-color .2s ease,box-shadow .2s ease,background-color .2s ease;
+}
+html[data-dd-store-theme] :is(input,select,textarea):focus-visible{
+  border-color:#d32c7e!important;
+  box-shadow:0 0 0 3px rgba(211,44,126,.12);
+}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  html[data-dd-store-theme] :is(.product,.product-card,.dd-extra-card){
+    transition:transform .22s var(--dd-polish-ease),box-shadow .22s ease,border-color .22s ease,background-color .22s ease;
+  }
+  html[data-dd-store-theme] :is(.product,.product-card,.dd-extra-card):hover{
+    transform:translateY(-2px);
+  }
+  html[data-dd-store-theme] :is(button,[role="button"]):not(:disabled):active{
+    transform:scale(.985);
+  }
+}
+@media (max-width:767px){
+  html[data-dd-store-theme] :is(input,select,textarea){font-size:max(16px,1em)}
+  html[data-dd-store-theme] :is(.product,.product-card,.dd-extra-card){min-width:0}
+}
+@media (prefers-reduced-motion:reduce){
+  html[data-dd-store-theme] :is(.product,.product-card,.dd-extra-card,button,[role="button"]){
+    transform:none!important;
+  }
+}
