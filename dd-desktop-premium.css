@@ -318,3 +318,23 @@ html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!imp
   color:#35303b!important;stroke:currentColor!important
  }
 }
+
+/* Subtle polish: restore readable contrast on light-theme product browsing CTA. */
+@media(min-width:768px){
+ html.dd-premium-mobile[data-dd-store-theme="light"] .featuredHeading a{
+  color:#982052!important;
+  background:#fff!important;
+  border-color:#d52679!important;
+  font-weight:700!important;
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .featuredHeading a:hover,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .featuredHeading a:focus-visible{
+  color:#fff!important;
+  background:#bd246b!important;
+  border-color:#bd246b!important;
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] #shop #resultCount{
+  color:#595264!important;
+  font-weight:600!important;
+ }
+}
