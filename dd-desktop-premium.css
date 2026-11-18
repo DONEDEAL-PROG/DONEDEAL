@@ -231,3 +231,27 @@ html.dd-premium-mobile .dd-support-dock-window{bottom:90px}
 /* Center the empty search state across the full product grid. */
 html.dd-premium-mobile #catalog:has(>.empty){min-height:320px!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
 html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!important;min-height:320px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;box-sizing:border-box!important;margin:0!important;padding:32px!important}
+
+/* Desktop story visibility and theme-aware premium navigation */
+@media(min-width:768px){
+ html.dd-premium-mobile #dd-story.dd-story{display:block!important;visibility:visible!important}
+ html.dd-premium-mobile #dd-story .dd-story-chapter{display:flex!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-header{
+  background:#ffffff!important;color:#262330!important;border-color:#e5dce5!important;
+  box-shadow:0 7px 24px rgba(34,21,39,.07)!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand>span{color:#25212b!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand>span span{color:#d12b7b!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links{border-top-color:#e7dfe7!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links a,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links .dd-menu-trigger{color:#56505d!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links a:hover,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links a[aria-current]{color:#c42574!important;border-bottom-color:#c42574!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-actions :is(a,button),
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search button{color:#38323e!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search{background:#f5f2f6!important;border-color:#e3dce4!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search input{color:#27212c!important;background:transparent!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search input::placeholder{color:#716977!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links .dd-menu-trigger:hover{color:#c42574!important}
+}
