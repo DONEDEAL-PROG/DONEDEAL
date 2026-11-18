@@ -338,3 +338,45 @@ html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!imp
   font-weight:600!important;
  }
 }
+
+/* Subtle polish: consistent unfilled desktop shopping tools.
+   Override generic button styling without affecting icon actions. */
+@media(min-width:1101px){
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions a,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions button{
+  background:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  outline-offset:3px;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions a,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions button{
+  width:30px!important;height:36px!important;min-width:30px!important;min-height:36px!important;
+  padding:0!important;margin:0!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;
+  line-height:1!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button svg,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions svg{
+  width:23px!important;height:23px!important;display:block!important;
+  fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;
+  stroke-linecap:round!important;stroke-linejoin:round!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search button:hover,
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions :is(a,button):hover{
+  color:#e62b83!important;
+ }
+ html.dd-premium-mobile[data-dd-store-theme="dark"] .dd-mobile-premium-header .dd-desktop-search button,
+ html.dd-premium-mobile[data-dd-store-theme="dark"] .dd-mobile-premium-header .dd-desktop-actions :is(a,button){
+  color:#f1edf3!important;
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-header .dd-desktop-search button,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-header .dd-desktop-actions :is(a,button){
+  color:#322c36!important;
+ }
+}
