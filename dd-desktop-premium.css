@@ -231,3 +231,90 @@ html.dd-premium-mobile .dd-support-dock-window{bottom:90px}
 /* Center the empty search state across the full product grid. */
 html.dd-premium-mobile #catalog:has(>.empty){min-height:320px!important;grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
 html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!important;min-height:320px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;box-sizing:border-box!important;margin:0!important;padding:32px!important}
+
+/* Desktop story visibility and theme-aware premium navigation */
+@media(min-width:768px){
+ html.dd-premium-mobile #dd-story.dd-story{display:block!important;visibility:visible!important}
+ html.dd-premium-mobile #dd-story .dd-story-chapter{display:flex!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-header{
+  background:#ffffff!important;color:#262330!important;border-color:#e5dce5!important;
+  box-shadow:0 7px 24px rgba(34,21,39,.07)!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand>span{color:#25212b!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand>span span{color:#d12b7b!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links{border-top-color:#e7dfe7!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links a,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links .dd-menu-trigger{color:#56505d!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links a:hover,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links a[aria-current]{color:#c42574!important;border-bottom-color:#c42574!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-actions :is(a,button),
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search button{color:#38323e!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search{background:#f5f2f6!important;border-color:#e3dce4!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search input{color:#27212c!important;background:transparent!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search input::placeholder{color:#716977!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-links .dd-menu-trigger:hover{color:#c42574!important}
+}
+
+/* Desktop navigation: remove the oversized boxed menu appearance. */
+@media(min-width:768px){
+ html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger{
+  height:auto!important;min-height:42px!important;padding:0 12px!important;
+  border:0!important;border-radius:10px!important;outline:0!important;
+  background:transparent!important;box-shadow:none!important;
+  transform:none!important;line-height:1.2!important;
+ }
+ html.dd-premium-mobile .dd-desktop-links .dd-menu-trigger:focus-visible{
+  outline:2px solid #cf2778!important;outline-offset:2px!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .brandBar{
+  background:#fff!important;border:1px solid #e5dfe7!important;
+  box-shadow:0 8px 24px rgba(39,23,42,.07)!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .brandBar .brandTile{
+  background:transparent!important;color:#2c2731!important;
+  border-right-color:#e3dce5!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .brandBar .brandTile:hover{
+  background:#f8f0f5!important;color:#ad2467!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .brandBar .samsungWord{
+  color:#29252d!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .brandBar .appleLogo{
+  filter:none!important
+ }
+}
+
+/* Keep search, cart and account controls together in the desktop header. */
+@media(min-width:1101px){
+ html.dd-premium-mobile .dd-mobile-premium-header{
+  grid-template-columns:minmax(190px,220px) minmax(0,1fr) 116px!important;
+  column-gap:clamp(16px,2vw,30px)!important
+ }
+ html.dd-premium-mobile .dd-desktop-search{
+  position:relative!important;right:auto!important;left:auto!important;
+  grid-column:3!important;grid-row:1!important;justify-self:start!important;
+  width:26px!important;z-index:2!important
+ }
+ html.dd-premium-mobile .dd-desktop-actions{
+  grid-column:3!important;grid-row:1!important;justify-self:end!important;
+  gap:14px!important;min-width:70px!important
+ }
+ html.dd-premium-mobile .dd-desktop-search button{color:inherit!important}
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand img{
+  content:url("/done-deal-mark-light.png")!important;
+  filter:drop-shadow(0 2px 3px rgba(71,38,59,.12))!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand>span{
+  color:#27212b!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-mobile-premium-brand>span>span{
+  color:#c52a76!important
+ }
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search button,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-search button svg,
+ html.dd-premium-mobile[data-dd-store-theme="light"] .dd-desktop-actions svg{
+  color:#35303b!important;stroke:currentColor!important
+ }
+}
