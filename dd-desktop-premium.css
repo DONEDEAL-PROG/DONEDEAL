@@ -423,3 +423,23 @@ html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!imp
   color:#e52d83!important;background:rgba(229,45,131,.08)!important;
  }
 }
+
+/* Final desktop toolbar: wishlist remains available elsewhere, not in the header. */
+@media(min-width:1101px){
+ html.dd-premium-mobile .dd-mobile-premium-header{
+  grid-template-columns:minmax(190px,220px) minmax(0,1fr) 138px!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions a:first-child{
+  display:none!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-search{
+  grid-column:3!important;grid-row:1!important;position:relative!important;
+  right:auto!important;left:auto!important;justify-self:start!important;
+  width:32px!important;min-width:32px!important;
+ }
+ html.dd-premium-mobile .dd-mobile-premium-header .dd-desktop-actions{
+  grid-column:3!important;grid-row:1!important;justify-self:end!important;
+  width:80px!important;min-width:80px!important;gap:12px!important;
+  justify-content:space-between!important;
+ }
+}
