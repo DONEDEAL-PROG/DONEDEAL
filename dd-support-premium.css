@@ -122,3 +122,20 @@ html body.dd-support-premium #emptyConversationHistory p{
  color:var(--sp-muted)!important;
  opacity:1!important;
 }
+
+/* Queue and informational notices: maintain readable contrast in both themes. */
+html body.dd-support-premium :is(#liveFormNotice,#agentsBusyNotice,.info-box:not(#emptyConversationHistory)) {
+  background: var(--sp-field) !important;
+  border: 1px solid var(--sp-line) !important;
+  color: var(--sp-text) !important;
+  border-radius: 12px;
+}
+html body.dd-support-premium :is(#liveFormNotice,#agentsBusyNotice,.info-box:not(#emptyConversationHistory)) strong {
+  color: var(--sp-text) !important;
+  font-weight: 750 !important;
+  opacity: 1 !important;
+}
+html body.dd-support-premium :is(#liveFormNotice,#agentsBusyNotice,.info-box:not(#emptyConversationHistory)) p {
+  color: var(--sp-muted) !important;
+  opacity: 1 !important;
+}
