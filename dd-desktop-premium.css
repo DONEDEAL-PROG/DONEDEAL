@@ -443,3 +443,18 @@ html.dd-premium-mobile #catalog>.empty{grid-column:1/-1!important;width:100%!imp
   justify-content:space-between!important;
  }
 }
+
+/* Cart is a focused overlay: hide floating navigation and support UI while open.
+   :has() follows the existing .open state, including close/checkout actions. */
+html:has(#cartOverlay.open) .dd-mobile-premium-header,
+html:has(#cartOverlay.open) .dd-mobile-bottom-nav,
+html:has(#cartOverlay.open) .dd-support-float,
+html:has(#cartOverlay.open) .dd-support-dock,
+html:has(#cartOverlay.open) .dd-support-dock-bubble,
+html:has(#cartOverlay.open) body > header.nav {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+html:has(#cartOverlay.open) #cartOverlay {
+  z-index: 100001 !important;
+}
