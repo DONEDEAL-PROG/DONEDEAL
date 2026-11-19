@@ -213,6 +213,13 @@ function setMode(next){
 
   const live=mode==='live';
 
+  // Keep the visible inbox tabs synchronized with the selected support mode.
+  document.querySelectorAll('.dd-support-inbox-actions button').forEach(button=>{
+    const active=button.dataset.supportMode===mode;
+    button.classList.toggle('is-active',active);
+    button.setAttribute('aria-pressed',String(active));
+  });
+
   $('chooseLive').classList.toggle(
     'active',
     live
@@ -765,7 +772,7 @@ $('backToInbox').onclick=()=>{document.body.classList.remove('dd-support-chat');
 document.body.classList.add('dd-support-premium');
 $('message').addEventListener('input',()=>{const field=$('message');field.style.height='43px';field.style.height=Math.min(110,Math.max(43,field.scrollHeight))+'px';});
 const inboxActions=document.createElement('div');inboxActions.className='dd-support-inbox-actions';
-for(const [label,next] of [['＋ New ticket','ticket'],['Live support','live']]){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{startNewConversation(next);document.body.classList.remove('dd-support-chat');$('start').scrollIntoView({block:'start',behavior:'smooth'})};inboxActions.append(b)}
+for(const [label,next] of [['＋ New ticket','ticket'],['Live support','live']]){const b=document.createElement('button');b.type='button';b.dataset.supportMode=next;b.textContent=label;b.onclick=()=>{startNewConversation(next);document.body.classList.remove('dd-support-chat');$('start').scrollIntoView({block:'start',behavior:'smooth'})};inboxActions.append(b)}
 $('myConversationsPanel').before(inboxActions);
 // Restore current conversation.
 try{
