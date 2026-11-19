@@ -458,3 +458,22 @@ html:has(#cartOverlay.open) body > header.nav {
 html:has(#cartOverlay.open) #cartOverlay {
   z-index: 100001 !important;
 }
+
+/* Product details must sit above sticky navigation and remain fully usable. */
+html.dd-premium-mobile #detailOverlay.open {
+  z-index: 100002 !important;
+}
+html:has(#detailOverlay.open) .dd-mobile-premium-header,
+html:has(#detailOverlay.open) .dd-mobile-bottom-nav,
+html:has(#detailOverlay.open) body > header.nav {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+#detailOverlay .modal {
+  box-sizing: border-box;
+  max-height: min(90dvh, calc(100dvh - 32px));
+  overscroll-behavior: contain;
+}
+@media(max-width:767px){
+  #detailOverlay .modal{max-height:calc(100dvh - 24px)}
+}
