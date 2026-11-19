@@ -1,0 +1,12 @@
+/* Premium visual smartphone comparison */
+#compareOverlay .modal{width:min(1050px,calc(100vw - 32px));max-width:1050px;max-height:90dvh;overflow:auto;padding:28px;border-radius:22px;background:#202029;border:1px solid #49414e;box-shadow:0 25px 90px #0009}
+#compareOverlay .modal>h2{font-size:clamp(22px,2.3vw,29px);letter-spacing:-.6px;margin:0 44px 23px 0}
+#compareOverlay .comparePanel.dd-compare-premium{display:grid;grid-template-columns:repeat(var(--compare-columns,3),minmax(0,1fr));gap:16px}
+#compareOverlay .compareCard{display:flex;flex-direction:column;min-width:0;padding:0 0 20px;overflow:hidden;border-radius:17px;background:linear-gradient(150deg,#2b2b35,#25242e);border:1px solid #48424e;color:#f8f6fa}
+#compareOverlay .dd-compare-photo{height:220px;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at center,#42404e,#302e3a 65%,#292732);border-bottom:1px solid #47414d;color:#b9b5c2;text-align:center;font-size:12px}
+#compareOverlay .dd-compare-photo img{display:block;width:100%;height:100%;max-width:95%;object-fit:contain;filter:drop-shadow(0 12px 17px #0005)}
+#compareOverlay .dd-compare-brand{margin:19px 18px 6px;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#ff69a8;font-weight:800}
+#compareOverlay .compareCard h3{font-size:19px;line-height:1.3;letter-spacing:-.4px;margin:0 18px 15px}
+#compareOverlay .dd-compare-spec,#compareOverlay .dd-compare-desc{margin:0 18px 12px;font-size:12px;line-height:1.65;color:#c7c4d0}
+#compareOverlay .dd-compare-price{display:block;margin:auto 18px 0;padding-top:18px;border-top:1px solid #47424e;font-size:20px;color:#fff;letter-spacing:-.3px}
+@media(max-width:700px){#compareOverlay .modal{padding:20px 14px}#compareOverlay .comparePanel.dd-compare-premium{grid-template-columns:1fr;gap:12px}#compareOverlay .dd-compare-photo{height:190px}}
