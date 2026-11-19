@@ -39,7 +39,7 @@
    else {const links=header.querySelector('.dd-desktop-links');if(links&&trigger.parentNode!==links)links.prepend(trigger);}
   }
   placeMenu();new MutationObserver(placeMenu).observe(document.body,{childList:true,subtree:true});window.addEventListener('resize',placeMenu);
-  if(new URLSearchParams(location.search).get('widget')!=='1'){
+  if(false /* Floating support removed; use Customer Support navigation instead. */){
    const dock=document.createElement('div');dock.className='dd-support-dock';
    const bubble=document.createElement('button');bubble.type='button';bubble.className='dd-support-dock-bubble';bubble.setAttribute('aria-label','Resume customer support');bubble.textContent='Support';
    const box=document.createElement('div');box.className='dd-support-dock-window';box.hidden=true;
