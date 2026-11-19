@@ -18,6 +18,22 @@ const wish=document.createElement('button');wish.type='button';wish.className='w
 const cp=document.createElement('button');cp.type='button';cp.className='outline compareBtn';cp.textContent=comparison.includes(p.id)?'✓ In comparison':'⇄ Compare';cp.onclick=()=>{comparison=comparison.includes(p.id)?comparison.filter(x=>x!==p.id):comparison.length<3?[...comparison,p.id]:comparison;put('ddCompare',comparison);render()};el.querySelector('.actions').append(cp);
 if(customPrices[p.id]!==undefined){const elPrice=el.querySelector('.price');elPrice.innerHTML=money(cost)+'<small>Demo selling price set in this browser</small>'}
 });document.getElementById('resultCount').textContent=shown+' products';document.getElementById('compareCount').textContent=comparison.length;document.getElementById('wishlistToggle').textContent=onlyWishlist?'♥ Show all phones':'♡ Wishlist';};
+// Comparison selection must have a visible entry point to open the modal.
+const compareLauncher=document.createElement('button');
+compareLauncher.type='button';
+compareLauncher.id='ddCompareLauncher';
+compareLauncher.className='dd-compare-launcher';
+compareLauncher.setAttribute('aria-label','Open smartphone comparison');
+compareLauncher.addEventListener('click',()=>window.openCompare());
+document.body.append(compareLauncher);
+function syncCompareLauncher(){
+  const count=comparison.filter(id=>products.some(p=>p.id===id)).length;
+  compareLauncher.hidden=count===0;
+  compareLauncher.textContent='Compare '+count+' phone'+(count===1?'':'s')+' →';
+}
+const previousComparisonRender=render;
+render=function(){previousComparisonRender();syncCompareLauncher()};
+syncCompareLauncher();
 window.toggleWishlist=()=>{onlyWishlist=!onlyWishlist;render()};
 function compareImage(p){
   let overrides={};
