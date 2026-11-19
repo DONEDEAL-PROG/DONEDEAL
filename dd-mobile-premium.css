@@ -185,3 +185,35 @@ html.dd-premium-mobile .dd-cart-privacy{text-align:center;color:var(--mp-muted);
   html.dd-premium-mobile .dd-mobile-premium-theme{display:none!important}
   html.dd-premium-mobile .dd-hero-eyebrow{display:none!important}
 }
+
+/* Mobile product details: keep purchase action accessible inside the modal. */
+@media(max-width:767px){
+ html body:has(#detailOverlay.open) .dd-mobile-bottom-nav,
+ html body:has(#detailOverlay.open) nav.dd-mobile-bottom-nav,
+ html body:has(#detailOverlay.open) .dd-mobile-premium-header{
+   display:none!important;visibility:hidden!important;pointer-events:none!important;
+ }
+ html body #detailOverlay.open{z-index:100010!important;inset:0!important;overflow:hidden!important}
+ html body #detailOverlay .modal{
+   position:absolute!important;top:50%!important;left:50%!important;
+   transform:translate(-50%,-50%)!important;
+   width:calc(100vw - 20px)!important;max-width:520px!important;
+   height:calc(100dvh - 28px)!important;max-height:calc(100dvh - 28px)!important;
+   padding:18px 16px 0!important;overflow-y:auto!important;overflow-x:hidden!important;
+   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+   box-sizing:border-box!important;border-radius:18px!important;
+ }
+ html body #detailOverlay #detailBody{padding-bottom:0!important}
+ html body #detailOverlay #detailBody > button.btn:last-child{
+   display:block!important;position:sticky!important;bottom:0!important;z-index:5!important;
+   box-sizing:border-box!important;width:100%!important;min-height:54px!important;
+   margin:18px 0 0!important;padding:15px 18px!important;
+   border-radius:12px!important;background:#ed4082!important;color:#fff!important;
+   font-weight:850!important;font-size:15px!important;
+   box-shadow:0 -9px 0 10px #25262d,0 5px 20px #0004!important;
+ }
+ html body #detailOverlay .modal{padding-bottom:max(16px,env(safe-area-inset-bottom))!important}
+ html body #detailOverlay #detailBody .visual{height:clamp(170px,31dvh,270px)!important}
+ html body #detailOverlay #detailBody .detailPhoto{height:clamp(170px,31dvh,270px)!important}
+ html body #detailOverlay #detailBody .specTable{font-size:13px!important}
+}
