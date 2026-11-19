@@ -19,7 +19,38 @@ const cp=document.createElement('button');cp.type='button';cp.className='outline
 if(customPrices[p.id]!==undefined){const elPrice=el.querySelector('.price');elPrice.innerHTML=money(cost)+'<small>Demo selling price set in this browser</small>'}
 });document.getElementById('resultCount').textContent=shown+' products';document.getElementById('compareCount').textContent=comparison.length;document.getElementById('wishlistToggle').textContent=onlyWishlist?'♥ Show all phones':'♡ Wishlist';};
 window.toggleWishlist=()=>{onlyWishlist=!onlyWishlist;render()};
-window.openCompare=()=>{closeOverlay();const selected=comparison.map(id=>products.find(p=>p.id===id)).filter(Boolean);document.getElementById('compareBody').innerHTML=selected.length?'<div class="comparePanel">'+selected.map(p=>'<div class="compareCard"><strong>'+escapeHTML(p.brand+' '+p.name)+'</strong><p>'+escapeHTML(p.spec)+'</p><p>'+escapeHTML(p.desc)+'</p><b>'+money(price(p))+'</b></div>').join('')+'</div>':'Choose up to three products using the Compare buttons in the catalog.';document.getElementById('compareOverlay').classList.add('open')};
+function compareImage(p){
+  let overrides={};
+  try{overrides=JSON.parse(localStorage.getItem('ddPhotoOverrides')||'{}')||{}}catch(_){}
+  return (typeof window.DDProductImage==='function'&&window.DDProductImage(p.id))||overrides[p.id]||p.image||'';
+}
+window.openCompare=()=>{
+  closeOverlay();
+  const selected=comparison.map(id=>products.find(p=>p.id===id)).filter(Boolean);
+  const body=document.getElementById('compareBody');
+  body.replaceChildren();
+  if(!selected.length){body.textContent='Choose up to three products using the Compare buttons in the catalog.'}
+  else{
+    const grid=document.createElement('div');grid.className='comparePanel dd-compare-premium';
+    selected.forEach(p=>{
+      const card=document.createElement('article');card.className='compareCard';
+      const photo=document.createElement('div');photo.className='dd-compare-photo';
+      const imageUrl=compareImage(p);
+      if(imageUrl){
+        const img=document.createElement('img');img.alt=p.brand+' '+p.name;img.loading='lazy';
+        img.onerror=()=>{img.remove();photo.textContent='Product image unavailable'};
+        img.src=imageUrl;photo.append(img);
+      }else{photo.textContent='Product image unavailable'}
+      const brand=document.createElement('span');brand.className='dd-compare-brand';brand.textContent=p.brand;
+      const name=document.createElement('h3');name.textContent=p.name;
+      const specs=document.createElement('p');specs.className='dd-compare-spec';specs.textContent=p.spec||'Specifications pending';
+      const desc=document.createElement('p');desc.className='dd-compare-desc';desc.textContent=p.desc||'';
+      const priceTag=document.createElement('strong');priceTag.className='dd-compare-price';priceTag.textContent=money(price(p));
+      card.append(photo,brand,name,specs,desc,priceTag);grid.append(card);
+    });body.append(grid);
+  }
+  document.getElementById('compareOverlay').classList.add('open');
+};
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 window.openAdmin=()=>{closeOverlay();const count=products.length,priced=products.filter(p=>price(p)!=null).length;document.getElementById('adminStats').innerHTML='<div class="adminStat">Products<b>'+count+'</b></div><div class="adminStat">Priced models<b>'+priced+'</b></div><div class="adminStat">Cart items<b>'+Object.values(cart).reduce((a,b)=>a+Number(b),0)+'</b></div>';document.getElementById('adminProducts').innerHTML=products.map(p=>'<div class="adminRow"><span>'+escapeHTML(p.brand+' '+p.name)+'</span><label>₱ <input type="number" min="0" step="1" data-id="'+escapeHTML(p.id)+'" placeholder="Price" value="'+(customPrices[p.id]??'')+'"></label><button type="button" data-save="'+escapeHTML(p.id)+'">Save</button></div>').join('');document.querySelectorAll('#adminProducts button').forEach(b=>b.onclick=()=>{const id=b.dataset.save;const v=[...document.querySelectorAll('#adminProducts input')].find(x=>x.dataset.id===id).value;if(v==='')delete customPrices[id];else customPrices[id]=Math.max(0,Math.round(Number(v)));put('ddPrices',customPrices);render();openAdmin()});document.getElementById('adminOverlay').classList.add('open')};
 window.resetDemo=()=>{if(!confirm('Clear local demo products and selling prices on this browser?'))return;customProducts.forEach(p=>{const i=products.findIndex(x=>x.id===p.id);if(i>=0)products.splice(i,1)});customProducts=[];customPrices={};put('ddCustomProducts',[]);put('ddPrices',{});render();openAdmin()};
