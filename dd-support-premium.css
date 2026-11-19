@@ -6,7 +6,7 @@ html body.dd-support-premium main>h1{font-size:27px!important;letter-spacing:-.7
 html body.dd-support-premium main>p{color:var(--sp-muted);font-size:14px;margin:0 0 22px}
 html body.dd-support-premium .dd-support-inbox-actions{display:flex;gap:10px;margin:20px 0 24px}
 html body.dd-support-premium .dd-support-inbox-actions button{flex:1;background:var(--sp-card);color:var(--sp-text);border:1px solid var(--sp-line);border-radius:10px;padding:12px;font:650 13px system-ui;cursor:pointer}
-html body.dd-support-premium .dd-support-inbox-actions button:first-child{border-color:var(--sp-pink);background:var(--sp-tint)}
+html body.dd-support-premium .dd-support-inbox-actions button.is-active{border-color:var(--sp-pink)!important;background:var(--sp-tint)!important;color:var(--sp-text)!important;box-shadow:inset 0 0 0 1px rgba(237,64,130,.16)!important;font-weight:750!important}
 html body.dd-support-premium #myConversationsPanel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 24px!important}
 html body.dd-support-premium #myConversationsPanel h2{font-size:19px!important;margin:0!important}
 html body.dd-support-premium #myConversationsPanel>.section-top{justify-content:flex-start;gap:9px;margin-bottom:12px}
