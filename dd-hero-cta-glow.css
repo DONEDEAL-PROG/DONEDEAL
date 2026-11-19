@@ -1,0 +1,111 @@
+/* DONEDEAL — isolated, premium animated hero CTA.
+   Loaded last to override older hero-specific styles without affecting cart buttons. */
+main#home > .hero .heroCopy > .btn,
+main#home > .hero .heroCopy > a.btn,
+html.dd-premium-mobile .dd-mobile-hero-content > button {
+  position: relative !important;
+  isolation: isolate;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  min-width: 212px;
+  min-height: 57px;
+  width: max-content;
+  max-width: 100%;
+  padding: 15px 32px !important;
+  overflow: hidden;
+  border: 1.5px solid #ff9cda !important;
+  border-radius: 999px !important;
+  background: linear-gradient(115deg,#ff2aa3 0%,#f90083 42%,#e50074 80%,#fe198d 100%) !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  font-size: clamp(15px,1.15vw,18px) !important;
+  line-height: 1.2 !important;
+  letter-spacing: .1px;
+  text-decoration: none !important;
+  text-shadow: 0 1px 2px rgba(86,0,45,.4);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.56),
+    inset 0 -3px 8px rgba(108,0,65,.27),
+    0 0 0 3px rgba(255,46,159,.15),
+    0 0 15px rgba(255,21,147,.82),
+    0 0 36px rgba(255,0,127,.5),
+    0 11px 35px rgba(229,0,116,.34) !important;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .25s cubic-bezier(.2,.75,.3,1),box-shadow .25s ease,filter .25s ease !important;
+}
+main#home > .hero .heroCopy > .btn::before,
+main#home > .hero .heroCopy > a.btn::before,
+html.dd-premium-mobile .dd-mobile-hero-content > button::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -65%;
+  left: -75%;
+  width: 48%;
+  height: 235%;
+  pointer-events: none;
+  transform: translateX(-30%) rotate(24deg);
+  background: linear-gradient(90deg,transparent 0%,rgba(255,255,255,.22) 28%,rgba(255,255,255,.83) 49%,rgba(255,255,255,.28) 70%,transparent 100%);
+  animation: dd-hero-cta-shine 3.2s ease-in-out infinite;
+}
+main#home > .hero .heroCopy > .btn::after,
+main#home > .hero .heroCopy > a.btn::after,
+html.dd-premium-mobile .dd-mobile-hero-content > button::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg,rgba(255,255,255,.23),transparent 43%,rgba(86,0,55,.08));
+}
+main#home > .hero .heroCopy > .btn:hover,
+main#home > .hero .heroCopy > a.btn:hover,
+html.dd-premium-mobile .dd-mobile-hero-content > button:hover {
+  transform: translateY(-3px) scale(1.035) !important;
+  filter: brightness(1.12);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,.7),
+    0 0 0 4px rgba(255,46,159,.22),
+    0 0 26px rgba(255,21,147,.98),
+    0 0 56px rgba(255,0,127,.68),
+    0 16px 38px rgba(229,0,116,.43) !important;
+}
+main#home > .hero .heroCopy > .btn:active,
+main#home > .hero .heroCopy > a.btn:active,
+html.dd-premium-mobile .dd-mobile-hero-content > button:active {
+  transform: translateY(0) scale(.975) !important;
+}
+main#home > .hero .heroCopy > .btn:focus-visible,
+main#home > .hero .heroCopy > a.btn:focus-visible,
+html.dd-premium-mobile .dd-mobile-hero-content > button:focus-visible {
+  outline: 3px solid #fff !important;
+  outline-offset: 5px !important;
+}
+@keyframes dd-hero-cta-shine {
+  0%,15% {left:-75%;opacity:0}
+  20% {opacity:1}
+  49% {left:145%;opacity:1}
+  55%,100% {left:145%;opacity:0}
+}
+@media(max-width:760px) {
+  main#home > .hero .heroCopy > .btn,
+  main#home > .hero .heroCopy > a.btn {
+    min-height:52px;
+    min-width:190px;
+  }
+  html.dd-premium-mobile .dd-mobile-hero-content > button {
+    width:100% !important;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  main#home > .hero .heroCopy > .btn,
+  main#home > .hero .heroCopy > a.btn,
+  html.dd-premium-mobile .dd-mobile-hero-content > button {transition:none !important}
+  main#home > .hero .heroCopy > .btn::before,
+  main#home > .hero .heroCopy > a.btn::before,
+  html.dd-premium-mobile .dd-mobile-hero-content > button::before {animation:none !important;opacity:0}
+}
