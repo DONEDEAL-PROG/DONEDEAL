@@ -18,6 +18,22 @@ const wish=document.createElement('button');wish.type='button';wish.className='w
 const cp=document.createElement('button');cp.type='button';cp.className='outline compareBtn';cp.textContent=comparison.includes(p.id)?'✓ In comparison':'⇄ Compare';cp.onclick=()=>{comparison=comparison.includes(p.id)?comparison.filter(x=>x!==p.id):comparison.length<3?[...comparison,p.id]:comparison;put('ddCompare',comparison);render()};el.querySelector('.actions').append(cp);
 if(customPrices[p.id]!==undefined){const elPrice=el.querySelector('.price');elPrice.innerHTML=money(cost)+'<small>Demo selling price set in this browser</small>'}
 });document.getElementById('resultCount').textContent=shown+' products';document.getElementById('compareCount').textContent=comparison.length;document.getElementById('wishlistToggle').textContent=onlyWishlist?'♥ Show all phones':'♡ Wishlist';};
+// Visible comparison entry point: selected cards previously had no way to open the comparison modal.
+const compareLauncher=document.createElement('button');
+compareLauncher.type='button';
+compareLauncher.id='ddCompareLauncher';
+compareLauncher.className='dd-compare-launcher';
+compareLauncher.setAttribute('aria-label','View selected smartphone comparison');
+compareLauncher.addEventListener('click',()=>window.openCompare());
+document.body.append(compareLauncher);
+function syncCompareLauncher(){
+  const selected=comparison.filter(id=>products.some(p=>p.id===id));
+  compareLauncher.hidden=selected.length===0;
+  compareLauncher.textContent='Compare '+selected.length+' phone'+(selected.length===1?'':'s')+' →';
+}
+const previousRender=render;
+render=function(){previousRender();syncCompareLauncher()};
+syncCompareLauncher();
 window.toggleWishlist=()=>{onlyWishlist=!onlyWishlist;render()};
 window.openCompare=()=>{closeOverlay();const selected=comparison.map(id=>products.find(p=>p.id===id)).filter(Boolean);document.getElementById('compareBody').innerHTML=selected.length?'<div class="comparePanel">'+selected.map(p=>'<div class="compareCard"><strong>'+escapeHTML(p.brand+' '+p.name)+'</strong><p>'+escapeHTML(p.spec)+'</p><p>'+escapeHTML(p.desc)+'</p><b>'+money(price(p))+'</b></div>').join('')+'</div>':'Choose up to three products using the Compare buttons in the catalog.';document.getElementById('compareOverlay').classList.add('open')};
 function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
