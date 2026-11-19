@@ -219,3 +219,6 @@ html[data-dd-store-theme] :is(input,select,textarea):focus-visible{
     transform:none!important;
   }
 }
+
+/* Keep customer support available through navigation, without floating widgets. */
+.dd-support-float,.dd-support-dock,.dd-support-dock-bubble{display:none!important}
