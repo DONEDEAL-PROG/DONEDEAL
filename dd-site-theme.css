@@ -222,3 +222,67 @@ html[data-dd-store-theme] :is(input,select,textarea):focus-visible{
 
 /* Keep customer support available through navigation, without floating widgets. */
 .dd-support-float,.dd-support-dock,.dd-support-dock-bubble{display:none!important}
+
+/* Frosted-glass dropdown controls — preserve native selection behavior. */
+html.dd-premium-mobile {
+  --dd-glass-surface:rgba(33,32,43,.72);
+  --dd-glass-edge:rgba(255,255,255,.20);
+  --dd-glass-text:#f9f6fb;
+}
+html.dd-premium-mobile[data-dd-store-theme="light"] {
+  --dd-glass-surface:rgba(255,255,255,.78);
+  --dd-glass-edge:rgba(78,51,82,.18);
+  --dd-glass-text:#25212c;
+}
+html.dd-premium-mobile :is(.storageSelect,.controls select,.shopExtras select,.checkout select,.adminForm select) {
+  background-color:var(--dd-glass-surface)!important;
+  color:var(--dd-glass-text)!important;
+  border:1px solid var(--dd-glass-edge)!important;
+  border-radius:13px!important;
+  backdrop-filter:blur(18px) saturate(145%);
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 8px 24px rgba(0,0,0,.13)!important;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+html.dd-premium-mobile :is(.storageSelect,.controls select,.shopExtras select,.checkout select,.adminForm select):focus-visible {
+  outline:2px solid #f34b97!important;
+  outline-offset:2px;
+  border-color:#f34b97!important;
+}
+html.dd-premium-mobile :is(.storageSelect,.controls select,.shopExtras select,.checkout select,.adminForm select) option {
+  background:#26232e;color:#fff;
+}
+html.dd-premium-mobile[data-dd-store-theme="light"] :is(.storageSelect,.controls select,.shopExtras select,.checkout select,.adminForm select) option {
+  background:#fff;color:#25212c;
+}
+@media(prefers-reduced-transparency:reduce){
+ html.dd-premium-mobile :is(.storageSelect,.controls select,.shopExtras select,.checkout select,.adminForm select){backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+
+/* Unified glass treatment for every native selector and custom dropdown surface. */
+html.dd-premium-mobile select,
+html.dd-premium-mobile [role="listbox"],
+html.dd-premium-mobile [role="menu"],
+html.dd-premium-mobile [role="combobox"],
+html.dd-premium-mobile :is(.dropdown,.dropdown-menu,.dropdown-content,.menu-dropdown,.nav-dropdown,.brand-dropdown,.select-menu,.select-options,.menu-panel,.dd-dropdown,.dd-dropdown-menu) {
+  background:var(--dd-glass-surface)!important;
+  color:var(--dd-glass-text)!important;
+  border:1px solid var(--dd-glass-edge)!important;
+  border-radius:14px!important;
+  backdrop-filter:blur(20px) saturate(155%)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(155%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 16px 42px rgba(0,0,0,.22)!important;
+}
+html.dd-premium-mobile :is([role="option"],[role="menuitem"],.dropdown-item,.menu-item):hover,
+html.dd-premium-mobile :is([role="option"][aria-selected="true"],[role="menuitem"][aria-current="true"],.dropdown-item.active){
+  background:rgba(239,62,140,.17)!important;color:var(--dd-glass-text)!important;
+}
+html.dd-premium-mobile select:focus-visible,
+html.dd-premium-mobile [role="combobox"]:focus-visible{
+  outline:2px solid #ef438f!important;outline-offset:2px;
+}
+html.dd-premium-mobile select option{background:#282530;color:#fff}
+html.dd-premium-mobile[data-dd-store-theme="light"] select option{background:#fff;color:#25212c}
+@media(prefers-reduced-transparency:reduce){
+ html.dd-premium-mobile :is(select,[role="listbox"],[role="menu"],[role="combobox"],.dropdown,.dropdown-menu,.dropdown-content,.menu-dropdown,.nav-dropdown,.brand-dropdown,.select-menu,.select-options,.menu-panel,.dd-dropdown,.dd-dropdown-menu){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
